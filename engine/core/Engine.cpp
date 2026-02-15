@@ -74,8 +74,11 @@ void Engine::RunEditor() {
         m_net.Poll();
         m_scheduler.Tick([this](float dt) {
             m_world.Update(dt);
+            ui::UIContext uiCtx{};
+            uiCtx.deltaTime = dt;
+            uiCtx.tick = static_cast<uint32_t>(m_scheduler.CurrentTick());
+            m_uiManager.Update(uiCtx);
         });
-        // UI update and render would happen here
         tickCount++;
         if (m_config.maxTicks > 0 && tickCount >= m_config.maxTicks) {
             m_running = false;
@@ -90,8 +93,11 @@ void Engine::RunClient() {
         m_net.Poll();
         m_scheduler.Tick([this](float dt) {
             m_world.Update(dt);
+            ui::UIContext uiCtx{};
+            uiCtx.deltaTime = dt;
+            uiCtx.tick = static_cast<uint32_t>(m_scheduler.CurrentTick());
+            m_uiManager.Update(uiCtx);
         });
-        // Render would happen here
         tickCount++;
         if (m_config.maxTicks > 0 && tickCount >= m_config.maxTicks) {
             m_running = false;

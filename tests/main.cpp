@@ -87,6 +87,9 @@ void test_engine_init_and_shutdown();
 void test_engine_run_loop_ticks();
 void test_engine_capabilities();
 void test_engine_net_mode_from_config();
+void test_engine_frame_pacing_default_enabled();
+void test_engine_frame_pacing_prevents_spin();
+void test_engine_ui_update_in_loop();
 
 // Logger tests
 void test_logger_creates_log_directory();
@@ -774,6 +777,9 @@ int main() {
     test_engine_run_loop_ticks();
     test_engine_capabilities();
     test_engine_net_mode_from_config();
+    test_engine_frame_pacing_default_enabled();
+    test_engine_frame_pacing_prevents_spin();
+    test_engine_ui_update_in_loop();
 
     // Logger
     std::cout << "\n--- Logger ---" << std::endl;
