@@ -2483,7 +2483,7 @@ Walk through editor UX for worlds
 Say which one and we’ll build your planets 🌍✨
 
 
-i also want to be able to generate  full spiral galaxys with up to  100000 solar systems to explore  that can be  essentiall added by  editor as well  pretty much any game featur you can think of this editor will be able to trans form and make  from side scroller to  top down zelda like with an obit camera that moves  down to strategy style games  physics for all  literally the possibilties are endless even minecraft style generation as well  i mean everything ad anything in a highly configurable   and  easy to use for the average user implementation as possible 
+i also want to be able to generate  full spiral galaxys with up to  100000 star systems to explore  that can be  essentiall added by  editor as well  pretty much any game featur you can think of this editor will be able to trans form and make  from side scroller to  top down adventure style with an obit camera that moves  down to strategy style games  physics for all  literally the possibilties are endless even voxel style generation as well  i mean everything ad anything in a highly configurable   and  easy to use for the average user implementation as possible 
 
 Short answer first, because it matters for sanity:
 
