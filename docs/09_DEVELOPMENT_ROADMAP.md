@@ -163,8 +163,8 @@ Advanced GUI architecture, editor refinements, and determinism enforcement.
 - [ ] Editor self-hosting (editor UI defined in Atlas GUI DSL)
 - [ ] Non-closable main panels (World Outliner, Asset Browser, Inspector, Replay Timeline, Console, Permissions)
 - [ ] Editor attach protocol (attach to live client, headless server, or replay)
-- [ ] Permission tiers (ViewOnly, QA, Developer, CI, Admin)
-- [ ] Client HUD overlay (tick count, determinism warnings, time controls)
+- [x] Permission tiers (ViewOnly, QA, Developer, CI, Admin)
+- [x] Client HUD overlay (tick count, determinism warnings, time controls)
 - [ ] Headless server GUI (state-only panel tree, CLI commands)
 
 ## Phase 9 — Replay & Formal Verification 🔧
@@ -172,14 +172,14 @@ Advanced GUI architecture, editor refinements, and determinism enforcement.
 Replay system closure, hash ladder verification, and TLA+ formal proofs.
 
 - [x] Hash ladder verification (H[n] = Hash(H[n-1] || State[n] || Inputs[n]))
-- [ ] Replay Timeline panel (scrub, compare, branch, inject inputs)
-- [ ] Replay divergence inspector (auto-open diff view on hash mismatch)
+- [x] Replay Timeline panel (scrub, compare, branch, inject inputs)
+- [x] Replay divergence inspector (auto-open diff view on hash mismatch)
 - [ ] TLA+ specifications (ecs.tla, replay.tla, layout.tla)
 - [ ] TLC model checker CI integration
 - [ ] Proof viewer panel (syntax-highlighted TLA+ in editor)
 - [ ] Replay → proof importer (trace → checkable format)
 - [ ] Cross-platform replay equivalence verification
-- [ ] Deterministic allocator (arena, stable IDs, no pointer-order dependence)
+- [x] Deterministic allocator (arena, stable IDs, no pointer-order dependence)
 - [ ] AtlasShaderIR (deterministic shader compilation)
 
 ## Phase 10 — Flow Graph & Procedural Content 🔧

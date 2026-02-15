@@ -78,12 +78,18 @@ add_executable(AtlasTests
     test_ui_layout_solver.cpp
     test_ui_nodes_extended.cpp
     test_state_hasher.cpp
+    test_replay_divergence.cpp
+    test_deterministic_allocator.cpp
+    test_permission_manager.cpp
+    test_hud_overlay.cpp
+    test_replay_timeline_panel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/AssetBrowserPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/WorldGraphPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ProfilerPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/ReplayTimelinePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/NetInspectorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/tools/GamePackagerPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/tools/VisualDiff.cpp

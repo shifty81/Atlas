@@ -72,6 +72,10 @@ add_library(AtlasEngine STATIC
     production/PlatformTarget.cpp
     sim/ReplayRecorder.cpp
     sim/StateHasher.cpp
+    sim/ReplayDivergenceInspector.cpp
+    core/DeterministicAllocator.cpp
+    core/PermissionManager.cpp
+    ui/HUDOverlay.cpp
     module/ModuleLoader.cpp
 )
 

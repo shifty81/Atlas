@@ -637,6 +637,55 @@ void test_arena2d_server_rules();
 void test_arena2d_lifecycle();
 void test_arena2d_factory();
 
+// Replay Timeline Panel tests
+void test_replay_timeline_empty();
+void test_replay_timeline_load();
+void test_replay_timeline_scrub();
+void test_replay_timeline_markers();
+void test_replay_timeline_compare_identical();
+void test_replay_timeline_compare_divergent();
+void test_replay_timeline_inject_input();
+void test_replay_timeline_branch();
+
+// Replay Divergence Inspector tests
+void test_divergence_no_mismatch();
+void test_divergence_hash_mismatch();
+void test_divergence_frame_comparison();
+void test_divergence_single_frame_check();
+void test_divergence_report_format();
+void test_divergence_history();
+void test_divergence_severity();
+
+// Deterministic Allocator tests
+void test_allocator_create();
+void test_allocator_single_alloc();
+void test_allocator_multiple_allocs();
+void test_allocator_dealloc();
+void test_allocator_reuse_space();
+void test_allocator_stable_ids();
+void test_allocator_reset();
+void test_allocator_deterministic();
+
+// Permission Manager tests
+void test_permission_defaults();
+void test_permission_register_user();
+void test_permission_tier_viewonly();
+void test_permission_tier_developer();
+void test_permission_tier_admin();
+void test_permission_grant_custom();
+void test_permission_revoke();
+void test_permission_user_management();
+
+// HUD Overlay tests
+void test_hud_defaults();
+void test_hud_tick_display();
+void test_hud_warnings();
+void test_hud_critical_warning();
+void test_hud_time_controls();
+void test_hud_step_forward();
+void test_hud_determinism_status();
+void test_hud_visibility();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -1354,6 +1403,60 @@ int main() {
     test_arena2d_server_rules();
     test_arena2d_lifecycle();
     test_arena2d_factory();
+
+    // Replay Timeline Panel
+    std::cout << "\n--- Replay Timeline Panel ---" << std::endl;
+    test_replay_timeline_empty();
+    test_replay_timeline_load();
+    test_replay_timeline_scrub();
+    test_replay_timeline_markers();
+    test_replay_timeline_compare_identical();
+    test_replay_timeline_compare_divergent();
+    test_replay_timeline_inject_input();
+    test_replay_timeline_branch();
+
+    // Replay Divergence Inspector
+    std::cout << "\n--- Replay Divergence Inspector ---" << std::endl;
+    test_divergence_no_mismatch();
+    test_divergence_hash_mismatch();
+    test_divergence_frame_comparison();
+    test_divergence_single_frame_check();
+    test_divergence_report_format();
+    test_divergence_history();
+    test_divergence_severity();
+
+    // Deterministic Allocator
+    std::cout << "\n--- Deterministic Allocator ---" << std::endl;
+    test_allocator_create();
+    test_allocator_single_alloc();
+    test_allocator_multiple_allocs();
+    test_allocator_dealloc();
+    test_allocator_reuse_space();
+    test_allocator_stable_ids();
+    test_allocator_reset();
+    test_allocator_deterministic();
+
+    // Permission Manager
+    std::cout << "\n--- Permission Manager ---" << std::endl;
+    test_permission_defaults();
+    test_permission_register_user();
+    test_permission_tier_viewonly();
+    test_permission_tier_developer();
+    test_permission_tier_admin();
+    test_permission_grant_custom();
+    test_permission_revoke();
+    test_permission_user_management();
+
+    // HUD Overlay
+    std::cout << "\n--- HUD Overlay ---" << std::endl;
+    test_hud_defaults();
+    test_hud_tick_display();
+    test_hud_warnings();
+    test_hud_critical_warning();
+    test_hud_time_controls();
+    test_hud_step_forward();
+    test_hud_determinism_status();
+    test_hud_visibility();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
