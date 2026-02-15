@@ -12,7 +12,6 @@ namespace atlas::sim {
 static DivergenceSeverity ClassifySeverity(const DivergenceReport& r) {
     if (r.divergeTick < 0)
         return DivergenceSeverity::None;
-    // Divergence in the first 10 % of the stream (or first tick) is critical.
     if (r.totalTicksCompared == 0 || r.firstMatchingTicks == 0)
         return DivergenceSeverity::Critical;
     double ratio = static_cast<double>(r.firstMatchingTicks)

@@ -110,7 +110,14 @@ ComparisonResult ReplayTimelinePanel::CompareWith(
 
     // Frames beyond the shorter replay count as divergent
     if (minLen < maxLen && result.divergeTick < 0) {
-        result.divergeTick = static_cast<int64_t>(minLen);
+        // Use the tick from the frame at the boundary, or fall back to index
+        if (minLen < m_frames.size()) {
+            result.divergeTick = static_cast<int64_t>(m_frames[minLen].tick);
+        } else if (minLen < other.size()) {
+            result.divergeTick = static_cast<int64_t>(other[minLen].tick);
+        } else {
+            result.divergeTick = static_cast<int64_t>(minLen);
+        }
     }
 
     result.matchPercentage = maxLen > 0
