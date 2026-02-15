@@ -2,8 +2,17 @@
 #include "../ui/EditorPanel.h"
 #include "../../engine/world/WorldGraph.h"
 #include <string>
+#include <vector>
 
 namespace atlas::editor {
+
+struct GraphNodeInfo {
+    world::NodeID id = 0;
+    std::string name;
+    std::string category;
+    std::vector<world::NodePort> inputs;
+    std::vector<world::NodePort> outputs;
+};
 
 class WorldGraphPanel : public EditorPanel {
 public:
@@ -19,9 +28,18 @@ public:
     void SelectNode(world::NodeID id) { m_selectedNode = id; }
     world::NodeID SelectedNode() const { return m_selectedNode; }
 
+    // Node catalog snapshot populated by Draw()
+    const std::vector<GraphNodeInfo>& NodeInfos() const { return m_nodeInfos; }
+
+    // Compiled status
+    bool IsCompiled() const;
+
+    std::string Summary() const;
+
 private:
     world::WorldGraph* m_graph = nullptr;
     world::NodeID m_selectedNode = 0;
+    std::vector<GraphNodeInfo> m_nodeInfos;
 };
 
 }

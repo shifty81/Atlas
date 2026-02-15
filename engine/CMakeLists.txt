@@ -8,6 +8,7 @@ add_library(AtlasEngine STATIC
     assets/AssetRegistry.cpp
     assets/AssetBinary.cpp
     net/NetContext.cpp
+    net/Replication.cpp
     sim/TickScheduler.cpp
     world/CubeSphereLayout.cpp
     world/VoxelGridLayout.cpp
@@ -60,6 +61,7 @@ add_library(AtlasEngine STATIC
     physics/PhysicsWorld.cpp
     story/StoryGraph.cpp
     ui/UIScreenGraph.cpp
+    production/AssetCooker.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

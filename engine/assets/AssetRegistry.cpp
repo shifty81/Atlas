@@ -23,6 +23,15 @@ const AssetEntry* AssetRegistry::Get(const std::string& id) const {
     return it != m_assets.end() ? &it->second : nullptr;
 }
 
+std::vector<AssetEntry> AssetRegistry::GetAll() const {
+    std::vector<AssetEntry> result;
+    result.reserve(m_assets.size());
+    for (const auto& [id, entry] : m_assets) {
+        result.push_back(entry);
+    }
+    return result;
+}
+
 void AssetRegistry::SetReloadCallback(ReloadCallback cb) {
     m_onReload = std::move(cb);
 }

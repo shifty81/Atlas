@@ -54,10 +54,18 @@ add_executable(AtlasTests
     test_ecs_serialization.cpp
     test_snapshot.cpp
     test_ecs_inspector.cpp
+    test_replication.cpp
+    test_asset_browser.cpp
+    test_asset_cooker.cpp
+    test_graph_editor.cpp
+    test_asset_assistant.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/AssetBrowserPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/WorldGraphPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/assistant/EditorAssistant.cpp
+    ${CMAKE_SOURCE_DIR}/editor/assistant/AssetGraphAssistant.cpp
 )
 
 target_link_libraries(AtlasTests AtlasEngine)
