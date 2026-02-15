@@ -159,6 +159,7 @@ For keeping server/client/editor generic while hosting game code in external mod
 Atlas/
 ├── engine/              # Core engine static library
 │   ├── core/            # Engine bootstrap, logging, config
+│   │   └── contract/    # Determinism contract enforcement headers
 │   ├── ecs/             # Entity-Component-System framework
 │   ├── graphvm/         # Deterministic Graph VM + compiler + serialization + cache
 │   ├── assets/          # Asset registry, binary format, hot reload
@@ -209,6 +210,9 @@ Atlas/
 ├── server/              # Headless dedicated server
 │
 ├── tests/               # Unit tests (90 test files)
+│
+├── tools/               # Development tools and scripts
+│   └── contract_scan.py # Determinism contract violation scanner
 │
 ├── schemas/             # Versioned JSON schemas
 │   ├── atlas.project.v1.json
@@ -345,6 +349,19 @@ See the [docs/](docs/) directory for detailed documentation:
 | [Gameplay Mechanics](docs/07_GAMEPLAY_MECHANICS.md) | Mechanic assets, skill trees, cameras |
 | [AI Editor Assist](docs/08_AI_EDITOR_ASSIST.md) | AI-assisted content generation |
 | [Development Roadmap](docs/09_DEVELOPMENT_ROADMAP.md) | Phase-by-phase development status |
+| [GUI System](docs/12_GUI_SYSTEM.md) | Custom GUI architecture, DSL, layout solver |
+| [Editor UI](docs/13_EDITOR_UI.md) | Unreal-grade editor aesthetics, panels, self-hosting |
+| [Replay & Proofs](docs/14_REPLAY_AND_PROOFS.md) | Replay system, hash ladder, TLA+ verification |
+| [Flow Graph](docs/15_FLOW_GRAPH.md) | Blueprint-like visual scripting, IR, debugger |
+| [AtlasAI](docs/16_ATLAS_AI.md) | AI assistant, web aggregation, context-aware prompts |
+| [Procedural Modeling](docs/17_PROCEDURAL_MODELING.md) | Blender-like modeling, mesh/material graphs |
+| [Game GUI Authoring](docs/18_GAME_GUI_AUTHORING.md) | Game UI as authored data, widget DSL |
+| [Template Repository](docs/19_TEMPLATE_REPO.md) | Forkable template system, atlas init |
+| [CI & Build](docs/20_CI_AND_BUILD.md) | CI policies, build system, first-run experience |
+| [Formal Specifications](docs/21_FORMAL_SPECIFICATIONS.md) | TLA+ specs for ECS, replay, layout |
+| [Core Contract](docs/ATLAS_CORE_CONTRACT.md) | Non-negotiable engine invariants |
+| [Determinism Enforcement](docs/ATLAS_DETERMINISM_ENFORCEMENT.md) | Compile-time, runtime, CI enforcement |
+| [Lockdown Checklist](docs/ATLAS_LOCKDOWN_CHECKLIST.md) | Engine feature-freeze gate |
 | [Building](docs/BUILDING.md) | Build prerequisites, script usage, logs, troubleshooting |
 | [Architecture Reference](docs/ARCHITECTURE.md) | Detailed module-by-module reference |
 | [Naming Conventions](docs/ATLAS_NAMING_CONVENTIONS.md) | Code style and naming rules |

@@ -152,6 +152,80 @@ All polish systems are implemented.
 - [x] Replay recorder (input frame recording, binary save/load, tick-based lookup)
 - [x] Crash analysis tools (breadcrumb trail, crash report generation, file output, callbacks)
 
+## Phase 8 — GUI System & Editor Hardening 🔧
+
+Advanced GUI architecture, editor refinements, and determinism enforcement.
+
+- [ ] Custom GUI widget system (layout solver, DSL compiler, deterministic rendering)
+- [ ] GUI DSL (declarative layout language with docking, splits, tabs)
+- [ ] GUI input recorder and replay (semantic events, CI video export)
+- [ ] Unreal-grade editor aesthetics (dark theme, professional typography, icons)
+- [ ] Editor self-hosting (editor UI defined in Atlas GUI DSL)
+- [ ] Non-closable main panels (World Outliner, Asset Browser, Inspector, Replay Timeline, Console, Permissions)
+- [ ] Editor attach protocol (attach to live client, headless server, or replay)
+- [ ] Permission tiers (ViewOnly, QA, Developer, CI, Admin)
+- [ ] Client HUD overlay (tick count, determinism warnings, time controls)
+- [ ] Headless server GUI (state-only panel tree, CLI commands)
+
+## Phase 9 — Replay & Formal Verification 🔧
+
+Replay system closure, hash ladder verification, and TLA+ formal proofs.
+
+- [ ] Hash ladder verification (H[n] = Hash(H[n-1] || State[n] || Inputs[n]))
+- [ ] Replay Timeline panel (scrub, compare, branch, inject inputs)
+- [ ] Replay divergence inspector (auto-open diff view on hash mismatch)
+- [ ] TLA+ specifications (ecs.tla, replay.tla, layout.tla)
+- [ ] TLC model checker CI integration
+- [ ] Proof viewer panel (syntax-highlighted TLA+ in editor)
+- [ ] Replay → proof importer (trace → checkable format)
+- [ ] Cross-platform replay equivalence verification
+- [ ] Deterministic allocator (arena, stable IDs, no pointer-order dependence)
+- [ ] AtlasShaderIR (deterministic shader compilation)
+
+## Phase 10 — Flow Graph & Procedural Content 🔧
+
+Blueprint-like visual scripting and Blender-like procedural modeling.
+
+- [ ] Flow Graph IR (file format, schema validation, version migration)
+- [ ] Flow Graph VM runtime (deterministic node execution)
+- [ ] Flow Graph debugger (breakpoints, timeline stepping, value inspection)
+- [ ] Flow Graph → C++ codegen (release build optimization)
+- [ ] UI logic graphs (safe subset for UI behavior)
+- [ ] Procedural mesh graph library (primitives, operations, deformers)
+- [ ] Procedural material & shader graphs
+- [ ] LOD & mesh baking graphs
+- [ ] Deterministic animation graphs (bone manipulation, IK/FK, blend trees)
+- [ ] Collaborative graph editing (live cursors, conflict resolution)
+
+## Phase 11 — AtlasAI & Game GUI Authoring 🔧
+
+AI-assisted authoring and unified game UI system.
+
+- [ ] AtlasAI core (structured I/O, permission-gated intents)
+- [ ] Atlas Assistant panel (context-aware prompts, diff preview)
+- [ ] AI diff viewer (preview generated changes before applying)
+- [ ] AI-assisted flow graph refactoring
+- [ ] Web aggregation knowledge base
+- [ ] Game GUI asset format (layout tree, widget definitions, bindings)
+- [ ] Widget DSL for game UI (inventory, HUD, menus, dialogs)
+- [ ] Game GUI binding system (ECS → UI data flow)
+- [ ] Full editor authoring for all game mechanics UI
+
+## Phase 12 — CI, Build & Template System 🔧
+
+Production-grade CI, build experience, and template repository support.
+
+- [ ] Determinism CI gate (golden replay comparison, hash validation)
+- [ ] Contract bot (automated PR violation scanning)
+- [ ] atlas.build.json schema (artifact definitions, validation requirements)
+- [ ] First-run experience (one-command build, /run shortcuts)
+- [ ] Build manifest (executable hashes, layout hashes, DSL version)
+- [ ] atlas init tool (namespace rewrite, core freeze, editor branding)
+- [ ] Template contract (ATLAS_TEMPLATE_CONTRACT.md for forks)
+- [ ] Determinism versioning strategy across forks
+- [ ] CI dashboard panel (in-editor CI results visualization)
+- [ ] Certified build mode (audit-grade verification artifacts)
+
 ---
 
 ## Implementation Summary
@@ -170,3 +244,8 @@ All polish systems are implemented.
 | Production Tools | ✅ Complete | Packager, asset cooker, build profiles, mod loader, platform targeting |
 | Polish | ✅ Complete | Undo/redo, visual diff, profiler, replay recorder, crash analysis |
 | Game Module System | ✅ Complete | IGameModule interface, ModuleLoader, AtlasGameplay library, EveOffline module, SDK export |
+| GUI System & Editor Hardening | 🔧 Planned | Custom GUI DSL, layout solver, editor self-hosting, permissions |
+| Replay & Formal Verification | 🔧 Planned | Hash ladder, TLA+ specs, proof viewer, deterministic allocator |
+| Flow Graph & Procedural Content | 🔧 Planned | Flow Graph IR/VM, procedural modeling, animation graphs |
+| AtlasAI & Game GUI Authoring | 🔧 Planned | AI assistant, game UI authoring, widget DSL |
+| CI, Build & Template System | 🔧 Planned | Determinism CI, contract bot, atlas init, template repo |

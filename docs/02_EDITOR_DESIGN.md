@@ -94,3 +94,15 @@ Everything can be rearranged and saved.
 - Possess Entity
 - Client-Server Loopback
 - P2P Test Session
+
+## Extended Design
+
+For expanded editor UI design including Unreal-grade aesthetics, editor shell architecture,
+editor attach protocol, permission tiers, headless server GUI, and self-hosting, see
+[13_EDITOR_UI.md](13_EDITOR_UI.md).
+
+For the underlying custom GUI system (DSL, layout solver, widget system, replay), see
+[12_GUI_SYSTEM.md](12_GUI_SYSTEM.md).
+
+For game UI authoring within the editor (inventory, HUD, menus), see
+[18_GAME_GUI_AUTHORING.md](18_GAME_GUI_AUTHORING.md).
