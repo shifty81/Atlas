@@ -30,7 +30,7 @@ predicates linking the abstract model to the real ECS implementation.
 Models the chained hash commitment scheme used by the replay system:
 
 ```
-H[n] = Hash(H[n-1] || State[n] || Inputs[n])
+H[n] = Hash(H[n-1] || ECS_State[n] || Inputs[n])
 ```
 
 | Invariant | Description |
