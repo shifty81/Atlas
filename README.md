@@ -226,6 +226,30 @@ Atlas/
 
 ### Build
 
+The easiest way to build is with the included build script:
+
+```bash
+# Build all targets (server, client, editor, runtime) in Release mode
+./build.sh
+
+# Build specific targets
+./build.sh server client          # Server and client only
+./build.sh editor                 # Developer client (editor) only
+
+# Build options
+./build.sh -b Debug all           # Debug build
+./build.sh -b Development editor  # Development build (optimized + debug symbols)
+./build.sh --clean --test all     # Clean rebuild with tests
+./build.sh -o ./my-output server  # Custom output directory
+
+# See all options
+./build.sh --help
+```
+
+Executables are placed in `dist/` by default.
+
+You can also build manually with CMake:
+
 ```bash
 mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
@@ -235,22 +259,26 @@ cmake --build .
 ### Run
 
 ```bash
-# Editor (authoring + testing)
-./editor/AtlasEditor
+# Editor / developer client (authoring + testing)
+./dist/AtlasEditor
 
 # Runtime (standalone with project loading)
-./runtime/AtlasRuntime --project projects/atlas-sample/sample.atlas
+./dist/AtlasRuntime --project projects/atlas-sample/sample.atlas
 
 # Client (player runtime)
-./client/AtlasClient
+./dist/AtlasClient
 
 # Server (headless)
-./server/AtlasServer
+./dist/AtlasServer
 ```
 
 ### Tests
 
 ```bash
+# Via build script
+./build.sh --test
+
+# Or manually
 cd build
 ctest
 # or
