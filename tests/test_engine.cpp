@@ -1,6 +1,7 @@
 #include "../engine/core/Engine.h"
 #include <iostream>
 #include <cassert>
+#include <chrono>
 
 using namespace atlas;
 
@@ -31,6 +32,7 @@ void test_engine_run_loop_ticks() {
     engine.InitCore();
     engine.InitECS();
     engine.InitNetworking();
+    engine.GetScheduler().SetFramePacing(false);
 
     // Add a tick callback to count ticks
     int tickCount = 0;
@@ -110,4 +112,70 @@ void test_engine_net_mode_from_config() {
     }
 
     std::cout << "[PASS] test_engine_net_mode_from_config" << std::endl;
+}
+
+void test_engine_frame_pacing_default_enabled() {
+    EngineConfig cfg;
+    cfg.mode = EngineMode::Server;
+    Engine engine(cfg);
+
+    // Frame pacing should be enabled by default
+    assert(engine.GetScheduler().FramePacingEnabled());
+
+    // Can disable and re-enable
+    engine.GetScheduler().SetFramePacing(false);
+    assert(!engine.GetScheduler().FramePacingEnabled());
+
+    engine.GetScheduler().SetFramePacing(true);
+    assert(engine.GetScheduler().FramePacingEnabled());
+
+    std::cout << "[PASS] test_engine_frame_pacing_default_enabled" << std::endl;
+}
+
+void test_engine_frame_pacing_prevents_spin() {
+    // With frame pacing on, 3 ticks at 30hz should take ~100ms, not instant
+    EngineConfig cfg;
+    cfg.mode = EngineMode::Server;
+    cfg.tickRate = 30;
+    cfg.maxTicks = 3;
+
+    Engine engine(cfg);
+    engine.InitCore();
+    engine.InitECS();
+    engine.InitNetworking();
+    // Frame pacing is on by default
+
+    auto start = std::chrono::steady_clock::now();
+    engine.Run();
+    auto elapsed = std::chrono::steady_clock::now() - start;
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
+
+    // 3 ticks at 30hz = 100ms. Allow some tolerance but should be > 50ms
+    assert(ms >= 50);
+
+    std::cout << "[PASS] test_engine_frame_pacing_prevents_spin" << std::endl;
+}
+
+void test_engine_ui_update_in_loop() {
+    EngineConfig cfg;
+    cfg.mode = EngineMode::Client;
+    cfg.tickRate = 60;
+    cfg.maxTicks = 3;
+
+    Engine engine(cfg);
+    engine.InitCore();
+    engine.InitUI();
+    engine.InitECS();
+    engine.InitNetworking();
+    engine.GetScheduler().SetFramePacing(false);
+
+    // UIManager should be initialized after InitUI
+    assert(engine.GetUIManager().IsInitialized());
+
+    engine.Run();
+
+    // Engine should stop after maxTicks
+    assert(!engine.Running());
+
+    std::cout << "[PASS] test_engine_ui_update_in_loop" << std::endl;
 }

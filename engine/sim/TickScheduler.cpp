@@ -1,4 +1,5 @@
 #include "TickScheduler.h"
+#include <thread>
 
 namespace atlas::sim {
 
@@ -15,6 +16,28 @@ float TickScheduler::FixedDeltaTime() const {
 }
 
 void TickScheduler::Tick(const std::function<void(float)>& callback) {
+    if (m_framePacing) {
+        auto now = std::chrono::steady_clock::now();
+        if (m_firstTick) {
+            m_nextTick = now;
+            m_firstTick = false;
+        }
+
+        if (now < m_nextTick) {
+            std::this_thread::sleep_until(m_nextTick);
+        }
+
+        auto tickInterval = std::chrono::microseconds(1000000 / m_tickRate);
+        m_nextTick += tickInterval;
+
+        // Prevent spiral of death: if we fell behind more than one full tick,
+        // reset the target to now + one interval
+        now = std::chrono::steady_clock::now();
+        if (m_nextTick < now) {
+            m_nextTick = now + tickInterval;
+        }
+    }
+
     if (callback) {
         callback(FixedDeltaTime());
     }
@@ -23,6 +46,17 @@ void TickScheduler::Tick(const std::function<void(float)>& callback) {
 
 uint64_t TickScheduler::CurrentTick() const {
     return m_currentTick;
+}
+
+void TickScheduler::SetFramePacing(bool enabled) {
+    m_framePacing = enabled;
+    if (enabled) {
+        m_firstTick = true;
+    }
+}
+
+bool TickScheduler::FramePacingEnabled() const {
+    return m_framePacing;
 }
 
 }
