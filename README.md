@@ -10,6 +10,111 @@ Atlas is a modular, data-driven game engine and simulation platform designed to 
 - **Massive Procedural Worlds** — Planet-scale to galaxy-scale generation
 - **AI-Assisted Generation** — In-editor content and mechanic generation
 
+## 🗺️ Development Roadmap
+
+> **Project scope at a glance** — See [docs/09_DEVELOPMENT_ROADMAP.md](docs/09_DEVELOPMENT_ROADMAP.md) for full details.
+
+```
+  Phase 1        Phase 2        Phase 3        Phase 4        Phase 5        Phase 6        Phase 7
+ Core Engine      Editor       Networking    World Gen       Gameplay      Production       Polish
+────────────────────────────────────────────────────────────────────────────────────────────────────
+ ██████████     ██████████     ██████████     ██████░░░░     ░░░░░░░░░░     ██████░░░░     ░░░░░░░░░░
+   100%            100%           100%           43%             0%            40%             0%
+  ✅ Done        ✅ Done        ✅ Done       🔧 Active      📋 Planned    🔧 Active      📋 Planned
+```
+
+<table>
+<tr>
+<td width="14%">
+
+**Phase 1 — Core Engine** ✅
+
+- ✅ Bootstrap & config
+- ✅ ECS framework
+- ✅ Graph VM & compiler
+- ✅ Asset registry
+- ✅ Binary asset format
+- ✅ Hot reload
+
+</td>
+<td width="14%">
+
+**Phase 2 — Editor** ✅
+
+- ✅ UI framework
+- ✅ Panel docking system
+- ✅ Graph editor panel
+- ✅ ECS inspector
+- ✅ Console panel
+- ✅ Asset browser
+
+</td>
+<td width="14%">
+
+**Phase 3 — Networking** ✅
+
+- ✅ NetContext API
+- ✅ Dedicated server
+- ✅ P2P support
+- ✅ Lockstep + rollback
+- ✅ Replication rules
+
+</td>
+<td width="14%">
+
+**Phase 4 — World Gen** 🔧
+
+- ✅ WorldLayout interface
+- ✅ Cube-sphere math
+- ✅ Voxel grid layout
+- ⬜ Terrain mesh gen
+- ⬜ Noise nodes
+- ⬜ World streaming
+- ⬜ Galaxy generation
+
+</td>
+<td width="14%">
+
+**Phase 5 — Gameplay** 📋
+
+- ⬜ Mechanic assets
+- ⬜ Camera system
+- ⬜ Input mapping
+- ⬜ Physics integration
+- ⬜ Audio system
+
+</td>
+<td width="14%">
+
+**Phase 6 — Production** 🔧
+
+- ✅ Game packager
+- ✅ Asset cooker
+- ⬜ Build profiles
+- ⬜ Mod loader
+- ⬜ Platform targeting
+
+</td>
+<td width="14%">
+
+**Phase 7 — Polish** 📋
+
+- ⬜ Undo/redo system
+- ⬜ Visual diff tools
+- ⬜ Profiler panels
+- ⬜ Replay recorder
+- ⬜ Crash analysis
+
+</td>
+</tr>
+</table>
+
+| Status | Meaning |
+|--------|---------|
+| ✅ Done | Phase fully complete |
+| 🔧 Active | Currently in development |
+| 📋 Planned | Not yet started |
+
 ## Architecture
 
 Atlas ships as three executables, all linked against the same engine core:
