@@ -14,6 +14,11 @@ add_library(AtlasEngine STATIC
     world/NoiseGenerator.cpp
     world/WorldStreamer.cpp
     world/GalaxyGenerator.cpp
+    interaction/InteractionSystem.cpp
+    interaction/RuleIntentResolver.cpp
+    ai/FactionRouter.cpp
+    asset_graph/AssetGraphExecutor.cpp
+    mod/ModAssetRegistry.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

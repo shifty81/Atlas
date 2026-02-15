@@ -96,6 +96,41 @@ void test_console_net_mode();
 void test_console_help();
 void test_console_unknown_command();
 
+// Interaction tests
+void test_utterance_creation();
+void test_intent_creation();
+void test_rule_intent_resolver();
+void test_interaction_system_uninitialized();
+void test_interaction_system_no_match();
+void test_interaction_system_full_pipeline();
+
+// Diplomacy tests
+void test_faction_request_neutral();
+void test_faction_request_trusted();
+void test_faction_request_hostile();
+void test_faction_threaten_increases_hostility();
+void test_faction_unknown_intent();
+void test_faction_personality_affects_hostility();
+
+// Asset graph tests
+void test_asset_context();
+void test_asset_graph_executor_empty();
+void test_asset_graph_executor_single_node();
+void test_asset_graph_executor_multiple_nodes();
+void test_damage_state();
+
+// Mod tests
+void test_mod_register_graph();
+void test_mod_register_archetype();
+void test_mod_registry_mixed();
+
+// Editor assistant tests
+void test_editor_assistant_explain_performance();
+void test_editor_assistant_explain_node();
+void test_editor_assistant_unknown();
+void test_interaction_debugger_record();
+void test_interaction_debugger_clear();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -208,6 +243,46 @@ int main() {
     test_console_net_mode();
     test_console_help();
     test_console_unknown_command();
+
+    // Interaction
+    std::cout << "\n--- Interaction System ---" << std::endl;
+    test_utterance_creation();
+    test_intent_creation();
+    test_rule_intent_resolver();
+    test_interaction_system_uninitialized();
+    test_interaction_system_no_match();
+    test_interaction_system_full_pipeline();
+
+    // Diplomacy
+    std::cout << "\n--- AI Diplomacy ---" << std::endl;
+    test_faction_request_neutral();
+    test_faction_request_trusted();
+    test_faction_request_hostile();
+    test_faction_threaten_increases_hostility();
+    test_faction_unknown_intent();
+    test_faction_personality_affects_hostility();
+
+    // Asset Graph
+    std::cout << "\n--- Asset Graph ---" << std::endl;
+    test_asset_context();
+    test_asset_graph_executor_empty();
+    test_asset_graph_executor_single_node();
+    test_asset_graph_executor_multiple_nodes();
+    test_damage_state();
+
+    // Mod System
+    std::cout << "\n--- Mod System ---" << std::endl;
+    test_mod_register_graph();
+    test_mod_register_archetype();
+    test_mod_registry_mixed();
+
+    // Editor Assistant
+    std::cout << "\n--- Editor Assistant ---" << std::endl;
+    test_editor_assistant_explain_performance();
+    test_editor_assistant_explain_node();
+    test_editor_assistant_unknown();
+    test_interaction_debugger_record();
+    test_interaction_debugger_clear();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
