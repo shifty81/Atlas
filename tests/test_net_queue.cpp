@@ -93,11 +93,11 @@ void test_net_shutdown_clears_queues() {
     NetContext net;
     net.Init(NetMode::Server);
 
-    net.AddPeer();
+    uint32_t peer = net.AddPeer();
 
     Packet pkt;
     pkt.type = 1;
-    net.Send(1, pkt);
+    net.Send(peer, pkt);
     net.Poll();
 
     net.Shutdown();
