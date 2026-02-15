@@ -4,6 +4,7 @@
 #include "../ecs/ECS.h"
 #include "../net/NetContext.h"
 #include "../sim/TickScheduler.h"
+#include "../ui/UIManager.h"
 
 namespace atlas {
 
@@ -63,6 +64,7 @@ public:
     ecs::World& GetWorld() { return m_world; }
     net::NetContext& GetNet() { return m_net; }
     sim::TickScheduler& GetScheduler() { return m_scheduler; }
+    ui::UIManager& GetUIManager() { return m_uiManager; }
 
 private:
     EngineConfig m_config;
@@ -70,6 +72,7 @@ private:
     ecs::World m_world;
     net::NetContext m_net;
     sim::TickScheduler m_scheduler;
+    ui::UIManager m_uiManager;
 };
 
 }

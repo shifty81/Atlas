@@ -45,6 +45,11 @@ add_library(AtlasEngine STATIC
     weapon/WeaponNodes.cpp
     ui/UIGraph.cpp
     ui/UINodes.cpp
+    ui/UIScreenGraph.cpp
+    ui/UICommandBus.cpp
+    ui/UIManager.cpp
+    ui/UIRenderer.cpp
+    ui/UILayoutSolver.cpp
     flow/GameFlowGraph.cpp
     flow/GameFlowNodes.cpp
     schema/SchemaValidator.cpp
@@ -62,7 +67,6 @@ add_library(AtlasEngine STATIC
     mod/ModLoader.cpp
     physics/PhysicsWorld.cpp
     story/StoryGraph.cpp
-    ui/UIScreenGraph.cpp
     production/AssetCooker.cpp
     production/BuildProfile.cpp
     production/PlatformTarget.cpp

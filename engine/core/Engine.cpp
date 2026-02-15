@@ -25,10 +25,13 @@ void Engine::InitRender() {
 }
 
 void Engine::InitUI() {
-    if (m_config.mode == EngineMode::Server) {
-        Logger::Info("Server mode: UI disabled");
-        return;
+    ui::GUIContext guiCtx;
+    switch (m_config.mode) {
+        case EngineMode::Editor: guiCtx = ui::GUIContext::Editor; break;
+        case EngineMode::Client: guiCtx = ui::GUIContext::Game;   break;
+        case EngineMode::Server: guiCtx = ui::GUIContext::Server; break;
     }
+    m_uiManager.Init(guiCtx);
     Logger::Info("UI system initialized");
 }
 
@@ -119,6 +122,7 @@ bool Engine::Running() const {
 void Engine::Shutdown() {
     if (m_running) {
         Logger::Info("Engine shutting down");
+        m_uiManager.Shutdown();
         m_net.Shutdown();
         m_running = false;
         Logger::Shutdown();

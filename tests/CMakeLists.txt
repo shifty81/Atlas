@@ -73,6 +73,10 @@ add_executable(AtlasTests
     test_atlas_gameplay.cpp
     test_eveoffline_module.cpp
     test_arena2d_module.cpp
+    test_ui_command_bus.cpp
+    test_ui_manager.cpp
+    test_ui_layout_solver.cpp
+    test_ui_nodes_extended.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp

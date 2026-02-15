@@ -372,6 +372,41 @@ void test_uigraph_compile_chain();
 void test_uigraph_execute();
 void test_uigraph_deterministic();
 
+// UICommandBus tests
+void test_command_bus_enqueue();
+void test_command_bus_drain();
+void test_command_bus_clear();
+void test_command_bus_dispatch();
+void test_command_bus_dispatch_unhandled();
+void test_command_bus_move_enqueue();
+
+// UIManager tests
+void test_ui_manager_init();
+void test_ui_manager_context_switch();
+void test_ui_manager_screen_access();
+void test_ui_manager_graph_access();
+void test_ui_manager_update();
+void test_ui_manager_command_bus();
+void test_ui_manager_shutdown();
+void test_ui_manager_server_context();
+
+// UILayoutSolver tests
+void test_layout_solver_single_entry();
+void test_layout_solver_horizontal_split();
+void test_layout_solver_vertical_split();
+void test_layout_solver_weighted();
+void test_layout_solver_min_size_respect();
+void test_layout_solver_clear();
+void test_layout_solver_deterministic();
+void test_layout_solver_offset();
+
+// UI Nodes Extended tests
+void test_slotgrid_node_defaults();
+void test_inputfield_node_defaults();
+void test_inputfield_node_with_text();
+void test_slotgrid_node_metadata();
+void test_inputfield_node_metadata();
+
 // Schema Validator tests
 void test_schema_valid();
 void test_schema_empty_id();
@@ -1058,6 +1093,45 @@ int main() {
     test_uigraph_compile_chain();
     test_uigraph_execute();
     test_uigraph_deterministic();
+
+    // UI Command Bus
+    std::cout << "\n--- UI Command Bus ---" << std::endl;
+    test_command_bus_enqueue();
+    test_command_bus_drain();
+    test_command_bus_clear();
+    test_command_bus_dispatch();
+    test_command_bus_dispatch_unhandled();
+    test_command_bus_move_enqueue();
+
+    // UI Manager
+    std::cout << "\n--- UI Manager ---" << std::endl;
+    test_ui_manager_init();
+    test_ui_manager_context_switch();
+    test_ui_manager_screen_access();
+    test_ui_manager_graph_access();
+    test_ui_manager_update();
+    test_ui_manager_command_bus();
+    test_ui_manager_shutdown();
+    test_ui_manager_server_context();
+
+    // UI Layout Solver
+    std::cout << "\n--- UI Layout Solver ---" << std::endl;
+    test_layout_solver_single_entry();
+    test_layout_solver_horizontal_split();
+    test_layout_solver_vertical_split();
+    test_layout_solver_weighted();
+    test_layout_solver_min_size_respect();
+    test_layout_solver_clear();
+    test_layout_solver_deterministic();
+    test_layout_solver_offset();
+
+    // UI Nodes Extended
+    std::cout << "\n--- UI Nodes Extended ---" << std::endl;
+    test_slotgrid_node_defaults();
+    test_inputfield_node_defaults();
+    test_inputfield_node_with_text();
+    test_slotgrid_node_metadata();
+    test_inputfield_node_metadata();
 
     // Schema Validator
     std::cout << "\n--- Schema Validator ---" << std::endl;
