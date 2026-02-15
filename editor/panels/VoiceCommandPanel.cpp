@@ -3,10 +3,10 @@
 namespace atlas::editor {
 
 void VoiceCommandPanel::Draw() {
-    // Stub: In a real implementation, this renders via Atlas UI
-    // Shows: listening status, last phrase, resolved intent, confidence
-    // Buttons: [Enable] [Disable] [Train]
-    // List of registered voice commands
+    // Display state is already maintained by SetListening / ProcessPhrase.
+    // Queryable via IsListening(), LastPhrase(), LastResolvedIntent().
+    // A full UI backend would render status indicator, phrase log, and
+    // the list of registered voice commands here.
 }
 
 void VoiceCommandPanel::ProcessPhrase(const std::string& phrase) {

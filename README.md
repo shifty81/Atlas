@@ -204,7 +204,7 @@ Atlas/
 ├── client/              # Player runtime client
 ├── server/              # Headless dedicated server
 │
-├── tests/               # Unit tests (66 test files)
+├── tests/               # Unit tests (69 test files)
 │
 ├── schemas/             # Versioned JSON schemas
 │   ├── atlas.project.v1.json

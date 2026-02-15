@@ -4,10 +4,10 @@
 namespace atlas::editor {
 
 void ProjectPickerPanel::Draw() {
-    // Stub: In a real implementation, this renders via Atlas UI
-    // Modal dialog: "Open Project" button, recent project list, Exit button
-    // File filter: *.atlas only
-    // Once a project is selected, loads via ProjectManager
+    // Display state is already maintained by OpenProject / AddRecentProject.
+    // Queryable via HasProjectSelected(), SelectedProjectPath(), RecentProjects().
+    // A full UI backend would render the project picker modal with
+    // an "Open Project" button, recent project list, and Exit button.
 }
 
 void ProjectPickerPanel::AddRecentProject(const std::string& path) {

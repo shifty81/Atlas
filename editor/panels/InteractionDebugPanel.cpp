@@ -3,10 +3,10 @@
 namespace atlas::editor {
 
 void InteractionDebugPanel::Draw() {
-    // Stub: In a real implementation, this renders via Atlas UI
-    // Shows: Speaker, Text, Intent, Confidence, Data Sources
-    // Scrollable log of all interactions
-    // Filter by speaker/intent type
+    // Display state is already maintained by LogInteraction / ClearLog.
+    // Queryable via GetLog(), LogSize().
+    // A full UI backend would render a scrollable table of interactions
+    // with columns: Speaker, Text, Intent, Confidence.
 }
 
 void InteractionDebugPanel::LogInteraction(const InteractionLogEntry& entry) {

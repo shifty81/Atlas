@@ -540,6 +540,16 @@ void test_crash_save_report();
 void test_crash_callback();
 void test_crash_report_to_file();
 
+// Net Inspector Panel tests
+void test_net_inspector_standalone();
+void test_net_inspector_server_with_peers();
+void test_net_inspector_mode_names();
+
+// Game Packager Panel tests
+void test_game_packager_defaults();
+void test_game_packager_summary();
+void test_game_packager_modify_settings();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -1149,6 +1159,18 @@ int main() {
     test_crash_save_report();
     test_crash_callback();
     test_crash_report_to_file();
+
+    // Net Inspector Panel
+    std::cout << "\n--- Net Inspector Panel ---" << std::endl;
+    test_net_inspector_standalone();
+    test_net_inspector_server_with_peers();
+    test_net_inspector_mode_names();
+
+    // Game Packager Panel
+    std::cout << "\n--- Game Packager Panel ---" << std::endl;
+    test_game_packager_defaults();
+    test_game_packager_summary();
+    test_game_packager_modify_settings();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

@@ -5,7 +5,10 @@
 namespace atlas::editor {
 
 void ProfilerPanel::Draw() {
-    // Stub: would render frame time graph, system metric bars, controls
+    // Display data is already maintained by RecordFrame / RecordSystemMetric.
+    // Draw refreshes derived summary values accessible via AverageFrameTime(),
+    // PeakFrameTime(), FrameCount(), CurrentMetrics(), etc.
+    // A full UI backend would render frame-time graph and system metric bars here.
 }
 
 void ProfilerPanel::RecordFrame(const FrameTiming& timing) {

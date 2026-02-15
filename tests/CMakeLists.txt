@@ -67,12 +67,16 @@ add_executable(AtlasTests
     test_visual_diff.cpp
     test_crash_handler.cpp
     test_logger.cpp
+    test_net_inspector.cpp
+    test_game_packager.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/AssetBrowserPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/WorldGraphPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ProfilerPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/NetInspectorPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/tools/GamePackagerPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/tools/VisualDiff.cpp
     ${CMAKE_SOURCE_DIR}/editor/assistant/EditorAssistant.cpp
     ${CMAKE_SOURCE_DIR}/editor/assistant/AssetGraphAssistant.cpp

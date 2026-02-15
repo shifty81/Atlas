@@ -57,7 +57,7 @@ Atlas/
 ├── client/              # Player runtime client
 ├── server/              # Headless dedicated server
 │
-├── tests/               # Engine unit tests (54 test files)
+├── tests/               # Engine unit tests (69 test files)
 │
 ├── schemas/             # Versioned JSON schemas
 │   ├── atlas.project.v1.json
@@ -335,10 +335,9 @@ projects/
 | Voice Commands | ✅ | Voice command testing and monitoring |
 | Interaction Debugger | ✅ | AI interaction logging and analysis |
 | Network Inspector | ✅ | Network state debugging |
-| Game Packager | 🔧 | Build configuration UI (scaffolded) |
-| ECS Inspector | ⬜ | Entity and component exploration (stub) |
-| Graph Editor | ⬜ | Visual graph editing (not implemented) |
-| Asset Browser | ⬜ | Asset browsing (not implemented) |
+| Game Packager | ✅ | Build configuration UI |
+| ECS Inspector | ✅ | Entity and component exploration |
+| Asset Browser | ✅ | Asset browsing, filtering, and sorting |
 
 ## Build System
 

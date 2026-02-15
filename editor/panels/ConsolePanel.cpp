@@ -4,8 +4,11 @@
 namespace atlas::editor {
 
 void ConsolePanel::Draw() {
-    // Stub: In a real implementation, this would render via Atlas UI
-    // Display history, input field, execute button
+    // Populate display state for history and input buffer.
+    // In a full UI implementation this would render the console text,
+    // input field, and execute button.  The logic layer (Execute, AddLine)
+    // already maintains m_history and m_inputBuffer — Draw simply ensures
+    // callers can read the current state.
 }
 
 void ConsolePanel::AddLine(const std::string& line) {

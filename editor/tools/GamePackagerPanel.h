@@ -30,6 +30,9 @@ public:
     void Draw() override;
 
     const PackageSettings& Settings() const { return m_settings; }
+    PackageSettings& Settings() { return m_settings; }
+
+    std::string SettingsSummary() const;
 
 private:
     PackageSettings m_settings;
