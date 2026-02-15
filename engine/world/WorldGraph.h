@@ -80,6 +80,10 @@ public:
     size_t NodeCount() const;
     bool IsCompiled() const;
 
+    // Node access for editor/inspection
+    std::vector<NodeID> GetNodeIDs() const;
+    const WorldNode* GetNode(NodeID id) const;
+
 private:
     NodeID m_nextID = 1;
     std::unordered_map<NodeID, std::unique_ptr<WorldNode>> m_nodes;

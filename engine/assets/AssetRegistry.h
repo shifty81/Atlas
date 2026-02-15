@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 #include <unordered_map>
 #include <filesystem>
 #include <functional>
@@ -18,6 +19,7 @@ public:
 
     void Scan(const std::string& root);
     const AssetEntry* Get(const std::string& id) const;
+    std::vector<AssetEntry> GetAll() const;
 
     void SetReloadCallback(ReloadCallback cb);
     void PollHotReload();

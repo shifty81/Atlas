@@ -186,4 +186,18 @@ bool WorldGraph::IsCompiled() const {
     return m_compiled;
 }
 
+std::vector<NodeID> WorldGraph::GetNodeIDs() const {
+    std::vector<NodeID> ids;
+    ids.reserve(m_nodes.size());
+    for (const auto& [id, _] : m_nodes) {
+        ids.push_back(id);
+    }
+    return ids;
+}
+
+const WorldNode* WorldGraph::GetNode(NodeID id) const {
+    auto it = m_nodes.find(id);
+    return it != m_nodes.end() ? it->second.get() : nullptr;
+}
+
 }

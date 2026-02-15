@@ -414,6 +414,50 @@ void test_inspector_entities_with_components();
 void test_inspector_select_entity();
 void test_inspector_refreshes_on_draw();
 
+// Replication tests
+void test_replication_add_rule();
+void test_replication_remove_rule();
+void test_replication_get_rule();
+void test_replication_replace_rule();
+void test_replication_dirty_tracking();
+void test_replication_dirty_no_duplicates();
+void test_replication_collect_delta();
+void test_replication_apply_delta();
+void test_replication_multiple_rules();
+
+// Asset Browser tests
+void test_asset_browser_empty();
+void test_asset_browser_with_assets();
+void test_asset_browser_filter();
+void test_asset_browser_sort_modes();
+void test_asset_browser_select_asset();
+
+// Asset Cooker tests
+void test_cooker_default_settings();
+void test_cooker_set_output_dir();
+void test_cooker_cook_single_asset();
+void test_cooker_source_not_found();
+void test_cooker_cook_all();
+void test_cooker_strip_editor_data();
+void test_cooker_clear_log();
+void test_cooker_progress_callback();
+
+// Graph Editor Panel tests
+void test_graph_panel_no_graph();
+void test_graph_panel_with_nodes();
+void test_graph_panel_select_node();
+void test_graph_panel_compile_and_preview();
+void test_graph_panel_summary();
+void test_graph_panel_node_info();
+
+// Asset Graph Assistant tests
+void test_assistant_suggest_empty();
+void test_assistant_suggest_with_executor();
+void test_assistant_explain_no_executor();
+void test_assistant_explain_with_nodes();
+void test_assistant_mutate_no_executor();
+void test_assistant_mutate_intensity();
+
 // Story tests
 void test_story_add_node();
 void test_story_connections();
@@ -467,6 +511,55 @@ int main() {
     test_net_send_receive();
     test_net_broadcast_receive();
     test_net_shutdown_clears_queues();
+
+    // Replication
+    std::cout << "\n--- Replication ---" << std::endl;
+    test_replication_add_rule();
+    test_replication_remove_rule();
+    test_replication_get_rule();
+    test_replication_replace_rule();
+    test_replication_dirty_tracking();
+    test_replication_dirty_no_duplicates();
+    test_replication_collect_delta();
+    test_replication_apply_delta();
+    test_replication_multiple_rules();
+
+    // Asset Browser
+    std::cout << "\n--- Asset Browser ---" << std::endl;
+    test_asset_browser_empty();
+    test_asset_browser_with_assets();
+    test_asset_browser_filter();
+    test_asset_browser_sort_modes();
+    test_asset_browser_select_asset();
+
+    // Asset Cooker
+    std::cout << "\n--- Asset Cooker ---" << std::endl;
+    test_cooker_default_settings();
+    test_cooker_set_output_dir();
+    test_cooker_cook_single_asset();
+    test_cooker_source_not_found();
+    test_cooker_cook_all();
+    test_cooker_strip_editor_data();
+    test_cooker_clear_log();
+    test_cooker_progress_callback();
+
+    // Graph Editor Panel
+    std::cout << "\n--- Graph Editor Panel ---" << std::endl;
+    test_graph_panel_no_graph();
+    test_graph_panel_with_nodes();
+    test_graph_panel_select_node();
+    test_graph_panel_compile_and_preview();
+    test_graph_panel_summary();
+    test_graph_panel_node_info();
+
+    // Asset Graph Assistant
+    std::cout << "\n--- Asset Graph Assistant ---" << std::endl;
+    test_assistant_suggest_empty();
+    test_assistant_suggest_with_executor();
+    test_assistant_explain_no_executor();
+    test_assistant_explain_with_nodes();
+    test_assistant_mutate_no_executor();
+    test_assistant_mutate_intensity();
 
     // World
     std::cout << "\n--- World Layout ---" << std::endl;

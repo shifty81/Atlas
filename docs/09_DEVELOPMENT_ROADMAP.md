@@ -36,14 +36,14 @@ Some panels are scaffolded but not yet feature-complete.
 - [x] Interaction debugger panel (interaction logging and analysis)
 - [x] Net inspector panel (network state, peers, RTT, bandwidth)
 - [x] ECS inspector panel (entity list, component types, summary view)
-- [ ] Graph editor panel (stub — not yet implemented beyond scaffolding)
-- [ ] Asset browser (not implemented)
-- [ ] Editor assistant (interface exists, `Explain` methods are stubs)
+- [x] Graph editor panel (node enumeration, compile/preview, summary)
+- [x] Asset browser (registry scanning, filtering, sorting, selection)
+- [x] Editor assistant (asset graph suggestions, explanations, mutations)
 
 ## Phase 3 — Networking 🔧
 
 Core networking API is implemented. Lockstep and rollback methods exist
-but contain stub logic that needs to be completed.
+and are functional. Replication rules are implemented.
 
 - [x] NetContext API (mode selection, peer management, packet send/receive)
 - [x] Dedicated server loop (headless mode, tick processing)
@@ -51,7 +51,7 @@ but contain stub logic that needs to be completed.
 - [x] Loopback mode for testing
 - [x] Lockstep synchronization (ECS state serialization into snapshots)
 - [x] Rollback/replay (ECS state restore from snapshot, input frame replay)
-- [ ] Replication rules (not implemented)
+- [x] Replication rules (rule-based dirty tracking, delta collection/application)
 
 ## Phase 4 — World Generation ✅
 
@@ -129,11 +129,10 @@ Multi-project architecture with schema validation and plugin support.
 
 ## Phase 6 — Production 🔧
 
-Production tooling is in early stages. The packager panel exists but
-lacks functional build logic.
+Production tooling includes packager panel and asset cooker.
 
 - [x] Game packager panel (UI scaffolding for build targets and modes)
-- [ ] Asset cooker (not implemented)
+- [x] Asset cooker (source → binary cooking with header, batch processing, progress callbacks)
 - [ ] Build profiles (Debug/Development/Release — UI exists, logic missing)
 - [ ] Mod loader (ModAssetRegistry exists but minimal)
 - [ ] Platform targeting (not implemented)
@@ -161,7 +160,7 @@ Some polish items have been implemented earlier than planned.
 | Gameplay | ✅ Complete | Camera, input, physics, audio, mechanics |
 | Interaction/Voice | ✅ Complete | Unified intent pipeline |
 | Project/Plugin | ✅ Complete | Multi-project, schema validation, plugins |
-| Editor Framework | 🔧 Partial | Docking and most panels work; graph editor and asset browser remain |
-| Networking | 🔧 Partial | API works; lockstep/rollback implemented; replication rules remain |
-| Production Tools | 🔧 Early | Packager UI scaffolded; no build logic |
+| Editor Framework | ✅ Complete | Docking, all panels implemented including graph editor and asset browser |
+| Networking | ✅ Complete | API, lockstep/rollback, replication rules |
+| Production Tools | 🔧 Partial | Packager UI and asset cooker done; build profiles and platform targeting remain |
 | Polish | 🔧 Early | Undo/redo done; other items not started |
