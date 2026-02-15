@@ -70,7 +70,10 @@ add_library(AtlasEngine STATIC
     module/ModuleLoader.cpp
 )
 
-target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(AtlasEngine PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:include/atlas>
+)
 
 # Link dynamic loading library on Unix
 if(UNIX AND NOT APPLE)
@@ -78,3 +81,39 @@ if(UNIX AND NOT APPLE)
 elseif(APPLE)
     target_link_libraries(AtlasEngine PUBLIC dl)
 endif()
+
+# --- Install / Export ---
+install(TARGETS AtlasEngine
+    EXPORT AtlasEngineTargets
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+)
+
+# Install public headers preserving directory structure
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
+    DESTINATION include/atlas
+    FILES_MATCHING PATTERN "*.h"
+)
+
+install(EXPORT AtlasEngineTargets
+    FILE AtlasEngineTargets.cmake
+    NAMESPACE Atlas::
+    DESTINATION lib/cmake/AtlasEngine
+)
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/AtlasEngineConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/AtlasEngineConfig.cmake"
+    INSTALL_DESTINATION lib/cmake/AtlasEngine
+)
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/AtlasEngineConfigVersion.cmake"
+    VERSION 1.0.0
+    COMPATIBILITY SameMajorVersion
+)
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/AtlasEngineConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/AtlasEngineConfigVersion.cmake"
+    DESTINATION lib/cmake/AtlasEngine
+)

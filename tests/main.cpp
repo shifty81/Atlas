@@ -569,6 +569,14 @@ void test_economy_transactions();
 void test_economy_capacity();
 void test_economy_clear();
 
+// EveOffline Module tests
+void test_eveoffline_describe();
+void test_eveoffline_register_types();
+void test_eveoffline_replication_rules();
+void test_eveoffline_server_rules();
+void test_eveoffline_lifecycle();
+void test_eveoffline_factory();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -1211,6 +1219,15 @@ int main() {
     test_economy_transactions();
     test_economy_capacity();
     test_economy_clear();
+
+    // EveOffline Module
+    std::cout << "\n--- EveOffline Module ---" << std::endl;
+    test_eveoffline_describe();
+    test_eveoffline_register_types();
+    test_eveoffline_replication_rules();
+    test_eveoffline_server_rules();
+    test_eveoffline_lifecycle();
+    test_eveoffline_factory();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

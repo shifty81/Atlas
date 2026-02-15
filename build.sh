@@ -15,6 +15,7 @@
 #   client    Build AtlasClient
 #   editor    Build AtlasEditor (developer client)
 #   runtime   Build AtlasRuntime
+#   engine    Build AtlasEngine and AtlasGameplay libraries
 #   tests     Build and run tests
 #   all       Build all targets (default)
 #
@@ -24,6 +25,7 @@
 #   -o, --output DIR        Output directory for executables (default: dist/)
 #   -c, --clean             Clean build directory before building
 #   -t, --test              Run tests after building
+#   -i, --install           Install SDK (headers + libraries) to OUTPUT_DIR/sdk
 #   -h, --help              Show this help message
 #
 # Examples:
@@ -43,6 +45,7 @@ BUILD_TYPE="Release"
 OUTPUT_DIR="$SOURCE_DIR/dist"
 CLEAN=false
 RUN_TESTS=false
+INSTALL_SDK=false
 JOBS=""
 TARGETS=()
 
@@ -81,6 +84,8 @@ while [[ $# -gt 0 ]]; do
             CLEAN=true; shift ;;
         -t|--test)
             RUN_TESTS=true; shift ;;
+        -i|--install)
+            INSTALL_SDK=true; shift ;;
         -h|--help)
             usage ;;
         -*)
@@ -130,6 +135,7 @@ for target in "${TARGETS[@]}"; do
         client)   CMAKE_TARGETS+=("AtlasClient") ;;
         editor)   CMAKE_TARGETS+=("AtlasEditor") ;;
         runtime)  CMAKE_TARGETS+=("AtlasRuntime") ;;
+        engine)   CMAKE_TARGETS+=("AtlasEngine" "AtlasGameplay") ;;
         tests)    CMAKE_TARGETS+=("AtlasTests"); BUILD_TESTS=true; RUN_TESTS=true ;;
         all)      CMAKE_TARGETS=("AtlasServer" "AtlasClient" "AtlasEditor" "AtlasRuntime"); BUILD_TESTS=false ;;
         *)        error "Unknown target: $target"; exit 1 ;;
@@ -166,6 +172,7 @@ info "Parallel jobs: $JOBS"
 info "Output dir:    $OUTPUT_DIR"
 info "Targets:       ${CMAKE_TARGETS[*]}"
 info "Run tests:     $RUN_TESTS"
+info "Install SDK:   $INSTALL_SDK"
 info "Build log:     $BUILD_LOG"
 echo ""
 
@@ -182,6 +189,7 @@ mkdir -p "$BUILD_DIR"
 cmake -S "$SOURCE_DIR" -B "$BUILD_DIR" \
     -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE" \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+    -DCMAKE_INSTALL_PREFIX="$OUTPUT_DIR/sdk" \
     2>&1 | while IFS= read -r line; do echo "  $line"; done
 
 ok "CMake configured"
@@ -212,6 +220,18 @@ if [ "$RUN_TESTS" = true ]; then
         exit "$test_exit"
     fi
     ok "All tests passed"
+fi
+
+# --- Install SDK ---
+if [ "$INSTALL_SDK" = true ]; then
+    echo ""
+    info "Installing Atlas SDK to $OUTPUT_DIR/sdk..."
+    cmake --install "$BUILD_DIR" \
+        2>&1 | while IFS= read -r line; do echo "  $line"; done
+    ok "Atlas SDK installed to $OUTPUT_DIR/sdk"
+    info "External game modules can now use:"
+    info "  cmake -DAtlasEngine_DIR=$OUTPUT_DIR/sdk/lib/cmake/AtlasEngine"
+    info "  cmake -DAtlasGameplay_DIR=$OUTPUT_DIR/sdk/lib/cmake/AtlasGameplay"
 fi
 
 # --- Stage output ---

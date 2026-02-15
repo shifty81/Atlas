@@ -71,6 +71,7 @@ add_executable(AtlasTests
     test_game_packager.cpp
     test_game_module.cpp
     test_atlas_gameplay.cpp
+    test_eveoffline_module.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
@@ -84,7 +85,7 @@ add_executable(AtlasTests
     ${CMAKE_SOURCE_DIR}/editor/assistant/AssetGraphAssistant.cpp
 )
 
-target_link_libraries(AtlasTests AtlasEngine AtlasGameplay)
+target_link_libraries(AtlasTests AtlasEngine AtlasGameplay EveOfflineModule)
 target_include_directories(AtlasTests PRIVATE ${CMAKE_SOURCE_DIR}/editor)
 
 add_test(NAME AtlasTests COMMAND AtlasTests)
