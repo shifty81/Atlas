@@ -149,6 +149,10 @@ Atlas ships as four executables, all linked against the same engine core:
 | `AtlasClient`   | Player runtime                                |
 | `AtlasServer`   | Headless authoritative server                 |
 
+## Repo Split Plan
+
+For keeping server/client/editor generic while hosting game code in external modules (e.g., EveOffline), see [docs/10_REPO_SPLIT_PLAN.md](docs/10_REPO_SPLIT_PLAN.md) for the concrete layout, module interface, and migration steps.
+
 ## Repository Structure
 
 ```
