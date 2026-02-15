@@ -1,36 +1,56 @@
-# Atlas Engine — Editor Design (Dev Client)
+# Atlas Engine — Editor Design
 
-The Editor is Blender-esque, dockable, and mode-agnostic.
-It is a standalone application — not a mode of the client.
+The Editor is a Blender-style, dockable authoring environment. It is a standalone
+application — not a mode of the client — built as a superset of the runtime.
 
 ## Editor Principles
 
-- Dockable panels (like Blender)
+- Dockable panels (recursive dock nodes with horizontal/vertical splits)
 - Context-sensitive tools
 - Data-driven editors
 - Non-modal workflows
 - Everything live-editable
-- Undo/redo is core, not optional
+- Undo/redo is core, not optional (CommandHistory implemented)
 
-## Editor Capabilities
+## Implementation Status
+
+### Implemented ✅
+
+- **UI Framework** — EditorPanel base class, DockNode, EditorLayout manager
+- **Console Panel** — Command parsing (`spawn_entity`, `ecs.dump`, `set tickrate`, `net.mode`, `help`)
+- **World Graph Panel** — Node palette, canvas, inspector, and profiler sections
+- **Project Picker Panel** — Project selection with recent projects list
+- **Voice Command Panel** — Voice command processing and intent dispatch
+- **Interaction Debugger Panel** — Logs interactions (speaker, text, intent, confidence)
+- **Net Inspector Panel** — Network state debugging (mode, peers, RTT, bandwidth)
+- **Game Packager Panel** — Build target/mode UI (scaffolded, no build logic yet)
+- **Editor Assistant** — Routes intents for explanations (interface only)
+
+### Not Yet Implemented ⬜
+
+- **ECS Inspector Panel** — Stub exists (`Draw()` is empty)
+- **Graph Editor Panel** — Stub exists (no visual graph editing logic)
+- **Asset Browser** — Not implemented
+- **AI Asset Generation** — AIAggregator interface exists, no LLM integration
+
+## Editor Capabilities (Current)
+
+- Panel docking and layout management
+- Console command execution
+- World graph visualization
+- Project loading and switching
+- Voice command testing
+- Interaction debugging
+- Network state monitoring
+
+## Editor Capabilities (Planned)
 
 - Scene editing
-- Procedural world generation
+- Live simulation preview
 - Graph-based mechanics authoring
-- Live simulation
-- Network testing (P2P, dedicated server)
-- AI-assisted generation
-- Hot reload everything
-
-## Editor Modes (Not Separate Apps)
-
-- World Editor
-- Graph Editor
-- Asset Browser
-- Network Debugger
-- Simulation View
-- Strategy View
-- FPS View
+- Network testing (P2P, dedicated server loopback)
+- AI-assisted content generation
+- Hot reload visualization
 
 ## Default Layout
 
@@ -53,15 +73,21 @@ Everything can be rearranged and saved.
 
 ## Core Panels
 
-- **Outliner** — Assets / Worlds / Entities
-- **Properties** — Data only, schema-driven
-- **Graph Editor** — Node-based gameplay logic
-- **Viewport** — Render + simulation
-- **Net Debug** — Network topology and stats
-- **Profiler** — Graph VM, ECS, network timing
-- **Console** — Command-line automation
+| Panel | Status | Description |
+|-------|--------|-------------|
+| Console | ✅ Implemented | Command-line automation with entity spawning |
+| World Graph | ✅ Implemented | Node palette, canvas, inspector |
+| Project Picker | ✅ Implemented | Project selection and recent list |
+| Voice Commands | ✅ Implemented | Voice testing and intent dispatch |
+| Interaction Debugger | ✅ Implemented | Interaction logging and analysis |
+| Net Inspector | ✅ Implemented | Network topology and stats |
+| Game Packager | 🔧 Scaffolded | Build UI exists, no functional logic |
+| ECS Inspector | ⬜ Stub | `Draw()` exists but empty |
+| Graph Editor | ⬜ Stub | Not yet implemented |
+| Asset Browser | ⬜ Missing | Not yet created |
+| Profiler | ⬜ Planned | Not yet created |
 
-## Play-In-Editor Modes
+## Play-In-Editor Modes (Planned)
 
 - Simulate (no player)
 - Possess Entity

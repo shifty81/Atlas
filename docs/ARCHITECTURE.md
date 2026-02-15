@@ -11,60 +11,66 @@ share the same core technology.
 
 ```
 Atlas/
-├── engine/           # Atlas Engine (game-agnostic static library)
-│   ├── core/         # Engine lifecycle, logging, capabilities
-│   ├── ecs/          # Entity-Component-System framework
-│   ├── graphvm/      # Deterministic bytecode graph VM, serialization, caching
-│   ├── assets/       # Asset registry, binary format, hot reload
-│   ├── net/          # Networking (client-server, P2P, lockstep/rollback)
-│   ├── sim/          # Tick scheduler, deterministic simulation
-│   ├── world/        # Procedural world generation, WorldGraph, heightfield meshing
-│   ├── tile/         # TileGraph — 2D tile-based procedural generation
-│   ├── strategygraph/# Strategy decision graphs (influence, threat, scoring)
-│   ├── conversation/ # Dialogue + memory graphs (ConversationGraph)
-│   ├── ai/           # AI signals, memory, relationships, BehaviorGraph
-│   ├── character/    # CharacterGraph — modular character generation
-│   ├── animation/    # AnimationGraph — animation state machines + modifiers
-│   ├── weapon/       # WeaponGraph — weapon construction + wear
-│   ├── sound/        # SoundGraph — procedural audio generation
-│   ├── ui/           # UIGraph — UI composition system
-│   ├── flow/         # GameFlowGraph — game flow state machine
-│   ├── schema/       # Schema validation system
-│   ├── camera/       # World modes and camera projection policies
-│   ├── project/      # Project loading and validation (.atlas files)
-│   ├── command/      # Undo/redo command system
-│   ├── interaction/  # Unified intent/utterance system (voice, AI, console)
-│   ├── voice/        # Voice command registry and matching
-│   ├── plugin/       # Plugin validation, registry, and sandboxing
-│   └── rules/        # Server rules system (live parameter tuning)
+├── engine/              # Atlas Engine (game-agnostic static library)
+│   ├── core/            # Engine lifecycle, logging
+│   ├── ecs/             # Entity-Component-System framework
+│   ├── graphvm/         # Deterministic bytecode graph VM, serialization, caching
+│   ├── assets/          # Asset registry, binary format, hot reload
+│   ├── net/             # Networking (client-server, P2P)
+│   ├── sim/             # Tick scheduler, deterministic simulation
+│   ├── world/           # Procedural world generation, WorldGraph, heightfield meshing
+│   ├── tile/            # TileGraph — 2D tile-based procedural generation
+│   ├── strategygraph/   # Strategy decision graphs (influence, threat, scoring)
+│   ├── conversation/    # Dialogue + memory graphs (ConversationGraph)
+│   ├── ai/              # AI signals, memory, relationships, BehaviorGraph
+│   ├── character/       # CharacterGraph — modular character generation
+│   ├── animation/       # AnimationGraph — animation state machines + modifiers
+│   ├── weapon/          # WeaponGraph — weapon construction + wear
+│   ├── sound/           # SoundGraph — procedural audio generation
+│   ├── story/           # StoryGraph — narrative generation
+│   ├── ui/              # UIGraph — UI composition system
+│   ├── flow/            # GameFlowGraph — game flow state machine
+│   ├── schema/          # Schema validation system
+│   ├── camera/          # World modes and camera projection policies
+│   ├── input/           # Input mapping system
+│   ├── physics/         # Physics simulation (rigid bodies, AABB collision)
+│   ├── audio/           # Audio engine
+│   ├── gameplay/        # Mechanic assets & skill trees
+│   ├── project/         # Project loading and validation (.atlas files)
+│   ├── command/         # Undo/redo command system
+│   ├── interaction/     # Unified intent/utterance system (voice, AI, console)
+│   ├── voice/           # Voice command registry and matching
+│   ├── plugin/          # Plugin validation, registry
+│   ├── mod/             # Mod asset registry
+│   ├── asset_graph/     # Asset graph executor
+│   └── rules/           # Server rules system (live parameter tuning)
 │
-├── editor/           # Atlas Editor (authoring tool)
-│   ├── panels/       # Inspector panels (ECS, console, network, project picker,
-│   │                 #   world graph editor, voice commands, interaction debugger)
-│   ├── ui/           # Dock layout, panel framework
-│   ├── tools/        # Game packager, asset tools
-│   └── ai/           # AI assistant aggregator
+├── editor/              # Atlas Editor (authoring tool)
+│   ├── panels/          # Console, ECS Inspector, Net Inspector, World Graph,
+│   │                    # Project Picker, Voice Commands, Interaction Debugger
+│   ├── ui/              # Dock layout, panel framework
+│   ├── tools/           # Game packager panel
+│   ├── ai/              # AI aggregator
+│   └── assistant/       # Editor assistant (explain, suggest)
 │
-├── runtime/          # Atlas Runtime (standalone executable)
+├── runtime/             # Atlas Runtime (standalone CLI)
+├── client/              # Player runtime client
+├── server/              # Headless dedicated server
 │
-├── atlas_tests/      # Engine unit tests
+├── tests/               # Engine unit tests (54 test files)
 │
-├── schemas/          # Versioned schemas
+├── schemas/             # Versioned JSON schemas
 │   ├── atlas.project.v1.json
 │   ├── atlas.worldgraph.v1.json
 │   ├── atlas.strategygraph.v1.json
 │   └── atlas.conversation.v1.json
 │
-├── projects/         # External game projects (loaded via Plugin.toml / .atlas files)
-│   ├── eveoffline/   # EVEOFFLINE game project
-│   ├── arena2d/      # Arena2D reference project (2D scalability proof)
-│   └── atlas-sample/ # Minimal sample project
+├── projects/            # Sample game projects
+│   ├── eveoffline/      # Space strategy reference project
+│   ├── arena2d/         # 2D arena reference project
+│   └── atlas-sample/    # Minimal sample project
 │
-├── cpp_client/       # EVEOFFLINE game client (links AtlasEngine)
-├── cpp_server/       # EVEOFFLINE game server (links AtlasEngine)
-├── data/             # Moddable game content (JSON)
-├── tools/            # Modding utilities (Blender addon, validators)
-└── docs/             # Design documents, guides, session logs
+└── docs/                # Design documents and guides
 ```
 
 ## Engine Modules
@@ -93,7 +99,9 @@ Atlas/
 - Modes: Standalone, Client, Server, P2P_Host, P2P_Peer
 - Packet-based send/receive with tick stamping
 - Peer management (add, remove, RTT tracking)
-- Snapshot save/rollback/replay for lockstep networking
+- Loopback mode for local testing
+- Snapshot save/rollback methods exist but are stubs (ECS serialization not implemented)
+- Replication rules not yet implemented
 
 ### Simulation (`engine/sim/`)
 - Fixed-rate tick scheduler
@@ -295,33 +303,17 @@ Projects are defined by a single `project.atlas` JSON file conforming to
 
 ### Project Directory
 
-External game projects live under `projects/` and are loaded via their Plugin.toml + `.atlas` manifest:
+Sample game projects live under `projects/` and are loaded via `.atlas` manifest files:
 
 ```
 projects/
-├── eveoffline/           # EVEOFFLINE reference implementation
-│   ├── eveoffline.atlas  # Project manifest
-│   ├── Plugin.toml       # Plugin descriptor
-│   ├── worlds/           # WorldGraph + TileGraph files
-│   ├── strategy/         # StrategyGraph files
-│   ├── conversations/    # ConversationGraph files
-│   ├── ai/               # AI configuration
-│   ├── data/             # Data manifest
-│   ├── config/           # Runtime configuration
-│   └── assets/           # Art assets
-├── arena2d/              # Arena2D reference project (2D scalability proof)
-│   ├── arena2d.atlas
-│   ├── Plugin.toml
-│   ├── worlds/
-│   ├── ai/
-│   ├── data/
-│   └── config/
+├── eveoffline/           # Space strategy reference project
+│   └── eveoffline.atlas  # Project manifest with world graphs, strategy, AI config
+├── arena2d/              # 2D arena reference project
+│   └── arena2d.atlas     # Project manifest with AI, asset configuration
 └── atlas-sample/         # Minimal sample project
-    ├── sample.atlas
-    └── worlds/
+    └── sample.atlas      # Minimal project manifest
 ```
-
-See [Project Guidelines](docs/PROJECT_GUIDELINES.md) for complete rules.
 
 ## Editor Flow
 
@@ -334,16 +326,18 @@ See [Project Guidelines](docs/PROJECT_GUIDELINES.md) for complete rules.
 
 ### Editor Panels
 
-| Panel | Purpose |
-|-------|---------|
-| ECS Inspector | Entity and component exploration |
-| Console | Command execution and logging |
-| Network Inspector | Network state debugging |
-| **Project Picker** | Project selection and recent projects |
-| **World Graph Editor** | Visual WorldGraph authoring and preview |
-| **Voice Commands** | Voice command testing and monitoring |
-| **Interaction Debugger** | AI interaction logging and analysis |
-| Game Packager | Build configuration and packaging |
+| Panel | Status | Purpose |
+|-------|--------|---------|
+| Console | ✅ | Command execution and logging |
+| World Graph Editor | ✅ | Visual WorldGraph authoring and preview |
+| Project Picker | ✅ | Project selection and recent projects |
+| Voice Commands | ✅ | Voice command testing and monitoring |
+| Interaction Debugger | ✅ | AI interaction logging and analysis |
+| Network Inspector | ✅ | Network state debugging |
+| Game Packager | 🔧 | Build configuration UI (scaffolded) |
+| ECS Inspector | ⬜ | Entity and component exploration (stub) |
+| Graph Editor | ⬜ | Visual graph editing (not implemented) |
+| Asset Browser | ⬜ | Asset browsing (not implemented) |
 
 ## Build System
 
@@ -356,13 +350,13 @@ so a single build produces every executable, making everything debuggable at the
 | BUILD_ATLAS_TESTS   | ON      | Engine unit tests               |
 | BUILD_ATLAS_EDITOR  | ON      | Atlas Editor application        |
 | BUILD_ATLAS_RUNTIME | ON      | Atlas Runtime application       |
-| BUILD_CLIENT        | ON      | EVEOFFLINE game client          |
-| BUILD_SERVER        | ON      | EVEOFFLINE game server          |
+| BUILD_CLIENT        | ON      | Player runtime client           |
+| BUILD_SERVER        | ON      | Headless dedicated server       |
 
 Individual targets can be disabled when only a subset is needed (e.g. CI engine-only builds).
 
 ## Testing
 
-All engine modules have corresponding test files in `atlas_tests/`.
+All engine modules have corresponding test files in `tests/`.
 Tests use `assert()` with `[PASS]` output and are registered in `main.cpp`.
-Run with: `make test-engine`
+Run with: `cd build && ctest` or `./tests/AtlasTests`

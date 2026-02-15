@@ -1,5 +1,17 @@
 # Atlas Engine — Networking
 
+## Implementation Status
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| NetContext API | ✅ Implemented | Mode selection, peer management, packet send/receive |
+| Dedicated server loop | ✅ Implemented | Headless mode with tick processing |
+| P2P support | ✅ Implemented | Host/peer roles with RTT tracking |
+| Loopback mode | ✅ Implemented | Local testing without network |
+| Lockstep sync | ⬜ Stub | Methods declared, ECS serialization not implemented |
+| Rollback/replay | ⬜ Stub | Methods declared, ECS restore not implemented |
+| Replication rules | ⬜ Not started | No implementation |
+
 ## Unified Networking Model
 
 Atlas supports multiple networking modes through a single abstraction:
@@ -7,10 +19,10 @@ Atlas supports multiple networking modes through a single abstraction:
 | Mode           | Description                    |
 |----------------|--------------------------------|
 | Standalone     | No networking                  |
-| ClientServer   | Classic dedicated server       |
+| Client         | Client connecting to server    |
+| Server         | Dedicated authoritative server |
 | P2P_Host       | Peer-to-peer (host)            |
 | P2P_Peer       | Peer-to-peer (peer)            |
-| Hybrid         | Server + peer validation       |
 
 ## NetContext API
 
@@ -65,32 +77,34 @@ public:
 | Events   | Authority → All      |
 | Assets   | Editor → Disk → Runtime |
 
-## Lockstep + Rollback
+## Lockstep + Rollback (Planned)
+
+> **Note:** The lockstep and rollback methods exist in `NetContext` but contain
+> stub logic. ECS state serialization and restoration need to be implemented
+> before these features are functional.
+
+Design goals:
 
 - Fixed tick rate (e.g., 30 Hz)
 - Inputs buffered by tick
 - Graph VM deterministic
 - ECS state snapshot per tick
 
-### Rollback
+### Rollback (Planned)
 
 ```cpp
+// Target API — methods exist but internals are stubs
 void OnLateInput(InputFrame f) {
     if (f.tick < currentTick) {
-        RollbackTo(f.tick);
-        ReplayFrom(f.tick);
+        RollbackTo(f.tick);   // Stub: needs ECS state restore
+        ReplayFrom(f.tick);   // Stub: needs ECS state replay
     }
 }
 ```
 
-## Deterministic Sync
+## Replication Rules (Planned)
 
-Systems opt-in to replication:
+> **Note:** Replication rules are not yet implemented. The following describes
+> the intended design.
 
-```cpp
-class INetSyncSystem {
-public:
-    virtual void Serialize(Packet&) = 0;
-    virtual void Deserialize(Packet&) = 0;
-};
-```
+### Authoritative State

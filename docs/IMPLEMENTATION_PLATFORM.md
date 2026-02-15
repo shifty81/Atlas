@@ -2,6 +2,9 @@
 
 > Companion to `IMPLEMENTATION_CORE.md`. Covers platform infrastructure,
 > project architecture, mod ecosystem, multiplayer determinism, and SDK distribution.
+>
+> **Note:** This document describes both implemented features and planned designs.
+> Items marked as "Planned" or "Stub" are not yet fully functional.
 
 ---
 
@@ -36,9 +39,10 @@ declaring engine version, content paths, and adapter entry points.
 Atlas/
 ├── engine/
 ├── editor/
-├── Projects/
-│   ├── MyGame/Plugin.toml
-│   └── AnotherProject/Plugin.toml
+├── projects/
+│   ├── eveoffline/eveoffline.atlas
+│   ├── arena2d/arena2d.atlas
+│   └── atlas-sample/sample.atlas
 └── CMakeLists.txt
 ```
 
