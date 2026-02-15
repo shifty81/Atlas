@@ -2,6 +2,7 @@ add_executable(AtlasEditor
     main.cpp
     ui/EditorLayout.cpp
     panels/ECSInspectorPanel.cpp
+    panels/ProfilerPanel.cpp
     panels/NetInspectorPanel.cpp
     panels/ConsolePanel.cpp
     panels/InteractionDebugger.cpp
