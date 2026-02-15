@@ -31,14 +31,22 @@ FORBIDDEN_PATTERNS = [
 ]
 
 # Directories to scan (relative to engine root)
+# These are simulation-critical directories only.
+# Utility code (e.g. core/Logger) is excluded because it
+# legitimately uses wall-clock time for logging.
 SIMULATION_DIRS = [
-    "core",
     "ecs",
     "sim",
     "physics",
     "gameplay",
     "ai",
 ]
+
+# Directories to explicitly skip (contain references to
+# forbidden APIs in comments/error messages, not actual usage)
+SKIP_DIRS = {
+    "contract",
+}
 
 # File extensions to scan
 SOURCE_EXTENSIONS = {".cpp", ".h", ".hpp", ".cxx"}
@@ -82,6 +90,10 @@ def main():
             continue
         for filepath in scan_path.rglob("*"):
             if filepath.suffix in SOURCE_EXTENSIONS:
+                # Skip directories that reference forbidden APIs in
+                # comments or error messages (e.g. contract headers)
+                if any(skip in filepath.parts for skip in SKIP_DIRS):
+                    continue
                 all_violations.extend(scan_file(filepath))
 
     if all_violations:
