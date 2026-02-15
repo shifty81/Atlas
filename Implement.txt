@@ -129,7 +129,7 @@ Extend networking — maybe add multiplayer over LAN 😉
 Because it’s a classic C++/OpenGL project using CMake, you can add new modules, new UI widgets, or even support networking features like chat or squads — similar to how a full MMO client/server works.
 
 💡 Tips
-✨ You don’t need the official the target application client for this — this project is the client 😉
+✨ This project provides its own client — no external game client is needed 😉
 
 ✨ Ensure libraries are installed before running CMake — unresolved deps are the most common build breaker.
 
