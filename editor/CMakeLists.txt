@@ -12,6 +12,7 @@ add_executable(AtlasEditor
     panels/VoiceCommandPanel.cpp
     panels/InteractionDebugPanel.cpp
     tools/GamePackagerPanel.cpp
+    tools/VisualDiff.cpp
     assistant/EditorAssistant.cpp
     assistant/AssetGraphAssistant.cpp
 )

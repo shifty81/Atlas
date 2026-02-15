@@ -464,6 +464,75 @@ void test_story_connections();
 void test_story_tags();
 void test_story_get_by_type();
 
+// Build Profile tests
+void test_profile_default_debug();
+void test_profile_default_development();
+void test_profile_default_release();
+void test_profile_name();
+void test_profile_set_active();
+void test_profile_set_custom_config();
+void test_profile_overrides();
+void test_profile_override_missing_key();
+
+// Mod Loader tests
+void test_mod_loader_register();
+void test_mod_loader_register_invalid();
+void test_mod_loader_register_duplicate();
+void test_mod_loader_unregister();
+void test_mod_loader_enable_disable();
+void test_mod_loader_get_mod();
+void test_mod_loader_dependencies();
+void test_mod_loader_scan_directory();
+void test_mod_loader_clear();
+
+// Platform Target tests
+void test_platform_default_windows();
+void test_platform_default_linux();
+void test_platform_default_macos();
+void test_platform_default_web();
+void test_platform_name();
+void test_platform_set_target();
+void test_platform_custom_config();
+void test_platform_module_exclusion();
+void test_platform_host();
+void test_platform_supported_list();
+
+// Profiler Panel tests
+void test_profiler_empty();
+void test_profiler_record_frame();
+void test_profiler_average_and_peak();
+void test_profiler_max_history();
+void test_profiler_system_metrics();
+void test_profiler_pause();
+void test_profiler_clear();
+
+// Replay Recorder tests
+void test_replay_initial_state();
+void test_replay_start_recording();
+void test_replay_record_frames();
+void test_replay_stop_recording();
+void test_replay_save_and_load();
+void test_replay_load_invalid();
+void test_replay_clear();
+
+// Visual Diff tests
+void test_diff_identical();
+void test_diff_added();
+void test_diff_removed();
+void test_diff_modified();
+void test_diff_empty();
+void test_diff_compare_graphs();
+void test_diff_summarize();
+
+// Crash Handler tests
+void test_crash_breadcrumb();
+void test_crash_breadcrumb_limit();
+void test_crash_clear_breadcrumbs();
+void test_crash_generate_report();
+void test_crash_save_report();
+void test_crash_callback();
+void test_crash_report_to_file();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -989,6 +1058,82 @@ int main() {
     test_story_connections();
     test_story_tags();
     test_story_get_by_type();
+
+    // Build Profiles
+    std::cout << "\n--- Build Profiles ---" << std::endl;
+    test_profile_default_debug();
+    test_profile_default_development();
+    test_profile_default_release();
+    test_profile_name();
+    test_profile_set_active();
+    test_profile_set_custom_config();
+    test_profile_overrides();
+    test_profile_override_missing_key();
+
+    // Mod Loader
+    std::cout << "\n--- Mod Loader ---" << std::endl;
+    test_mod_loader_register();
+    test_mod_loader_register_invalid();
+    test_mod_loader_register_duplicate();
+    test_mod_loader_unregister();
+    test_mod_loader_enable_disable();
+    test_mod_loader_get_mod();
+    test_mod_loader_dependencies();
+    test_mod_loader_scan_directory();
+    test_mod_loader_clear();
+
+    // Platform Target
+    std::cout << "\n--- Platform Target ---" << std::endl;
+    test_platform_default_windows();
+    test_platform_default_linux();
+    test_platform_default_macos();
+    test_platform_default_web();
+    test_platform_name();
+    test_platform_set_target();
+    test_platform_custom_config();
+    test_platform_module_exclusion();
+    test_platform_host();
+    test_platform_supported_list();
+
+    // Profiler Panel
+    std::cout << "\n--- Profiler Panel ---" << std::endl;
+    test_profiler_empty();
+    test_profiler_record_frame();
+    test_profiler_average_and_peak();
+    test_profiler_max_history();
+    test_profiler_system_metrics();
+    test_profiler_pause();
+    test_profiler_clear();
+
+    // Replay Recorder
+    std::cout << "\n--- Replay Recorder ---" << std::endl;
+    test_replay_initial_state();
+    test_replay_start_recording();
+    test_replay_record_frames();
+    test_replay_stop_recording();
+    test_replay_save_and_load();
+    test_replay_load_invalid();
+    test_replay_clear();
+
+    // Visual Diff
+    std::cout << "\n--- Visual Diff ---" << std::endl;
+    test_diff_identical();
+    test_diff_added();
+    test_diff_removed();
+    test_diff_modified();
+    test_diff_empty();
+    test_diff_compare_graphs();
+    test_diff_summarize();
+
+    // Crash Handler
+    std::cout << "\n--- Crash Handler ---" << std::endl;
+    test_crash_breadcrumb();
+    test_crash_breadcrumb_limit();
+    test_crash_clear_breadcrumbs();
+    test_crash_generate_report();
+    test_crash_save_report();
+    test_crash_callback();
+    test_crash_report_to_file();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
