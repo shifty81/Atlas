@@ -103,6 +103,10 @@ public:
     bool HasSerializer(std::type_index key) const;
     uint32_t GetTypeTag(std::type_index key) const;
 
+    // Single-component serialization (for replication deltas)
+    std::vector<uint8_t> SerializeComponent(EntityID id, std::type_index key) const;
+    bool DeserializeComponent(EntityID id, uint32_t typeTag, const uint8_t* data, size_t size);
+
 private:
     EntityID m_nextID = 1;
     std::vector<EntityID> m_entities;

@@ -99,6 +99,10 @@ const std::vector<InputFrame>& NetContext::RecordedInputs() const {
     return m_inputHistory;
 }
 
+void NetContext::SetInputApplyCallback(std::function<void(const InputFrame&)> cb) {
+    m_inputApplyCallback = std::move(cb);
+}
+
 void NetContext::SaveSnapshot(uint32_t tick) {
     WorldSnapshot snap;
     snap.tick = tick;
@@ -136,7 +140,10 @@ void NetContext::ReplayFrom(uint32_t tick) {
 
     for (const auto& frame : m_inputHistory) {
         if (frame.tick >= tick) {
-            // Apply input frame by ticking the world
+            // Apply the input frame to the world before ticking
+            if (m_inputApplyCallback) {
+                m_inputApplyCallback(frame);
+            }
             m_world->Update(1.0f / 60.0f);
         }
     }

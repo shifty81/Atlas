@@ -174,3 +174,41 @@ void test_record_and_replay_input() {
 
     std::cout << "[PASS] test_record_and_replay_input" << std::endl;
 }
+
+void test_replay_applies_input_frames() {
+    World world;
+    world.RegisterComponent<SnapPosition>(1);
+
+    EntityID e = world.CreateEntity();
+    world.AddComponent<SnapPosition>(e, {0.0f, 0.0f});
+
+    NetContext net;
+    net.Init(NetMode::Server);
+    net.SetWorld(&world);
+
+    // Set up input apply callback that moves position by moveX/moveY
+    net.SetInputApplyCallback([&](const InputFrame& frame) {
+        auto* pos = world.GetComponent<SnapPosition>(e);
+        if (pos) {
+            pos->x += frame.moveX;
+            pos->y += frame.moveY;
+        }
+    });
+
+    InputFrame f1{1, 1, 5.0f, 0.0f};
+    InputFrame f2{2, 1, 0.0f, 3.0f};
+    InputFrame f3{3, 1, -2.0f, 1.0f};
+    net.RecordInput(f1);
+    net.RecordInput(f2);
+    net.RecordInput(f3);
+
+    // Replay all from tick 1
+    net.ReplayFrom(1);
+
+    auto* pos = world.GetComponent<SnapPosition>(e);
+    assert(pos != nullptr);
+    assert(pos->x == 3.0f);  // 5 + 0 + (-2) = 3
+    assert(pos->y == 4.0f);  // 0 + 3 + 1 = 4
+
+    std::cout << "[PASS] test_replay_applies_input_frames" << std::endl;
+}

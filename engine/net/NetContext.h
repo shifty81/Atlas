@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <queue>
+#include <functional>
 
 namespace atlas::ecs { class World; }
 
@@ -74,6 +75,9 @@ public:
     void RecordInput(const InputFrame& frame);
     const std::vector<InputFrame>& RecordedInputs() const;
 
+    // Set callback for applying input frames during replay
+    void SetInputApplyCallback(std::function<void(const InputFrame&)> cb);
+
     // Lockstep / Rollback
     void SaveSnapshot(uint32_t tick);
     void RollbackTo(uint32_t tick);
@@ -94,6 +98,9 @@ private:
     // Local packet queues for testability
     std::queue<QueuedPacket> m_outgoing;
     std::queue<Packet> m_incoming;
+
+    // Optional callback for applying input frames during replay
+    std::function<void(const InputFrame&)> m_inputApplyCallback;
 };
 
 }

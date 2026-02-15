@@ -411,6 +411,7 @@ void test_rollback_removes_future_snapshots();
 void test_snapshot_without_world();
 void test_rollback_with_multiple_entities();
 void test_record_and_replay_input();
+void test_replay_applies_input_frames();
 
 // ECS Inspector tests
 void test_inspector_empty_world();
@@ -428,6 +429,8 @@ void test_replication_dirty_no_duplicates();
 void test_replication_collect_delta();
 void test_replication_apply_delta();
 void test_replication_multiple_rules();
+void test_replication_delta_roundtrip();
+void test_replication_delta_every_tick();
 
 // Asset Browser tests
 void test_asset_browser_empty();
@@ -596,6 +599,8 @@ int main() {
     test_replication_collect_delta();
     test_replication_apply_delta();
     test_replication_multiple_rules();
+    test_replication_delta_roundtrip();
+    test_replication_delta_every_tick();
 
     // Asset Browser
     std::cout << "\n--- Asset Browser ---" << std::endl;
@@ -1053,6 +1058,7 @@ int main() {
     test_snapshot_without_world();
     test_rollback_with_multiple_entities();
     test_record_and_replay_input();
+    test_replay_applies_input_frames();
 
     // ECS Inspector
     std::cout << "\n--- ECS Inspector ---" << std::endl;

@@ -100,8 +100,9 @@ Atlas/
 - Packet-based send/receive with tick stamping
 - Peer management (add, remove, RTT tracking)
 - Loopback mode for local testing
-- Snapshot save/rollback methods exist but are stubs (ECS serialization not implemented)
-- Replication rules not yet implemented
+- Snapshot save/rollback (using ECS binary serialization)
+- Replication rules (rule-based dirty tracking, component-level delta collection/application)
+- Input frame recording and replay with configurable input apply callback
 
 ### Simulation (`engine/sim/`)
 - Fixed-rate tick scheduler

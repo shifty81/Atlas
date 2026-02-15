@@ -133,10 +133,14 @@ std::vector<uint8_t> ReplicationManager::CollectDelta(uint32_t tick) {
                 if (!m_world->HasSerializer(ti)) continue;
                 if (m_world->GetTypeTag(ti) != rule.typeTag) continue;
 
+                auto compData = m_world->SerializeComponent(eid, ti);
                 writeU32(eid);
-                // Data size is 0 for this delta format; full component
-                // serialization is handled by ECS Serialize/Deserialize
-                writeU32(0);
+                writeU32(static_cast<uint32_t>(compData.size()));
+                if (!compData.empty()) {
+                    size_t pos = buffer.size();
+                    buffer.resize(pos + compData.size());
+                    std::memcpy(buffer.data() + pos, compData.data(), compData.size());
+                }
                 entityCount++;
                 break;
             }
@@ -173,9 +177,11 @@ bool ReplicationManager::ApplyDelta(const std::vector<uint8_t>& data) {
         for (uint32_t j = 0; j < entityCount && pos < data.size(); ++j) {
             uint32_t entityID = readU32(pos); pos += 4;
             uint32_t dataSize = readU32(pos); pos += 4;
+
+            if (dataSize > 0 && m_world && pos + dataSize <= data.size()) {
+                m_world->DeserializeComponent(entityID, typeTag, data.data() + pos, dataSize);
+            }
             pos += dataSize;
-            (void)entityID;
-            (void)typeTag;
         }
     }
 
