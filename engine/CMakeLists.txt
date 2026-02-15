@@ -10,6 +10,10 @@ add_library(AtlasEngine STATIC
     sim/TickScheduler.cpp
     world/CubeSphereLayout.cpp
     world/VoxelGridLayout.cpp
+    world/TerrainMeshGenerator.cpp
+    world/NoiseGenerator.cpp
+    world/WorldStreamer.cpp
+    world/GalaxyGenerator.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

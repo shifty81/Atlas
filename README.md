@@ -18,9 +18,9 @@ Atlas is a modular, data-driven game engine and simulation platform designed to 
   Phase 1        Phase 2        Phase 3        Phase 4        Phase 5        Phase 6        Phase 7
  Core Engine      Editor       Networking    World Gen       Gameplay      Production       Polish
 ────────────────────────────────────────────────────────────────────────────────────────────────────
- ██████████     ██████████     ██████████     ██████░░░░     ░░░░░░░░░░     ██████░░░░     ░░░░░░░░░░
-   100%            100%           100%           43%             0%            40%             0%
-  ✅ Done        ✅ Done        ✅ Done       🔧 Active      📋 Planned    🔧 Active      📋 Planned
+ ██████████     ██████████     ██████████     ██████████     ░░░░░░░░░░     ██████░░░░     ░░░░░░░░░░
+   100%            100%           100%          100%             0%            40%             0%
+  ✅ Done        ✅ Done        ✅ Done       ✅ Done        📋 Planned    🔧 Active      📋 Planned
 ```
 
 <table>
@@ -62,15 +62,15 @@ Atlas is a modular, data-driven game engine and simulation platform designed to 
 </td>
 <td width="14%">
 
-**Phase 4 — World Gen** 🔧
+**Phase 4 — World Gen** ✅
 
 - ✅ WorldLayout interface
 - ✅ Cube-sphere math
 - ✅ Voxel grid layout
-- ⬜ Terrain mesh gen
-- ⬜ Noise nodes
-- ⬜ World streaming
-- ⬜ Galaxy generation
+- ✅ Terrain mesh gen
+- ✅ Noise nodes
+- ✅ World streaming
+- ✅ Galaxy generation
 
 </td>
 <td width="14%">
