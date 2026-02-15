@@ -72,29 +72,23 @@ std::vector<uint8_t> World::SerializeComponent(EntityID id, std::type_index key)
 }
 
 bool World::DeserializeComponent(EntityID id, uint32_t typeTag, const uint8_t* data, size_t size) {
-    // Find the serializer for this typeTag
-    std::type_index targetKey = std::type_index(typeid(void));
-    const ComponentSerializer* cs = nullptr;
+    // Find the serializer matching this typeTag
     for (const auto& [key, ser] : m_serializers) {
-        if (ser.typeTag == typeTag) {
-            targetKey = key;
-            cs = &ser;
-            break;
+        if (ser.typeTag != typeTag) continue;
+
+        auto val = ser.deserialize(data, size);
+        if (!val.has_value()) return false;
+
+        // Ensure entity exists
+        if (!IsAlive(id)) {
+            m_entities.push_back(id);
+            if (id >= m_nextID) m_nextID = id + 1;
         }
+
+        m_components[id][key] = std::move(val);
+        return true;
     }
-    if (!cs) return false;
-
-    auto val = cs->deserialize(data, size);
-    if (!val.has_value()) return false;
-
-    // Ensure entity exists
-    if (!IsAlive(id)) {
-        m_entities.push_back(id);
-        if (id >= m_nextID) m_nextID = id + 1;
-    }
-
-    m_components[id][targetKey] = std::move(val);
-    return true;
+    return false;
 }
 
 // Binary format:
