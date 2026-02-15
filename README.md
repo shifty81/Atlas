@@ -208,7 +208,7 @@ Atlas/
 ├── client/              # Player runtime client
 ├── server/              # Headless dedicated server
 │
-├── tests/               # Unit tests (84 test files)
+├── tests/               # Unit tests (90 test files)
 │
 ├── schemas/             # Versioned JSON schemas
 │   ├── atlas.project.v1.json
@@ -218,6 +218,7 @@ Atlas/
 │
 ├── projects/            # Sample game projects
 │   ├── eveoffline/      # Space strategy reference project
+│   │   └── module/      # EveOfflineModule (IGameModule implementation)
 │   ├── arena2d/         # 2D arena reference project
 │   └── atlas-sample/    # Minimal sample project
 │
@@ -244,18 +245,20 @@ The easiest way to build is with the included build script:
 # Build specific targets
 ./build.sh server client          # Server and client only
 ./build.sh editor                 # Developer client (editor) only
+./build.sh engine                 # Engine and gameplay libraries only
 
 # Build options
 ./build.sh -b Debug all           # Debug build
 ./build.sh -b Development editor  # Development build (optimized + debug symbols)
 ./build.sh --clean --test all     # Clean rebuild with tests
 ./build.sh -o ./my-output server  # Custom output directory
+./build.sh --install              # Install SDK (headers + libs + cmake configs) to dist/sdk/
 
 # See all options
 ./build.sh --help
 ```
 
-Executables are placed in `dist/` by default.
+Executables are placed in `dist/` by default. SDK artifacts (for external game modules) are installed to `dist/sdk/` with the `--install` flag.
 
 You can also build manually with CMake:
 

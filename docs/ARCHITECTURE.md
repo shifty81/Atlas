@@ -49,6 +49,12 @@ Atlas/
 ├── modules/
 │   └── atlas_gameplay/  # AtlasGameplay static lib (factions, combat, economy)
 │
+├── projects/
+│   ├── eveoffline/      # EveOffline project data and game module
+│   │   └── module/      # EveOfflineModule (IGameModule implementation)
+│   ├── atlas-sample/    # Generic sample project
+│   └── arena2d/         # Arena 2D sample project
+│
 ├── editor/              # Atlas Editor (authoring tool)
 │   ├── panels/          # Console, ECS Inspector, Net Inspector, World Graph,
 │   │                    # Project Picker, Voice Commands, Interaction Debugger
@@ -61,7 +67,7 @@ Atlas/
 ├── client/              # Player runtime client
 ├── server/              # Headless dedicated server
 │
-├── tests/               # Engine unit tests (84 test files)
+├── tests/               # Engine unit tests (90 test files)
 │
 ├── schemas/             # Versioned JSON schemas
 │   ├── atlas.project.v1.json
@@ -182,6 +188,19 @@ Atlas/
 - **ModuleLoader**: Dynamic loading via `dlopen`/`LoadLibrary` with static fallback for tests
 - Lifecycle: RegisterTypes → ConfigureReplication → ConfigureServerRules → OnStart → OnTick → OnShutdown
 - Factory symbol: `extern "C" CreateGameModule()` exported by shared library modules
+
+### EveOffline Module (`projects/eveoffline/module/`)
+- Reference implementation of `IGameModule` for the EveOffline space simulator
+- Registers 5 factions (Amarr, Caldari, Gallente, Minmatar, Pirates) with alliance/hostility relations
+- Registers 5 economy resources (ISK, Tritanium, Pyerite, Mexallon, Isogen)
+- Configures 3 replication rules (ShipPosition, ShipHealth, Inventory)
+- Configures 5 server rules (mining yield, NPC spawn rate, market updates, pirate aggression, warp speed)
+- Exports `CreateGameModule()` factory for dynamic loading
+
+### SDK / CMake Export
+- `AtlasEngine` and `AtlasGameplay` targets export CMake config files via `install(EXPORT ...)`
+- External game modules can use `find_package(AtlasEngine)` and `find_package(AtlasGameplay)` to link against the SDK
+- `build.sh --install` publishes headers, static libraries, and CMake configs to `dist/sdk/`
 
 ## AtlasGameplay Library (`modules/atlas_gameplay/`)
 

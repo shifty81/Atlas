@@ -128,6 +128,8 @@ Multi-project architecture with schema validation and plugin support.
 - [x] Server rules system (live parameter tuning with bounds)
 - [x] Game module interface (IGameModule, GameModuleContext, dynamic/static loading)
 - [x] AtlasGameplay library (FactionSystem, CombatFramework, EconomySystem)
+- [x] EveOffline game module (reference IGameModule implementation with factions, economy, replication, server rules)
+- [x] CMake SDK export (install/export rules for find_package(AtlasEngine) and find_package(AtlasGameplay))
 
 ## Phase 6 — Production ✅
 
@@ -166,4 +168,4 @@ All polish systems are implemented.
 | Networking | ✅ Complete | API, lockstep/rollback, replication rules |
 | Production Tools | ✅ Complete | Packager, asset cooker, build profiles, mod loader, platform targeting |
 | Polish | ✅ Complete | Undo/redo, visual diff, profiler, replay recorder, crash analysis |
-| Game Module System | ✅ Complete | IGameModule interface, ModuleLoader, AtlasGameplay library |
+| Game Module System | ✅ Complete | IGameModule interface, ModuleLoader, AtlasGameplay library, EveOffline module, SDK export |
