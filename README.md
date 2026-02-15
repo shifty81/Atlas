@@ -214,6 +214,7 @@ Atlas/
 │   └── atlas-sample/    # Minimal sample project
 │
 ├── docs/                # Documentation
+├── logs/                # Build and runtime logs (gitignored contents)
 └── CMakeLists.txt       # Root build configuration
 ```
 
@@ -333,6 +334,7 @@ See the [docs/](docs/) directory for detailed documentation:
 | [Gameplay Mechanics](docs/07_GAMEPLAY_MECHANICS.md) | Mechanic assets, skill trees, cameras |
 | [AI Editor Assist](docs/08_AI_EDITOR_ASSIST.md) | AI-assisted content generation |
 | [Development Roadmap](docs/09_DEVELOPMENT_ROADMAP.md) | Phase-by-phase development status |
+| [Building](docs/BUILDING.md) | Build prerequisites, script usage, logs, troubleshooting |
 | [Architecture Reference](docs/ARCHITECTURE.md) | Detailed module-by-module reference |
 | [Naming Conventions](docs/ATLAS_NAMING_CONVENTIONS.md) | Code style and naming rules |
 | [Simulation Philosophy](docs/ATLAS_SIMULATION_PHILOSOPHY.md) | Determinism and simulation design |
