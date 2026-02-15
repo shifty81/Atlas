@@ -121,6 +121,7 @@ void Engine::Shutdown() {
         Logger::Info("Engine shutting down");
         m_net.Shutdown();
         m_running = false;
+        Logger::Shutdown();
     }
 }
 

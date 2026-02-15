@@ -66,6 +66,7 @@ add_executable(AtlasTests
     test_replay_recorder.cpp
     test_visual_diff.cpp
     test_crash_handler.cpp
+    test_logger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp

@@ -21,7 +21,7 @@ void test_asset_browser_empty() {
 
 void test_asset_browser_with_assets() {
     // Create temp directory with test assets
-    std::string tmpDir = std::filesystem::temp_directory_path() / "atlas_test_browser";
+    std::string tmpDir = (std::filesystem::temp_directory_path() / "atlas_test_browser").string();
     std::filesystem::create_directories(tmpDir);
 
     // Create dummy .atlas files
@@ -54,7 +54,7 @@ void test_asset_browser_with_assets() {
 }
 
 void test_asset_browser_filter() {
-    std::string tmpDir = std::filesystem::temp_directory_path() / "atlas_test_browser_filter";
+    std::string tmpDir = (std::filesystem::temp_directory_path() / "atlas_test_browser_filter").string();
     std::filesystem::create_directories(tmpDir);
 
     {
@@ -85,7 +85,7 @@ void test_asset_browser_filter() {
 }
 
 void test_asset_browser_sort_modes() {
-    std::string tmpDir = std::filesystem::temp_directory_path() / "atlas_test_browser_sort";
+    std::string tmpDir = (std::filesystem::temp_directory_path() / "atlas_test_browser_sort").string();
     std::filesystem::create_directories(tmpDir);
 
     {

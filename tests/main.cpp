@@ -88,6 +88,10 @@ void test_engine_run_loop_ticks();
 void test_engine_capabilities();
 void test_engine_net_mode_from_config();
 
+// Logger tests
+void test_logger_creates_log_directory();
+void test_logger_writes_to_file();
+
 // Console tests
 void test_console_spawn_entity();
 void test_console_ecs_dump();
@@ -685,6 +689,11 @@ int main() {
     test_engine_run_loop_ticks();
     test_engine_capabilities();
     test_engine_net_mode_from_config();
+
+    // Logger
+    std::cout << "\n--- Logger ---" << std::endl;
+    test_logger_creates_log_directory();
+    test_logger_writes_to_file();
 
     // Console
     std::cout << "\n--- Console ---" << std::endl;
