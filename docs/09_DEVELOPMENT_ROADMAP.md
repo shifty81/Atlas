@@ -127,25 +127,25 @@ Multi-project architecture with schema validation and plugin support.
 - [x] Mod asset registry (basic registration)
 - [x] Server rules system (live parameter tuning with bounds)
 
-## Phase 6 — Production 🔧
+## Phase 6 — Production ✅
 
-Production tooling includes packager panel and asset cooker.
+Production tooling is complete with packager, cooker, build profiles, mod loading, and platform targeting.
 
 - [x] Game packager panel (UI scaffolding for build targets and modes)
 - [x] Asset cooker (source → binary cooking with header, batch processing, progress callbacks)
-- [ ] Build profiles (Debug/Development/Release — UI exists, logic missing)
-- [ ] Mod loader (ModAssetRegistry exists but minimal)
-- [ ] Platform targeting (not implemented)
+- [x] Build profiles (Debug/Development/Release with optimization, symbols, assertions, compiler/linker flags, overrides)
+- [x] Mod loader (mod descriptors, registration, enable/disable, dependency validation, directory scanning)
+- [x] Platform targeting (Windows/Linux/macOS/Web with toolchains, defines, module exclusion, host detection)
 
-## Phase 7 — Polish 🔧
+## Phase 7 — Polish ✅
 
-Some polish items have been implemented earlier than planned.
+All polish systems are implemented.
 
 - [x] Undo/redo system (CommandHistory with execute/undo/redo stacks)
-- [ ] Visual diff tools
-- [ ] Profiler panels
-- [ ] Replay recorder
-- [ ] Crash analysis tools
+- [x] Visual diff tools (key-value and graph snapshot comparison, diff summarization)
+- [x] Profiler panel (frame timing history, system metrics, average/peak tracking, pause/resume)
+- [x] Replay recorder (input frame recording, binary save/load, tick-based lookup)
+- [x] Crash analysis tools (breadcrumb trail, crash report generation, file output, callbacks)
 
 ---
 
@@ -162,5 +162,5 @@ Some polish items have been implemented earlier than planned.
 | Project/Plugin | ✅ Complete | Multi-project, schema validation, plugins |
 | Editor Framework | ✅ Complete | Docking, all panels implemented including graph editor and asset browser |
 | Networking | ✅ Complete | API, lockstep/rollback, replication rules |
-| Production Tools | 🔧 Partial | Packager UI and asset cooker done; build profiles and platform targeting remain |
-| Polish | 🔧 Early | Undo/redo done; other items not started |
+| Production Tools | ✅ Complete | Packager, asset cooker, build profiles, mod loader, platform targeting |
+| Polish | ✅ Complete | Undo/redo, visual diff, profiler, replay recorder, crash analysis |

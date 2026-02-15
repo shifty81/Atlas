@@ -39,9 +39,9 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
   Phase 1        Phase 2        Phase 3        Phase 4        Phase 5        Phase 6        Phase 7
  Core Engine      Editor       Networking    World Gen       Gameplay      Production       Polish
 ────────────────────────────────────────────────────────────────────────────────────────────────────
- ██████████     ███████░░░     ████████░░     ██████████     ██████████     ██░░░░░░░░     ██░░░░░░░░
-   100%            70%            80%           100%           100%           20%            20%
-  ✅ Done       🔧 Active      🔧 Active      ✅ Done        ✅ Done       🔧 Active      🔧 Active
+ ██████████     ██████████     ██████████     ██████████     ██████████     ██████████     ██████████
+   100%           100%           100%           100%           100%           100%           100%
+  ✅ Done        ✅ Done        ✅ Done        ✅ Done        ✅ Done        ✅ Done        ✅ Done
 ```
 
 <table>
@@ -60,27 +60,27 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 </td>
 <td width="14%">
 
-**Phase 2 — Editor** 🔧
+**Phase 2 — Editor** ✅
 
 - ✅ UI framework
 - ✅ Panel docking system
 - ✅ Console panel
 - ✅ World graph panel
 - ✅ ECS inspector
-- ⬜ Graph editor (stub)
-- ⬜ Asset browser
+- ✅ Graph editor
+- ✅ Asset browser
 
 </td>
 <td width="14%">
 
-**Phase 3 — Networking** 🔧
+**Phase 3 — Networking** ✅
 
 - ✅ NetContext API
 - ✅ Dedicated server loop
 - ✅ P2P support
 - ✅ Lockstep sync
 - ✅ Rollback/replay
-- ⬜ Replication rules
+- ✅ Replication rules
 
 </td>
 <td width="14%">
@@ -109,24 +109,24 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 </td>
 <td width="14%">
 
-**Phase 6 — Production** 🔧
+**Phase 6 — Production** ✅
 
-- ✅ Game packager (stub)
-- ⬜ Asset cooker
-- ⬜ Build profiles
-- ⬜ Mod loader
-- ⬜ Platform targeting
+- ✅ Game packager
+- ✅ Asset cooker
+- ✅ Build profiles
+- ✅ Mod loader
+- ✅ Platform targeting
 
 </td>
 <td width="14%">
 
-**Phase 7 — Polish** 🔧
+**Phase 7 — Polish** ✅
 
 - ✅ Undo/redo system
-- ⬜ Visual diff tools
-- ⬜ Profiler panels
-- ⬜ Replay recorder
-- ⬜ Crash analysis
+- ✅ Visual diff tools
+- ✅ Profiler panel
+- ✅ Replay recorder
+- ✅ Crash analysis
 
 </td>
 </tr>
@@ -135,8 +135,6 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 | Status | Meaning |
 |--------|---------|
 | ✅ Done | Phase fully implemented |
-| 🔧 Active | Partially implemented, in progress |
-| 📋 Planned | Not yet started |
 
 ---
 
@@ -161,7 +159,7 @@ Atlas/
 │   ├── graphvm/         # Deterministic Graph VM + compiler + serialization + cache
 │   ├── assets/          # Asset registry, binary format, hot reload
 │   ├── net/             # Networking (client-server + P2P)
-│   ├── sim/             # Tick scheduler, deterministic simulation
+│   ├── sim/             # Tick scheduler, deterministic simulation, replay recorder
 │   ├── world/           # World generation (cube-sphere, voxel, terrain, galaxy, streaming)
 │   ├── input/           # Input mapping system
 │   ├── camera/          # Camera system with world mode policies
@@ -186,14 +184,15 @@ Atlas/
 │   ├── project/         # Project loading and validation
 │   ├── schema/          # Schema validation system
 │   ├── plugin/          # Plugin system (validation, registry)
-│   ├── mod/             # Mod asset registry
+│   ├── mod/             # Mod asset registry and mod loader
+│   ├── production/      # Asset cooker, build profiles, platform targeting
 │   └── rules/           # Server rules (live parameter tuning)
 │
 ├── editor/              # Standalone editor application
 │   ├── ui/              # Docking, layout, panel framework
 │   ├── panels/          # Console, ECS Inspector, Net Inspector, World Graph,
-│   │                    # Project Picker, Voice Commands, Interaction Debugger
-│   ├── tools/           # Game packager panel
+│   │                    # Project Picker, Voice Commands, Interaction Debugger, Profiler
+│   ├── tools/           # Game packager panel, visual diff tools
 │   ├── ai/              # AI aggregator for asset generation
 │   └── assistant/       # Editor assistant (explain, suggest)
 │
@@ -201,7 +200,7 @@ Atlas/
 ├── client/              # Player runtime client
 ├── server/              # Headless dedicated server
 │
-├── tests/               # Unit tests (54 test files)
+├── tests/               # Unit tests (66 test files)
 │
 ├── schemas/             # Versioned JSON schemas
 │   ├── atlas.project.v1.json

@@ -59,11 +59,20 @@ add_executable(AtlasTests
     test_asset_cooker.cpp
     test_graph_editor.cpp
     test_asset_assistant.cpp
+    test_build_profile.cpp
+    test_mod_loader.cpp
+    test_platform_target.cpp
+    test_profiler_panel.cpp
+    test_replay_recorder.cpp
+    test_visual_diff.cpp
+    test_crash_handler.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/AssetBrowserPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/WorldGraphPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/ProfilerPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/tools/VisualDiff.cpp
     ${CMAKE_SOURCE_DIR}/editor/assistant/EditorAssistant.cpp
     ${CMAKE_SOURCE_DIR}/editor/assistant/AssetGraphAssistant.cpp
 )

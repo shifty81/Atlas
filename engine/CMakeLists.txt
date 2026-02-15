@@ -1,6 +1,7 @@
 add_library(AtlasEngine STATIC
     core/Engine.cpp
     core/Logger.cpp
+    core/CrashHandler.cpp
     ecs/ECS.cpp
     graphvm/GraphVM.cpp
     graphvm/GraphCompiler.cpp
@@ -58,10 +59,14 @@ add_library(AtlasEngine STATIC
     interaction/InteractionSystem.cpp
     interaction/RuleIntentResolver.cpp
     mod/ModAssetRegistry.cpp
+    mod/ModLoader.cpp
     physics/PhysicsWorld.cpp
     story/StoryGraph.cpp
     ui/UIScreenGraph.cpp
     production/AssetCooker.cpp
+    production/BuildProfile.cpp
+    production/PlatformTarget.cpp
+    sim/ReplayRecorder.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
