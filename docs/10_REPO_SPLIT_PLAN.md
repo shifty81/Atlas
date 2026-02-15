@@ -1,11 +1,15 @@
-# Atlas Repo Split & Game Module Plan
+# Atlas — Game Module Architecture
 
-Goal: keep the Atlas repo purely engine/runtime, ship generic client/server/editor binaries, and host game-specific logic (EveOffline or others) as external modules.
+EveOffline ships permanently inside this repository as a first-party game
+example. There is no plan to split it into a separate repo. Both the engine
+and EveOffline are actively developed side-by-side, and once the engine is
+complete EveOffline will serve as the shipped reference game that
+demonstrates every engine feature end-to-end.
 
-## Target Layout
+## Current Layout
 
 ```
-Atlas/                        (engine repo)
+Atlas/                        (single repo)
 ├─ engine/                    ← AtlasEngine static lib (core, ecs, net, sim, assets, graphs)
 ├─ runtime/                   ← AtlasRuntime entry that loads a game module
 ├─ client/                    ← AtlasClient links AtlasEngine + AtlasGameplay + module
@@ -13,45 +17,21 @@ Atlas/                        (engine repo)
 ├─ editor/                    ← AtlasEditor links AtlasEngine + AtlasGameplay + module
 ├─ modules/
 │  └─ atlas_gameplay/         ← AtlasGameplay static lib (factions, economy, combat base, AI schedulers)
+├─ projects/
+│  ├─ eveoffline/             ← Shipped game example (permanent, not split out)
+│  │  └─ module/              ← EveOfflineModule (IGameModule implementation)
+│  └─ arena2d/                ← 2D arena reference project
 └─ CMakeLists.txt             ← adds AtlasEngine, AtlasGameplay, AtlasRuntime/Client/Server/Editor
-
-Atlas-EveOffline/             (game repo)
-├─ game/
-│  └─ EveOfflineModule.cpp    ← builds EveOfflineModule shared lib
-├─ assets/
-└─ CMakeLists.txt             ← finds AtlasEngine + AtlasGameplay and exports CreateGameModule()
 ```
 
-Recommended CMake targets:
-- `AtlasEngine` (static) — existing core
-- `AtlasGameplay` (static) — reusable gameplay frameworks, no Eve names
-- `AtlasRuntime` — generic bootstrap that loads a module
-- `AtlasServer` / `AtlasClient` / `AtlasEditor` — link AtlasEngine + AtlasGameplay; call into module
-- `EveOfflineModule` (shared, in game repo) — implements the module interface
-
-Example CMake wiring (engine repo):
-```cmake
-add_library(AtlasGameplay STATIC
-    modules/atlas_gameplay/FactionSystem.cpp
-    modules/atlas_gameplay/CombatFramework.cpp
-    modules/atlas_gameplay/EconomySystem.cpp)
-target_link_libraries(AtlasGameplay PUBLIC AtlasEngine)
-
-add_executable(AtlasServer server/main.cpp)
-target_link_libraries(AtlasServer PRIVATE AtlasEngine AtlasGameplay)
-```
-
-Game repo (EveOffline) links against installed/packaged engine artifacts:
-```cmake
-find_package(AtlasEngine REQUIRED)
-add_library(EveOfflineModule SHARED game/EveOfflineModule.cpp)
-target_link_libraries(EveOfflineModule PRIVATE AtlasEngine AtlasGameplay)
-target_compile_definitions(EveOfflineModule PRIVATE ATLAS_GAME_MODULE_NAME=\"EveOffline\")
-```
+Third-party games that want to build against the Atlas SDK can still use the
+module interface and `find_package(AtlasEngine)` / `find_package(AtlasGameplay)`
+after an SDK install, but EveOffline itself is not going external.
 
 ## Game Module Interface
 
-Define a narrow interface so the server/client stay generic. Suggested header (lives in AtlasEngine include path):
+The module interface keeps game logic cleanly separated from engine internals,
+even though everything lives in one repo.
 
 ```cpp
 namespace atlas::module {
@@ -102,10 +82,10 @@ extern "C" std::unique_ptr<atlas::module::IGameModule> CreateGameModule();
 
 Failure policy: if the module cannot be loaded or `Describe().name` mismatches the requested project, log + exit with a clear message.
 
-## Migration Steps (ordered)
+## Completed Steps
 
 1) ✅ **Freeze engine-facing APIs**: finalized `ecs::World`, `net::NetContext`, `net::ReplicationManager`, `rules::ServerRules`, and `assets::AssetRegistry` headers as the public surface.
 2) ✅ **Carve AtlasGameplay**: moved reusable gameplay frameworks (FactionSystem, CombatFramework, EconomySystem) under `modules/atlas_gameplay` and exposed them via `AtlasGameplay` target; no game-specific names.
 3) ✅ **Add module loader**: implemented the `IGameModule` interface header in `engine/module/`, added `ModuleLoader` with `dlopen`/`LoadLibrary` dynamic loading and `SetStaticModule()` for static linking during tests. Runtime/server/client entry points support `--module` flag.
-4) ✅ **Split EveOffline repo**: created `projects/eveoffline/module/` with `EveOfflineModule` implementing `IGameModule`; registers factions, economy, replication rules, and server rules. Serves as reference for building the standalone `Atlas-EveOffline` repo that builds `EveOfflineModule` as a shared lib and links against the Atlas SDK.
-5) ✅ **CI/build updates**: extended `build.sh` with `engine` target (builds `AtlasEngine` + `AtlasGameplay` libraries) and `--install` flag to publish SDK artifacts (headers + static libs + CMake configs); external modules can now `find_package(AtlasEngine)` and `find_package(AtlasGameplay)` cleanly.
+4) ✅ **EveOffline as in-repo game module**: created `projects/eveoffline/module/` with `EveOfflineModule` implementing `IGameModule`; registers factions, economy, replication rules, and server rules. Ships permanently as the reference game example.
+5) ✅ **CI/build updates**: extended `build.sh` with `engine` target (builds `AtlasEngine` + `AtlasGameplay` libraries) and `--install` flag to publish SDK artifacts (headers + static libs + CMake configs); external third-party modules can `find_package(AtlasEngine)` and `find_package(AtlasGameplay)` cleanly.

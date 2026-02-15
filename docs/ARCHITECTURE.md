@@ -190,7 +190,7 @@ Atlas/
 - Factory symbol: `extern "C" CreateGameModule()` exported by shared library modules
 
 ### EveOffline Module (`projects/eveoffline/module/`)
-- Reference implementation of `IGameModule` for the EveOffline space simulator
+- Shipped game example (permanently in-repo) implementing `IGameModule` for the EveOffline space simulator
 - Registers 5 factions (Amarr, Caldari, Gallente, Minmatar, Pirates) with alliance/hostility relations
 - Registers 5 economy resources (ISK, Tritanium, Pyerite, Mexallon, Isogen)
 - Configures 3 replication rules (ShipPosition, ShipHealth, Inventory)
