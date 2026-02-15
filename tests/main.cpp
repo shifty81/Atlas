@@ -550,6 +550,25 @@ void test_game_packager_defaults();
 void test_game_packager_summary();
 void test_game_packager_modify_settings();
 
+// Game Module tests
+void test_game_module_describe();
+void test_game_module_lifecycle();
+void test_module_loader_static();
+void test_module_loader_already_loaded();
+void test_module_loader_not_found();
+
+// Atlas Gameplay tests
+void test_faction_register();
+void test_faction_relations();
+void test_faction_clear();
+void test_combat_register_unit();
+void test_combat_resolve();
+void test_combat_clear();
+void test_economy_register();
+void test_economy_transactions();
+void test_economy_capacity();
+void test_economy_clear();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -1171,6 +1190,27 @@ int main() {
     test_game_packager_defaults();
     test_game_packager_summary();
     test_game_packager_modify_settings();
+
+    // Game Module System
+    std::cout << "\n--- Game Module System ---" << std::endl;
+    test_game_module_describe();
+    test_game_module_lifecycle();
+    test_module_loader_static();
+    test_module_loader_already_loaded();
+    test_module_loader_not_found();
+
+    // Atlas Gameplay
+    std::cout << "\n--- Atlas Gameplay ---" << std::endl;
+    test_faction_register();
+    test_faction_relations();
+    test_faction_clear();
+    test_combat_register_unit();
+    test_combat_resolve();
+    test_combat_clear();
+    test_economy_register();
+    test_economy_transactions();
+    test_economy_capacity();
+    test_economy_clear();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

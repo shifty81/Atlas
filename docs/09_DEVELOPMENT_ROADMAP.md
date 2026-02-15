@@ -126,6 +126,8 @@ Multi-project architecture with schema validation and plugin support.
 - [x] Plugin system (descriptor, validator, registry)
 - [x] Mod asset registry (basic registration)
 - [x] Server rules system (live parameter tuning with bounds)
+- [x] Game module interface (IGameModule, GameModuleContext, dynamic/static loading)
+- [x] AtlasGameplay library (FactionSystem, CombatFramework, EconomySystem)
 
 ## Phase 6 — Production ✅
 
@@ -159,8 +161,9 @@ All polish systems are implemented.
 | AI Systems | ✅ Complete | Memory, signals, relationships, behavior graphs |
 | Gameplay | ✅ Complete | Camera, input, physics, audio, mechanics |
 | Interaction/Voice | ✅ Complete | Unified intent pipeline |
-| Project/Plugin | ✅ Complete | Multi-project, schema validation, plugins |
+| Project/Plugin | ✅ Complete | Multi-project, schema validation, plugins, game modules |
 | Editor Framework | ✅ Complete | Docking, all panels implemented including graph editor and asset browser |
 | Networking | ✅ Complete | API, lockstep/rollback, replication rules |
 | Production Tools | ✅ Complete | Packager, asset cooker, build profiles, mod loader, platform targeting |
 | Polish | ✅ Complete | Undo/redo, visual diff, profiler, replay recorder, crash analysis |
+| Game Module System | ✅ Complete | IGameModule interface, ModuleLoader, AtlasGameplay library |

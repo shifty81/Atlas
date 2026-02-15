@@ -189,8 +189,12 @@ Atlas/
 │   ├── schema/          # Schema validation system
 │   ├── plugin/          # Plugin system (validation, registry)
 │   ├── mod/             # Mod asset registry and mod loader
+│   ├── module/          # Game module interface and dynamic loader
 │   ├── production/      # Asset cooker, build profiles, platform targeting
 │   └── rules/           # Server rules (live parameter tuning)
+│
+├── modules/
+│   └── atlas_gameplay/  # AtlasGameplay static lib (factions, combat, economy)
 │
 ├── editor/              # Standalone editor application
 │   ├── ui/              # Docking, layout, panel framework
@@ -204,7 +208,7 @@ Atlas/
 ├── client/              # Player runtime client
 ├── server/              # Headless dedicated server
 │
-├── tests/               # Unit tests (69 test files)
+├── tests/               # Unit tests (84 test files)
 │
 ├── schemas/             # Versioned JSON schemas
 │   ├── atlas.project.v1.json

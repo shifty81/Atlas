@@ -1,6 +1,11 @@
 #include "../engine/core/Engine.h"
 #include "../engine/core/Logger.h"
 #include "../engine/project/ProjectManager.h"
+#include "../engine/module/ModuleLoader.h"
+#include "../engine/module/IGameModule.h"
+#include "../engine/net/Replication.h"
+#include "../engine/rules/ServerRules.h"
+#include "../engine/assets/AssetRegistry.h"
 #include <iostream>
 #include <string>
 
@@ -10,6 +15,7 @@ static void PrintUsage() {
     std::cout << std::endl;
     std::cout << "Options:" << std::endl;
     std::cout << "  --project <path>     Load a .atlas project file" << std::endl;
+    std::cout << "  --module <path>      Load a game module (shared library)" << std::endl;
     std::cout << "  --mode <mode>        Runtime mode: client, server (default: client)" << std::endl;
     std::cout << "  --validate-only      Validate project and exit" << std::endl;
     std::cout << "  --help               Show this help message" << std::endl;
@@ -17,6 +23,7 @@ static void PrintUsage() {
 
 int main(int argc, char* argv[]) {
     std::string projectPath;
+    std::string modulePath;
     std::string modeStr = "client";
     bool validateOnly = false;
 
@@ -24,6 +31,8 @@ int main(int argc, char* argv[]) {
         std::string arg = argv[i];
         if (arg == "--project" && i + 1 < argc) {
             projectPath = argv[++i];
+        } else if (arg == "--module" && i + 1 < argc) {
+            modulePath = argv[++i];
         } else if (arg == "--mode" && i + 1 < argc) {
             modeStr = argv[++i];
         } else if (arg == "--validate-only") {
@@ -71,8 +80,54 @@ int main(int argc, char* argv[]) {
     engine.InitECS();
     engine.InitNetworking();
 
+    // Load game module if specified
+    atlas::module::ModuleLoader moduleLoader;
+    atlas::net::ReplicationManager replication;
+    atlas::asset::AssetRegistry assetRegistry;
+    replication.SetWorld(&engine.GetWorld());
+
+    if (!modulePath.empty()) {
+        auto result = moduleLoader.Load(modulePath);
+        if (result != atlas::module::ModuleLoadResult::Success) {
+            std::cerr << "Failed to load game module: " << modulePath << std::endl;
+            return 1;
+        }
+    }
+
+    if (moduleLoader.IsLoaded()) {
+        atlas::module::GameModuleContext ctx{
+            engine.GetWorld(),
+            engine.GetNet(),
+            replication,
+            atlas::rules::ServerRules::Get(),
+            assetRegistry,
+            atlas::project::ProjectManager::Get().Descriptor()
+        };
+
+        auto* mod = moduleLoader.GetModule();
+        mod->RegisterTypes(ctx);
+        mod->ConfigureReplication(ctx);
+        mod->ConfigureServerRules(ctx);
+        mod->OnStart(ctx);
+
+        auto desc = mod->Describe();
+        atlas::Logger::Info(std::string("Game module loaded: ") + desc.name);
+    }
+
     atlas::Logger::Info("Atlas Runtime starting...");
     engine.Run();
+
+    if (moduleLoader.IsLoaded()) {
+        atlas::module::GameModuleContext ctx{
+            engine.GetWorld(),
+            engine.GetNet(),
+            replication,
+            atlas::rules::ServerRules::Get(),
+            assetRegistry,
+            atlas::project::ProjectManager::Get().Descriptor()
+        };
+        moduleLoader.GetModule()->OnShutdown(ctx);
+    }
 
     return 0;
 }

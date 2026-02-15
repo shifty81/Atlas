@@ -67,6 +67,14 @@ add_library(AtlasEngine STATIC
     production/BuildProfile.cpp
     production/PlatformTarget.cpp
     sim/ReplayRecorder.cpp
+    module/ModuleLoader.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+# Link dynamic loading library on Unix
+if(UNIX AND NOT APPLE)
+    target_link_libraries(AtlasEngine PUBLIC dl)
+elseif(APPLE)
+    target_link_libraries(AtlasEngine PUBLIC dl)
+endif()

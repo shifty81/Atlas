@@ -104,8 +104,8 @@ Failure policy: if the module cannot be loaded or `Describe().name` mismatches t
 
 ## Migration Steps (ordered)
 
-1) **Freeze engine-facing APIs**: finalize `ecs::World`, `net::NetContext`, `net::ReplicationManager`, `rules::ServerRules`, and `assets::AssetRegistry` headers as the public surface.
-2) **Carve AtlasGameplay**: move reusable gameplay frameworks (faction router, diplomacy, economy scaffolding, combat base, AI schedulers) under `modules/atlas_gameplay` and expose them via `AtlasGameplay` target; prohibit Eve-specific names.
-3) **Add module loader**: implement the interface header, add loader code to `runtime/` (shared helper used by server/client/editor), and add a CMake option `ATLAS_STATIC_GAME_MODULE` for statically linking a module during tests.
+1) ✅ **Freeze engine-facing APIs**: finalized `ecs::World`, `net::NetContext`, `net::ReplicationManager`, `rules::ServerRules`, and `assets::AssetRegistry` headers as the public surface.
+2) ✅ **Carve AtlasGameplay**: moved reusable gameplay frameworks (FactionSystem, CombatFramework, EconomySystem) under `modules/atlas_gameplay` and exposed them via `AtlasGameplay` target; no game-specific names.
+3) ✅ **Add module loader**: implemented the `IGameModule` interface header in `engine/module/`, added `ModuleLoader` with `dlopen`/`LoadLibrary` dynamic loading and `SetStaticModule()` for static linking during tests. Runtime/server/client entry points support `--module` flag.
 4) **Split EveOffline repo**: create `Atlas-EveOffline` as a consumer that builds `EveOfflineModule` and embeds assets; reference Atlas as a submodule or packaged SDK. The server/client binaries remain the same; only the module changes.
 5) **CI/build updates**: extend `build.sh` targets for `engine`, `client`, `server`, and `module` (when present), and publish engine SDK artifacts so external modules can `find_package(AtlasEngine)` cleanly.

@@ -42,8 +42,12 @@ Atlas/
 │   ├── voice/           # Voice command registry and matching
 │   ├── plugin/          # Plugin validation, registry
 │   ├── mod/             # Mod asset registry
+│   ├── module/          # Game module interface and dynamic loader
 │   ├── asset_graph/     # Asset graph executor
 │   └── rules/           # Server rules system (live parameter tuning)
+│
+├── modules/
+│   └── atlas_gameplay/  # AtlasGameplay static lib (factions, combat, economy)
 │
 ├── editor/              # Atlas Editor (authoring tool)
 │   ├── panels/          # Console, ECS Inspector, Net Inspector, World Graph,
@@ -53,11 +57,11 @@ Atlas/
 │   ├── ai/              # AI aggregator
 │   └── assistant/       # Editor assistant (explain, suggest)
 │
-├── runtime/             # Atlas Runtime (standalone CLI)
+├── runtime/             # Atlas Runtime (standalone CLI, module loading)
 ├── client/              # Player runtime client
 ├── server/              # Headless dedicated server
 │
-├── tests/               # Engine unit tests (69 test files)
+├── tests/               # Engine unit tests (84 test files)
 │
 ├── schemas/             # Versioned JSON schemas
 │   ├── atlas.project.v1.json
@@ -170,6 +174,22 @@ Atlas/
 - Clamped to declared min/max bounds
 - Hot-reloadable rules apply at tick boundaries
 - Replay-aware: rules affecting replay are explicitly marked
+
+### Game Module System (`engine/module/`)
+- **IGameModule**: Abstract interface for game-specific logic modules
+- **GameModuleDesc**: Module name and version descriptor
+- **GameModuleContext**: Engine subsystem references (World, NetContext, ReplicationManager, ServerRules, AssetRegistry, ProjectDescriptor)
+- **ModuleLoader**: Dynamic loading via `dlopen`/`LoadLibrary` with static fallback for tests
+- Lifecycle: RegisterTypes → ConfigureReplication → ConfigureServerRules → OnStart → OnTick → OnShutdown
+- Factory symbol: `extern "C" CreateGameModule()` exported by shared library modules
+
+## AtlasGameplay Library (`modules/atlas_gameplay/`)
+
+Reusable gameplay frameworks, game-agnostic (no project-specific names):
+
+- **FactionSystem**: Faction registration, symmetric relation tracking (Neutral/Friendly/Hostile/Allied)
+- **CombatFramework**: Unit registration, damage/armor resolution, health tracking
+- **EconomySystem**: Named resource management with capacity limits, spend/add transactions
 
 ### Conversation Graphs (`engine/conversation/`)
 - DAG-based dialogue and memory graph with compile/execute pipeline
@@ -347,6 +367,7 @@ so a single build produces every executable, making everything debuggable at the
 | Option              | Default | Description                     |
 |---------------------|---------|---------------------------------|
 | BUILD_ATLAS_ENGINE  | ON      | Atlas Engine static library     |
+| BUILD_ATLAS_GAMEPLAY| ON      | AtlasGameplay static library    |
 | BUILD_ATLAS_TESTS   | ON      | Engine unit tests               |
 | BUILD_ATLAS_EDITOR  | ON      | Atlas Editor application        |
 | BUILD_ATLAS_RUNTIME | ON      | Atlas Runtime application       |
