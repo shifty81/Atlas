@@ -47,6 +47,36 @@ void test_cube_sphere_lod();
 void test_voxel_chunk_roundtrip();
 void test_voxel_neighbors();
 
+// Terrain mesh tests
+void test_terrain_flat_mesh();
+void test_terrain_heightmap_mesh();
+void test_terrain_normals_computed();
+void test_terrain_resolution_one();
+
+// Noise tests
+void test_perlin_range();
+void test_perlin_deterministic();
+void test_perlin_seed_variation();
+void test_fbm_octaves();
+void test_fbm_deterministic();
+void test_perlin_spatial_variation();
+
+// Streaming tests
+void test_streamer_request_load();
+void test_streamer_set_chunk_data();
+void test_streamer_unload_chunk();
+void test_streamer_get_loaded_chunks();
+void test_streamer_disk_cache();
+void test_streamer_duplicate_request();
+
+// Galaxy tests
+void test_galaxy_system_count();
+void test_galaxy_deterministic();
+void test_galaxy_seed_variation();
+void test_galaxy_region_filter();
+void test_galaxy_unique_ids();
+void test_galaxy_star_classes();
+
 // Compiler tests
 void test_compile_constants_and_add();
 void test_compile_and_execute_full();
@@ -122,6 +152,40 @@ int main() {
     test_cube_sphere_lod();
     test_voxel_chunk_roundtrip();
     test_voxel_neighbors();
+
+    // Terrain Mesh
+    std::cout << "\n--- Terrain Mesh ---" << std::endl;
+    test_terrain_flat_mesh();
+    test_terrain_heightmap_mesh();
+    test_terrain_normals_computed();
+    test_terrain_resolution_one();
+
+    // Noise
+    std::cout << "\n--- Noise Generator ---" << std::endl;
+    test_perlin_range();
+    test_perlin_deterministic();
+    test_perlin_seed_variation();
+    test_fbm_octaves();
+    test_fbm_deterministic();
+    test_perlin_spatial_variation();
+
+    // Streaming
+    std::cout << "\n--- World Streaming ---" << std::endl;
+    test_streamer_request_load();
+    test_streamer_set_chunk_data();
+    test_streamer_unload_chunk();
+    test_streamer_get_loaded_chunks();
+    test_streamer_disk_cache();
+    test_streamer_duplicate_request();
+
+    // Galaxy
+    std::cout << "\n--- Galaxy Generator ---" << std::endl;
+    test_galaxy_system_count();
+    test_galaxy_deterministic();
+    test_galaxy_seed_variation();
+    test_galaxy_region_filter();
+    test_galaxy_unique_ids();
+    test_galaxy_star_classes();
 
     // Compiler
     std::cout << "\n--- Graph Compiler ---" << std::endl;

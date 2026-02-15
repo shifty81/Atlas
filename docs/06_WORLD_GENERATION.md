@@ -52,20 +52,70 @@ struct CubeSphereCoord {
 ## Chunk Streaming
 
 Worlds are streamed in chunks. You never load the whole planet.
+The `WorldStreamer` class manages chunk lifecycle:
+
+- **Loading**: Chunks requested based on viewer proximity
+- **Loaded**: Chunk data resident in memory
+- **Cached**: Chunk data saved to disk, freed from memory
+- **Unloaded**: No data in memory or pending
 
 ```cpp
-struct WorldChunk {
-    ChunkCoord coord;
-    HeightField height;
-    MaterialMap materials;
-    InstanceData instances;
-};
+WorldStreamer streamer(layout, "cache/world");
+streamer.Update(viewerPos, lod, loadRadius, unloadRadius);
 ```
+
+### Disk Cache
+
+The streamer supports transparent disk caching. When a chunk is unloaded, its data is
+written to a binary file. When the chunk is needed again, it is loaded from disk instead
+of regenerated.
 
 ### Generation Flow
 
 ```
-Chunk Request → WorldSystem → GeneratorGraph.Execute(seed, params, coord) → ChunkData
+Chunk Request → WorldStreamer → NoiseGenerator → TerrainMeshGenerator → ChunkData
+```
+
+## Terrain Mesh Generation
+
+The `TerrainMeshGenerator` produces vertex/index data for terrain chunks:
+
+```cpp
+TerrainMesh mesh = TerrainMeshGenerator::Generate(chunk, resolution, chunkSize, heightFn);
+```
+
+- Generates a grid of `resolution × resolution` quads
+- Supports pluggable height functions
+- Computes per-vertex normals from face normals
+
+## Noise Generation
+
+The `NoiseGenerator` provides deterministic procedural noise:
+
+- **Perlin2D**: Classic 2D Perlin noise with configurable seed
+- **FBM2D**: Fractal Brownian Motion layering multiple Perlin octaves
+
+```cpp
+float height = NoiseGenerator::FBM2D(x, z, octaves, lacunarity, persistence, seed);
+```
+
+All noise functions are deterministic given the same seed, supporting the engine's
+determinism-first design principle.
+
+## Galaxy Generation
+
+The `GalaxyGenerator` produces spiral galaxy star systems:
+
+- Configurable arm count, spread, rotation
+- Core density bias for central bulge
+- Deterministic from seed
+- Region-filtered queries for streaming
+
+```cpp
+GalaxyParams params;
+params.armCount = 4;
+params.systemCount = 100000;
+auto systems = GalaxyGenerator::Generate(params);
 ```
 
 ## GameType Templates

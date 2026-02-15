@@ -31,10 +31,10 @@
 - [x] WorldLayout interface
 - [x] Cube-sphere planet math
 - [x] Voxel grid layout
-- [ ] Terrain mesh generation
-- [ ] Graph noise nodes (Perlin / FBM)
-- [ ] World streaming + disk cache
-- [ ] Galaxy generation
+- [x] Terrain mesh generation
+- [x] Graph noise nodes (Perlin / FBM)
+- [x] World streaming + disk cache
+- [x] Galaxy generation
 
 ## Phase 5 — Gameplay
 
