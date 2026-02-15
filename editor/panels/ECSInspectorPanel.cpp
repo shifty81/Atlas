@@ -1,13 +1,35 @@
 #include "ECSInspectorPanel.h"
+#include <sstream>
 
 namespace atlas::editor {
 
 void ECSInspectorPanel::Draw() {
-    // Stub: In a real implementation, this would render via Atlas UI
-    // For now, it demonstrates the panel structure
+    m_lastSnapshot.clear();
+
     auto entities = m_world.GetEntities();
-    // Draw entity list, component details, etc.
-    (void)entities;
+    for (auto eid : entities) {
+        InspectorEntry entry;
+        entry.entityID = eid;
+
+        auto types = m_world.GetComponentTypes(eid);
+        for (const auto& ti : types) {
+            // Demangle type name: use raw name as a best-effort label
+            entry.componentNames.push_back(ti.name());
+        }
+
+        m_lastSnapshot.push_back(std::move(entry));
+    }
+}
+
+std::string ECSInspectorPanel::Summary() const {
+    std::ostringstream oss;
+    oss << "Entities: " << m_lastSnapshot.size();
+    size_t totalComponents = 0;
+    for (const auto& entry : m_lastSnapshot) {
+        totalComponents += entry.componentNames.size();
+    }
+    oss << ", Components: " << totalComponents;
+    return oss.str();
 }
 
 }

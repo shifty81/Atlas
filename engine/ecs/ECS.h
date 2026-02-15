@@ -7,6 +7,7 @@
 #include <functional>
 #include <any>
 #include <string>
+#include <cstring>
 
 namespace atlas::ecs {
 
@@ -16,6 +17,13 @@ using ComponentTypeID = uint32_t;
 struct ComponentData {
     std::vector<uint8_t> data;
     size_t elementSize = 0;
+};
+
+// Type-erased serializer for a single component type
+struct ComponentSerializer {
+    uint32_t typeTag = 0;
+    std::function<std::vector<uint8_t>(const std::any&)> serialize;
+    std::function<std::any(const uint8_t*, size_t)> deserialize;
 };
 
 class World {
@@ -66,6 +74,35 @@ public:
 
     std::vector<std::type_index> GetComponentTypes(EntityID id) const;
 
+    // Component serializer registration (for POD types)
+    template<typename T>
+    void RegisterComponent(uint32_t typeTag) {
+        auto key = std::type_index(typeid(T));
+        ComponentSerializer cs;
+        cs.typeTag = typeTag;
+        cs.serialize = [](const std::any& val) -> std::vector<uint8_t> {
+            const T& v = std::any_cast<const T&>(val);
+            std::vector<uint8_t> buf(sizeof(T));
+            std::memcpy(buf.data(), &v, sizeof(T));
+            return buf;
+        };
+        cs.deserialize = [](const uint8_t* data, size_t size) -> std::any {
+            if (size < sizeof(T)) return {};
+            T v;
+            std::memcpy(&v, data, sizeof(T));
+            return v;
+        };
+        m_serializers[key] = std::move(cs);
+    }
+
+    // ECS state serialization (for snapshot/rollback)
+    std::vector<uint8_t> Serialize() const;
+    bool Deserialize(const std::vector<uint8_t>& data);
+
+    // Query registered serializer info
+    bool HasSerializer(std::type_index key) const;
+    uint32_t GetTypeTag(std::type_index key) const;
+
 private:
     EntityID m_nextID = 1;
     std::vector<EntityID> m_entities;
@@ -73,6 +110,9 @@ private:
 
     // Component storage: entity -> (type -> data)
     std::unordered_map<EntityID, std::unordered_map<std::type_index, std::any>> m_components;
+
+    // Registered component serializers: type_index -> serializer
+    std::unordered_map<std::type_index, ComponentSerializer> m_serializers;
 };
 
 }

@@ -1,4 +1,5 @@
 #include "NetContext.h"
+#include "../ecs/ECS.h"
 #include <algorithm>
 
 namespace atlas::net {
@@ -7,6 +8,7 @@ void NetContext::Init(NetMode mode) {
     m_mode = mode;
     m_peers.clear();
     m_snapshots.clear();
+    m_inputHistory.clear();
     m_nextPeerID = 1;
     while (!m_outgoing.empty()) m_outgoing.pop();
     while (!m_incoming.empty()) m_incoming.pop();
@@ -15,6 +17,7 @@ void NetContext::Init(NetMode mode) {
 void NetContext::Shutdown() {
     m_peers.clear();
     m_snapshots.clear();
+    m_inputHistory.clear();
     while (!m_outgoing.empty()) m_outgoing.pop();
     while (!m_incoming.empty()) m_incoming.pop();
     m_mode = NetMode::Standalone;
@@ -84,22 +87,63 @@ bool NetContext::Receive(Packet& outPkt) {
     return true;
 }
 
+void NetContext::SetWorld(ecs::World* world) {
+    m_world = world;
+}
+
+void NetContext::RecordInput(const InputFrame& frame) {
+    m_inputHistory.push_back(frame);
+}
+
+const std::vector<InputFrame>& NetContext::RecordedInputs() const {
+    return m_inputHistory;
+}
+
 void NetContext::SaveSnapshot(uint32_t tick) {
     WorldSnapshot snap;
     snap.tick = tick;
-    // Stub: serialize ECS state
+    if (m_world) {
+        snap.ecsState = m_world->Serialize();
+    }
     m_snapshots.push_back(std::move(snap));
 }
 
 void NetContext::RollbackTo(uint32_t tick) {
-    // Stub: restore ECS state from snapshot at given tick
-    while (!m_snapshots.empty() && m_snapshots.back().tick > tick) {
-        m_snapshots.pop_back();
+    // Find the snapshot for the requested tick
+    const WorldSnapshot* target = nullptr;
+    for (const auto& snap : m_snapshots) {
+        if (snap.tick == tick) {
+            target = &snap;
+            break;
+        }
+    }
+
+    if (target && m_world && !target->ecsState.empty()) {
+        m_world->Deserialize(target->ecsState);
+    }
+
+    // Remove snapshots after the rollback tick
+    m_snapshots.erase(
+        std::remove_if(m_snapshots.begin(), m_snapshots.end(),
+            [tick](const WorldSnapshot& s) { return s.tick > tick; }),
+        m_snapshots.end()
+    );
+}
+
+void NetContext::ReplayFrom(uint32_t tick) {
+    // Replay recorded input frames from the given tick onward
+    if (!m_world) return;
+
+    for (const auto& frame : m_inputHistory) {
+        if (frame.tick >= tick) {
+            // Apply input frame by ticking the world
+            m_world->Update(1.0f / 60.0f);
+        }
     }
 }
 
-void NetContext::ReplayFrom(uint32_t /*tick*/) {
-    // Stub: replay input frames from given tick to current tick
+const std::vector<WorldSnapshot>& NetContext::Snapshots() const {
+    return m_snapshots;
 }
 
 }

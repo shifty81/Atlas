@@ -4,6 +4,8 @@
 #include <string>
 #include <queue>
 
+namespace atlas::ecs { class World; }
+
 namespace atlas::net {
 
 enum class NetMode {
@@ -65,16 +67,29 @@ public:
     // Receive incoming packets (from local queue after Poll)
     bool Receive(Packet& outPkt);
 
+    // ECS world binding (required for snapshot/rollback)
+    void SetWorld(ecs::World* world);
+
+    // Input frame recording for replay
+    void RecordInput(const InputFrame& frame);
+    const std::vector<InputFrame>& RecordedInputs() const;
+
     // Lockstep / Rollback
     void SaveSnapshot(uint32_t tick);
     void RollbackTo(uint32_t tick);
     void ReplayFrom(uint32_t tick);
 
+    const std::vector<WorldSnapshot>& Snapshots() const;
+
 private:
     NetMode m_mode = NetMode::Standalone;
     std::vector<NetPeer> m_peers;
     std::vector<WorldSnapshot> m_snapshots;
+    std::vector<InputFrame> m_inputHistory;
     uint32_t m_nextPeerID = 1;
+
+    // Bound ECS world for serialization
+    ecs::World* m_world = nullptr;
 
     // Local packet queues for testability
     std::queue<QueuedPacket> m_outgoing;

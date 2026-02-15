@@ -51,8 +51,12 @@ add_executable(AtlasTests
     test_uigraph.cpp
     test_schema_validator.cpp
     test_graph_cache.cpp
+    test_ecs_serialization.cpp
+    test_snapshot.cpp
+    test_ecs_inspector.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/assistant/EditorAssistant.cpp
 )
 

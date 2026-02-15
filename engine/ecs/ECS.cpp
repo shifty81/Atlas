@@ -1,5 +1,6 @@
 #include "ECS.h"
 #include <algorithm>
+#include <cstring>
 
 namespace atlas::ecs {
 
@@ -48,6 +49,132 @@ std::vector<std::type_index> World::GetComponentTypes(EntityID id) const {
         }
     }
     return types;
+}
+
+bool World::HasSerializer(std::type_index key) const {
+    return m_serializers.find(key) != m_serializers.end();
+}
+
+uint32_t World::GetTypeTag(std::type_index key) const {
+    auto it = m_serializers.find(key);
+    if (it == m_serializers.end()) return 0;
+    return it->second.typeTag;
+}
+
+// Binary format:
+//   [uint32_t nextID]
+//   [uint32_t entityCount]
+//   for each entity:
+//     [uint32_t entityID]
+//     [uint32_t componentCount]  (only serializable components)
+//     for each component:
+//       [uint32_t typeTag]
+//       [uint32_t dataSize]
+//       [uint8_t data[dataSize]]
+
+std::vector<uint8_t> World::Serialize() const {
+    std::vector<uint8_t> buf;
+
+    auto writeU32 = [&](uint32_t v) {
+        size_t pos = buf.size();
+        buf.resize(pos + sizeof(uint32_t));
+        std::memcpy(buf.data() + pos, &v, sizeof(uint32_t));
+    };
+
+    writeU32(m_nextID);
+    writeU32(static_cast<uint32_t>(m_entities.size()));
+
+    for (EntityID eid : m_entities) {
+        writeU32(eid);
+
+        auto cit = m_components.find(eid);
+        if (cit == m_components.end()) {
+            writeU32(0);
+            continue;
+        }
+
+        // Count serializable components
+        uint32_t count = 0;
+        for (const auto& [typeIdx, val] : cit->second) {
+            if (m_serializers.find(typeIdx) != m_serializers.end()) {
+                ++count;
+            }
+        }
+        writeU32(count);
+
+        for (const auto& [typeIdx, val] : cit->second) {
+            auto sit = m_serializers.find(typeIdx);
+            if (sit == m_serializers.end()) continue;
+
+            writeU32(sit->second.typeTag);
+            auto data = sit->second.serialize(val);
+            writeU32(static_cast<uint32_t>(data.size()));
+            size_t pos = buf.size();
+            buf.resize(pos + data.size());
+            std::memcpy(buf.data() + pos, data.data(), data.size());
+        }
+    }
+
+    return buf;
+}
+
+bool World::Deserialize(const std::vector<uint8_t>& data) {
+    if (data.size() < 2 * sizeof(uint32_t)) return false;
+
+    size_t offset = 0;
+    auto readU32 = [&](uint32_t& v) -> bool {
+        if (offset + sizeof(uint32_t) > data.size()) return false;
+        std::memcpy(&v, data.data() + offset, sizeof(uint32_t));
+        offset += sizeof(uint32_t);
+        return true;
+    };
+
+    // Build reverse lookup: typeTag -> (type_index, deserializer)
+    std::unordered_map<uint32_t, std::pair<std::type_index, const ComponentSerializer*>> tagLookup;
+    for (const auto& [typeIdx, cs] : m_serializers) {
+        tagLookup.emplace(cs.typeTag, std::make_pair(typeIdx, &cs));
+    }
+
+    uint32_t nextID = 0;
+    if (!readU32(nextID)) return false;
+
+    uint32_t entityCount = 0;
+    if (!readU32(entityCount)) return false;
+
+    // Clear current state
+    m_entities.clear();
+    m_components.clear();
+
+    m_nextID = nextID;
+
+    for (uint32_t i = 0; i < entityCount; ++i) {
+        uint32_t eid = 0;
+        if (!readU32(eid)) return false;
+        m_entities.push_back(eid);
+
+        uint32_t compCount = 0;
+        if (!readU32(compCount)) return false;
+
+        for (uint32_t j = 0; j < compCount; ++j) {
+            uint32_t tag = 0;
+            if (!readU32(tag)) return false;
+            uint32_t size = 0;
+            if (!readU32(size)) return false;
+
+            if (offset + size > data.size()) return false;
+
+            auto tit = tagLookup.find(tag);
+            if (tit != tagLookup.end()) {
+                auto val = tit->second.second->deserialize(data.data() + offset, size);
+                if (val.has_value()) {
+                    m_components[eid][tit->second.first] = std::move(val);
+                }
+            }
+            offset += size;
+        }
+    }
+
+    return true;
 }
 
 }

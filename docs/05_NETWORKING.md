@@ -8,8 +8,8 @@
 | Dedicated server loop | ✅ Implemented | Headless mode with tick processing |
 | P2P support | ✅ Implemented | Host/peer roles with RTT tracking |
 | Loopback mode | ✅ Implemented | Local testing without network |
-| Lockstep sync | ⬜ Stub | Methods declared, ECS serialization not implemented |
-| Rollback/replay | ⬜ Stub | Methods declared, ECS restore not implemented |
+| Lockstep sync | ✅ Implemented | ECS state serialized into snapshots |
+| Rollback/replay | ✅ Implemented | ECS state restore + input frame replay |
 | Replication rules | ⬜ Not started | No implementation |
 
 ## Unified Networking Model
@@ -77,27 +77,28 @@ public:
 | Events   | Authority → All      |
 | Assets   | Editor → Disk → Runtime |
 
-## Lockstep + Rollback (Planned)
+## Lockstep + Rollback
 
-> **Note:** The lockstep and rollback methods exist in `NetContext` but contain
-> stub logic. ECS state serialization and restoration need to be implemented
-> before these features are functional.
+The lockstep and rollback methods are implemented in `NetContext` using
+ECS state serialization. `SaveSnapshot()` captures the full ECS state,
+`RollbackTo()` restores it, and `ReplayFrom()` re-applies recorded
+input frames.
 
-Design goals:
+Design:
 
 - Fixed tick rate (e.g., 30 Hz)
 - Inputs buffered by tick
 - Graph VM deterministic
 - ECS state snapshot per tick
 
-### Rollback (Planned)
+### Rollback
 
 ```cpp
-// Target API — methods exist but internals are stubs
+// Methods are implemented with ECS state serialization
 void OnLateInput(InputFrame f) {
     if (f.tick < currentTick) {
-        RollbackTo(f.tick);   // Stub: needs ECS state restore
-        ReplayFrom(f.tick);   // Stub: needs ECS state replay
+        RollbackTo(f.tick);   // Restores ECS state from snapshot
+        ReplayFrom(f.tick);   // Re-applies input frames from tick onward
     }
 }
 ```

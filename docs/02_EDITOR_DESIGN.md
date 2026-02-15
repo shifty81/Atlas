@@ -26,9 +26,10 @@ application — not a mode of the client — built as a superset of the runtime.
 - **Game Packager Panel** — Build target/mode UI (scaffolded, no build logic yet)
 - **Editor Assistant** — Routes intents for explanations (interface only)
 
+- **ECS Inspector Panel** — Entity list with component types and summary view
+
 ### Not Yet Implemented ⬜
 
-- **ECS Inspector Panel** — Stub exists (`Draw()` is empty)
 - **Graph Editor Panel** — Stub exists (no visual graph editing logic)
 - **Asset Browser** — Not implemented
 - **AI Asset Generation** — AIAggregator interface exists, no LLM integration
@@ -82,7 +83,7 @@ Everything can be rearranged and saved.
 | Interaction Debugger | ✅ Implemented | Interaction logging and analysis |
 | Net Inspector | ✅ Implemented | Network topology and stats |
 | Game Packager | 🔧 Scaffolded | Build UI exists, no functional logic |
-| ECS Inspector | ⬜ Stub | `Draw()` exists but empty |
+| ECS Inspector | ✅ Implemented | Entity list, component types, summary |
 | Graph Editor | ⬜ Stub | Not yet implemented |
 | Asset Browser | ⬜ Missing | Not yet created |
 | Profiler | ⬜ Planned | Not yet created |

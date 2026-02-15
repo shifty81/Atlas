@@ -35,7 +35,7 @@ Some panels are scaffolded but not yet feature-complete.
 - [x] Voice command panel (voice processing and intent dispatch)
 - [x] Interaction debugger panel (interaction logging and analysis)
 - [x] Net inspector panel (network state, peers, RTT, bandwidth)
-- [ ] ECS inspector panel (stub — `Draw()` exists but has no functional logic)
+- [x] ECS inspector panel (entity list, component types, summary view)
 - [ ] Graph editor panel (stub — not yet implemented beyond scaffolding)
 - [ ] Asset browser (not implemented)
 - [ ] Editor assistant (interface exists, `Explain` methods are stubs)
@@ -49,8 +49,8 @@ but contain stub logic that needs to be completed.
 - [x] Dedicated server loop (headless mode, tick processing)
 - [x] P2P host/peer support (peer add/remove, RTT tracking)
 - [x] Loopback mode for testing
-- [ ] Lockstep synchronization (method exists, ECS serialization is a stub)
-- [ ] Rollback/replay (method exists, ECS restore is a stub)
+- [x] Lockstep synchronization (ECS state serialization into snapshots)
+- [x] Rollback/replay (ECS state restore from snapshot, input frame replay)
 - [ ] Replication rules (not implemented)
 
 ## Phase 4 — World Generation ✅
@@ -161,7 +161,7 @@ Some polish items have been implemented earlier than planned.
 | Gameplay | ✅ Complete | Camera, input, physics, audio, mechanics |
 | Interaction/Voice | ✅ Complete | Unified intent pipeline |
 | Project/Plugin | ✅ Complete | Multi-project, schema validation, plugins |
-| Editor Framework | 🔧 Partial | Docking and several panels work; some stubs remain |
-| Networking | 🔧 Partial | API works; lockstep/rollback are stubs |
+| Editor Framework | 🔧 Partial | Docking and most panels work; graph editor and asset browser remain |
+| Networking | 🔧 Partial | API works; lockstep/rollback implemented; replication rules remain |
 | Production Tools | 🔧 Early | Packager UI scaffolded; no build logic |
 | Polish | 🔧 Early | Undo/redo done; other items not started |

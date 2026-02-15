@@ -391,6 +391,29 @@ void test_json_reader_parse();
 void test_json_reader_array();
 void test_json_roundtrip();
 
+// ECS Serialization tests
+void test_ecs_serialize_empty_world();
+void test_ecs_serialize_entities_no_components();
+void test_ecs_serialize_roundtrip();
+void test_ecs_serialize_preserves_next_id();
+void test_ecs_deserialize_clears_existing();
+void test_ecs_deserialize_invalid_data();
+void test_ecs_has_serializer();
+
+// Snapshot / Rollback tests
+void test_snapshot_saves_ecs_state();
+void test_rollback_restores_ecs_state();
+void test_rollback_removes_future_snapshots();
+void test_snapshot_without_world();
+void test_rollback_with_multiple_entities();
+void test_record_and_replay_input();
+
+// ECS Inspector tests
+void test_inspector_empty_world();
+void test_inspector_entities_with_components();
+void test_inspector_select_entity();
+void test_inspector_refreshes_on_draw();
+
 // Story tests
 void test_story_add_node();
 void test_story_connections();
@@ -840,6 +863,32 @@ int main() {
     test_json_reader_parse();
     test_json_reader_array();
     test_json_roundtrip();
+
+    // ECS Serialization
+    std::cout << "\n--- ECS Serialization ---" << std::endl;
+    test_ecs_serialize_empty_world();
+    test_ecs_serialize_entities_no_components();
+    test_ecs_serialize_roundtrip();
+    test_ecs_serialize_preserves_next_id();
+    test_ecs_deserialize_clears_existing();
+    test_ecs_deserialize_invalid_data();
+    test_ecs_has_serializer();
+
+    // Snapshot / Rollback
+    std::cout << "\n--- Snapshot / Rollback ---" << std::endl;
+    test_snapshot_saves_ecs_state();
+    test_rollback_restores_ecs_state();
+    test_rollback_removes_future_snapshots();
+    test_snapshot_without_world();
+    test_rollback_with_multiple_entities();
+    test_record_and_replay_input();
+
+    // ECS Inspector
+    std::cout << "\n--- ECS Inspector ---" << std::endl;
+    test_inspector_empty_world();
+    test_inspector_entities_with_components();
+    test_inspector_select_entity();
+    test_inspector_refreshes_on_draw();
 
     // Story
     std::cout << "\n--- Story System ---" << std::endl;

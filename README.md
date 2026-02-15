@@ -39,8 +39,8 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
   Phase 1        Phase 2        Phase 3        Phase 4        Phase 5        Phase 6        Phase 7
  Core Engine      Editor       Networking    World Gen       Gameplay      Production       Polish
 ────────────────────────────────────────────────────────────────────────────────────────────────────
- ██████████     ██████░░░░     █████░░░░░     ██████████     ██████████     ██░░░░░░░░     ██░░░░░░░░
-   100%            60%            50%           100%           100%           20%            20%
+ ██████████     ███████░░░     ████████░░     ██████████     ██████████     ██░░░░░░░░     ██░░░░░░░░
+   100%            70%            80%           100%           100%           20%            20%
   ✅ Done       🔧 Active      🔧 Active      ✅ Done        ✅ Done       🔧 Active      🔧 Active
 ```
 
@@ -66,8 +66,8 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 - ✅ Panel docking system
 - ✅ Console panel
 - ✅ World graph panel
+- ✅ ECS inspector
 - ⬜ Graph editor (stub)
-- ⬜ ECS inspector (stub)
 - ⬜ Asset browser
 
 </td>
@@ -78,8 +78,8 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 - ✅ NetContext API
 - ✅ Dedicated server loop
 - ✅ P2P support
-- ⬜ Lockstep (stub)
-- ⬜ Rollback (stub)
+- ✅ Lockstep sync
+- ✅ Rollback/replay
 - ⬜ Replication rules
 
 </td>
