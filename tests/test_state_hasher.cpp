@@ -163,7 +163,7 @@ void test_replay_record_with_hash() {
 }
 
 void test_replay_save_load_with_hash() {
-    std::string tmpPath = (std::filesystem::temp_directory_path() / "atlas_hash_test.rply").string();
+    std::string tmpPath = (std::filesystem::temp_directory_path() / "atlas_hash_test_v2.rply").string();
 
     // Record with hashes
     {
