@@ -27,8 +27,8 @@ static std::string Timestamp() {
 void Logger::Init() {
     {
         std::lock_guard<std::mutex> lock(s_mutex);
-        std::filesystem::create_directories("log");
-        std::string logPath = (std::filesystem::path("log") / "atlas.log").string();
+        std::filesystem::create_directories("logs");
+        std::string logPath = (std::filesystem::path("logs") / "atlas.log").string();
         s_logFile.open(logPath, std::ios::out | std::ios::app);
         if (!s_logFile.is_open()) {
             std::cerr << "[ERROR] Failed to open log file: " << logPath << std::endl;

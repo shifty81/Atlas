@@ -141,6 +141,20 @@ if [ "$RUN_TESTS" = true ] && [[ ! " ${CMAKE_TARGETS[*]} " =~ " AtlasTests " ]];
     CMAKE_TARGETS+=("AtlasTests")
 fi
 
+# --- Setup build log ---
+LOG_DIR="$SOURCE_DIR/logs"
+mkdir -p "$LOG_DIR"
+BUILD_LOG="$LOG_DIR/build.log"
+
+# Redirect all output to both console and build log
+exec > >(tee -a "$BUILD_LOG") 2>&1
+
+# Write a header to the build log
+echo ""
+echo "=== Atlas Build Log ==="
+echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
+echo ""
+
 # --- Print build configuration ---
 echo ""
 echo -e "${BOLD}╔══════════════════════════════════════╗${RESET}"
@@ -152,6 +166,7 @@ info "Parallel jobs: $JOBS"
 info "Output dir:    $OUTPUT_DIR"
 info "Targets:       ${CMAKE_TARGETS[*]}"
 info "Run tests:     $RUN_TESTS"
+info "Build log:     $BUILD_LOG"
 echo ""
 
 # --- Clean ---
@@ -237,4 +252,7 @@ if [ "$copied" -gt 0 ]; then
     ls -lh "$OUTPUT_DIR"/ | grep -v "^total"
 fi
 echo -e "${BOLD}═══════════════════════════════════════${RESET}"
+echo ""
+echo "=== Build Finished: $(date '+%Y-%m-%d %H:%M:%S') ==="
+info "Build log saved to: $BUILD_LOG"
 echo ""

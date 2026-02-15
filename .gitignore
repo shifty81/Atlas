@@ -30,7 +30,8 @@ venv/
 
 # Logs and databases
 *.log
-log/
+logs/*
+!logs/.gitkeep
 *.sqlite
 *.db
 

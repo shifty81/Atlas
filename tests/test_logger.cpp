@@ -7,21 +7,21 @@
 using namespace atlas;
 
 void test_logger_creates_log_directory() {
-    std::filesystem::remove_all("log");
+    std::filesystem::remove_all("logs");
 
     Logger::Init();
     Logger::Shutdown();
 
-    assert(std::filesystem::exists("log"));
-    assert(std::filesystem::is_directory("log"));
+    assert(std::filesystem::exists("logs"));
+    assert(std::filesystem::is_directory("logs"));
 
-    std::filesystem::remove_all("log");
+    std::filesystem::remove_all("logs");
 
     std::cout << "[PASS] test_logger_creates_log_directory" << std::endl;
 }
 
 void test_logger_writes_to_file() {
-    std::filesystem::remove_all("log");
+    std::filesystem::remove_all("logs");
 
     Logger::Init();
     Logger::Info("file output test info");
@@ -29,7 +29,7 @@ void test_logger_writes_to_file() {
     Logger::Error("file output test error");
     Logger::Shutdown();
 
-    std::string logPath = (std::filesystem::path("log") / "atlas.log").string();
+    std::string logPath = (std::filesystem::path("logs") / "atlas.log").string();
     assert(std::filesystem::exists(logPath));
 
     std::ifstream f(logPath);
@@ -44,7 +44,7 @@ void test_logger_writes_to_file() {
     assert(content.find("[ERROR]") != std::string::npos);
     assert(content.find("file output test error") != std::string::npos);
 
-    std::filesystem::remove_all("log");
+    std::filesystem::remove_all("logs");
 
     std::cout << "[PASS] test_logger_writes_to_file" << std::endl;
 }
