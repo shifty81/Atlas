@@ -101,6 +101,7 @@ add_executable(AtlasTests
     test_enforcement.cpp
     test_lockdown_phase2.cpp
     test_lockdown_phase3.cpp
+    test_gui_completion.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
@@ -116,6 +117,8 @@ add_executable(AtlasTests
     ${CMAKE_SOURCE_DIR}/editor/tools/VisualDiff.cpp
     ${CMAKE_SOURCE_DIR}/editor/assistant/EditorAssistant.cpp
     ${CMAKE_SOURCE_DIR}/editor/assistant/AssetGraphAssistant.cpp
+    ${CMAKE_SOURCE_DIR}/editor/ui/EditorAttachProtocol.cpp
+    ${CMAKE_SOURCE_DIR}/editor/ui/EditorLayout.cpp
 )
 
 target_link_libraries(AtlasTests AtlasEngine AtlasGameplay EveOfflineModule Arena2DModule)

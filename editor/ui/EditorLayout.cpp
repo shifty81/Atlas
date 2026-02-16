@@ -1,9 +1,33 @@
 #include "EditorLayout.h"
+#include <algorithm>
+#include <cstring>
 
 namespace atlas::editor {
 
 void EditorLayout::RegisterPanel(EditorPanel* panel) {
     m_panels.push_back(panel);
+}
+
+bool EditorLayout::ClosePanel(const std::string& name) {
+    for (auto* panel : m_panels) {
+        if (name == panel->Name()) {
+            if (!panel->IsClosable()) {
+                return false;
+            }
+            panel->SetVisible(false);
+            return true;
+        }
+    }
+    return false;
+}
+
+EditorPanel* EditorLayout::FindPanel(const std::string& name) const {
+    for (auto* panel : m_panels) {
+        if (name == panel->Name()) {
+            return panel;
+        }
+    }
+    return nullptr;
 }
 
 void EditorLayout::Draw() {

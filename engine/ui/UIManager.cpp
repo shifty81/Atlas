@@ -71,23 +71,23 @@ void UIManager::RenderWidget(UIRenderer* renderer, uint32_t widgetId, int depth)
 
     switch (widget->type) {
         case UIWidgetType::Panel: {
-            UIColor bg = {40, 42, 48, 255};
+            UIColor bg = {43, 43, 43, 255};
             renderer->DrawRect(rect, bg);
-            UIColor border = {80, 82, 88, 255};
+            UIColor border = {70, 73, 75, 255};
             renderer->DrawBorder(rect, 1, border);
             break;
         }
         case UIWidgetType::Button: {
-            UIColor bg = {60, 90, 140, 255};
+            UIColor bg = {55, 58, 62, 255};
             renderer->DrawRect(rect, bg);
-            UIColor border = {100, 130, 180, 255};
+            UIColor border = {80, 83, 88, 255};
             renderer->DrawBorder(rect, 1, border);
             UIColor textColor = {220, 220, 220, 255};
             renderer->DrawText(rect, widget->name, textColor);
             break;
         }
         case UIWidgetType::Text: {
-            UIColor textColor = {200, 200, 200, 255};
+            UIColor textColor = {220, 220, 220, 255};
             renderer->DrawText(rect, widget->name, textColor);
             break;
         }
@@ -97,25 +97,25 @@ void UIManager::RenderWidget(UIRenderer* renderer, uint32_t widgetId, int depth)
             break;
         }
         case UIWidgetType::List: {
-            UIColor bg = {35, 37, 42, 255};
+            UIColor bg = {35, 37, 40, 255};
             renderer->DrawRect(rect, bg);
-            UIColor border = {70, 72, 78, 255};
+            UIColor border = {70, 73, 75, 255};
             renderer->DrawBorder(rect, 1, border);
             break;
         }
         case UIWidgetType::SlotGrid: {
-            UIColor bg = {45, 47, 52, 255};
+            UIColor bg = {43, 43, 43, 255};
             renderer->DrawRect(rect, bg);
-            UIColor border = {80, 82, 88, 255};
+            UIColor border = {70, 73, 75, 255};
             renderer->DrawBorder(rect, 1, border);
             break;
         }
         case UIWidgetType::InputField: {
-            UIColor bg = {30, 32, 36, 255};
+            UIColor bg = {35, 37, 40, 255};
             renderer->DrawRect(rect, bg);
             UIColor border = {70, 100, 150, 255};
             renderer->DrawBorder(rect, 1, border);
-            UIColor textColor = {180, 180, 180, 255};
+            UIColor textColor = {160, 160, 160, 255};
             renderer->DrawText(rect, widget->name, textColor);
             break;
         }

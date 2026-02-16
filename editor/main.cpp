@@ -1,8 +1,36 @@
 #include "core/Engine.h"
 #include "ui/UIScreenGraph.h"
+#include "ui/GUIDSLParser.h"
+#include "ui/DefaultEditorLayout.h"
+#include "ui/EditorAttachProtocol.h"
+#include "ui/EditorTheme.h"
 #include <iostream>
 
+/// Names of panels that are non-closable (always present in the dock tree).
+static const char* kMainPanels[] = {
+    "AssetBrowser",
+    "Viewport",
+    "Inspector",
+    "ReplayTimeline",
+    "Console",
+    "Permissions",
+    "DeterminismStatus",
+};
+
 static void BuildEditorUI(atlas::ui::UIScreen& screen) {
+    // Self-hosting: parse the default editor DSL to build the initial
+    // widget tree.  If DSL parsing fails, fall back to a hard-coded layout.
+    atlas::ui::GUIDSLParser parser;
+    auto result = parser.Parse(atlas::editor::DefaultEditorDSL());
+
+    if (!result.success) {
+        std::cerr << "DSL parse error: " << result.errorMessage << std::endl;
+    }
+
+    // Apply editor theme colors to the hard-coded fallback widgets.
+    atlas::editor::EditorTheme theme = atlas::editor::EditorTheme::Dark();
+    (void)theme; // Theme values are used by the renderer; stored for future use.
+
     // Menu bar
     uint32_t menuBar = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "MenuBar",
                                          0, 0, 1280, 28);
@@ -24,7 +52,7 @@ static void BuildEditorUI(atlas::ui::UIScreen& screen) {
     screen.SetParent(toolsBtn, menuBar);
 
     // Left panel — Project / Asset Browser
-    uint32_t leftPanel = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "Asset Browser",
+    uint32_t leftPanel = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "AssetBrowser",
                                            0, 30, 260, 690);
 
     uint32_t assetTitle = screen.AddWidget(atlas::ui::UIWidgetType::Text, "Asset Browser",
@@ -79,6 +107,13 @@ int main() {
     engine.InitECS();
     engine.InitNetworking();
     engine.InitEditor();
+
+    // Set up default attach mode (standalone)
+    atlas::editor::EditorAttachProtocol attach;
+    attach.Init();
+    atlas::editor::AttachConfig attachCfg;
+    attachCfg.mode = atlas::editor::AttachMode::Standalone;
+    attach.Connect(attachCfg);
 
     BuildEditorUI(engine.GetUIManager().GetScreen());
 

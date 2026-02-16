@@ -936,6 +936,27 @@ void test_desync_reproducer_capture();
 void test_desync_reproducer_generate_command();
 void test_desync_reproducer_multiple_captures();
 
+// GUI Completion
+void test_editor_theme_dark_defaults();
+void test_editor_theme_custom_values();
+void test_panel_closable_by_default();
+void test_panel_set_non_closable();
+void test_layout_close_closable_panel();
+void test_layout_close_non_closable_panel();
+void test_layout_close_unknown_panel();
+void test_layout_find_panel();
+void test_main_panels_non_closable();
+void test_attach_init();
+void test_attach_standalone();
+void test_attach_live_client();
+void test_attach_live_client_missing_host();
+void test_attach_headless_server();
+void test_attach_replay();
+void test_attach_replay_missing_path();
+void test_attach_disconnect();
+void test_default_editor_dsl_parses();
+void test_default_editor_dsl_has_panels();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -1977,6 +1998,28 @@ int main() {
     test_desync_reproducer_capture();
     test_desync_reproducer_generate_command();
     test_desync_reproducer_multiple_captures();
+
+    // GUI Completion
+    std::cout << "\n--- GUI Completion ---" << std::endl;
+    test_editor_theme_dark_defaults();
+    test_editor_theme_custom_values();
+    test_panel_closable_by_default();
+    test_panel_set_non_closable();
+    test_layout_close_closable_panel();
+    test_layout_close_non_closable_panel();
+    test_layout_close_unknown_panel();
+    test_layout_find_panel();
+    test_main_panels_non_closable();
+    test_attach_init();
+    test_attach_standalone();
+    test_attach_live_client();
+    test_attach_live_client_missing_host();
+    test_attach_headless_server();
+    test_attach_replay();
+    test_attach_replay_missing_path();
+    test_attach_disconnect();
+    test_default_editor_dsl_parses();
+    test_default_editor_dsl_has_panels();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

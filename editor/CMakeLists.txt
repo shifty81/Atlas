@@ -1,6 +1,7 @@
 add_executable(AtlasEditor
     main.cpp
     ui/EditorLayout.cpp
+    ui/EditorAttachProtocol.cpp
     panels/ECSInspectorPanel.cpp
     panels/ProfilerPanel.cpp
     panels/NetInspectorPanel.cpp

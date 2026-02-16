@@ -162,10 +162,10 @@ Advanced GUI architecture, editor refinements, and determinism enforcement.
 - [x] Custom GUI widget system (layout solver, DSL compiler, deterministic rendering)
 - [x] GUI DSL (declarative layout language with docking, splits, tabs)
 - [x] GUI input recorder and replay (semantic events, CI video export)
-- [ ] Unreal-grade editor aesthetics (dark theme, professional typography, icons)
-- [ ] Editor self-hosting (editor UI defined in Atlas GUI DSL)
-- [ ] Non-closable main panels (World Outliner, Asset Browser, Inspector, Replay Timeline, Console, Permissions)
-- [ ] Editor attach protocol (attach to live client, headless server, or replay)
+- [x] Unreal-grade editor aesthetics (dark theme, professional typography, icons)
+- [x] Editor self-hosting (editor UI defined in Atlas GUI DSL)
+- [x] Non-closable main panels (World Outliner, Asset Browser, Inspector, Replay Timeline, Console, Permissions)
+- [x] Editor attach protocol (attach to live client, headless server, or replay)
 - [x] Permission tiers (ViewOnly, QA, Developer, CI, Admin)
 - [x] Client HUD overlay (tick count, determinism warnings, time controls)
 - [x] Headless server GUI (state-only panel tree, CLI commands)
@@ -247,7 +247,7 @@ Production-grade CI, build experience, and template repository support.
 | Production Tools | ✅ Complete | Packager, asset cooker, build profiles, mod loader, platform targeting |
 | Polish | ✅ Complete | Undo/redo, visual diff, profiler, replay recorder, crash analysis |
 | Game Module System | ✅ Complete | IGameModule interface, ModuleLoader, AtlasGameplay library, EveOffline (shipped in-repo), SDK export |
-| GUI System & Editor Hardening | 🔧 Planned | Custom GUI DSL, layout solver, editor self-hosting, permissions |
+| GUI System & Editor Hardening | ✅ Complete | Custom GUI DSL, layout solver, editor self-hosting, permissions |
 | Replay & Formal Verification | 🔧 In Progress | Hash ladder implemented, TLA+ specs and proof viewer pending |
 | Flow Graph & Procedural Content | 🔧 Planned | Flow Graph IR/VM, procedural modeling, animation graphs |
 | AtlasAI & Game GUI Authoring | 🔧 Planned | AI assistant, game UI authoring, widget DSL |
