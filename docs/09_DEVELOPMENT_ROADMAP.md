@@ -185,7 +185,7 @@ Replay system closure, hash ladder verification, and TLA+ formal proofs.
 - [x] Deterministic allocator (arena, stable IDs, no pointer-order dependence)
 - [x] AtlasShaderIR (deterministic shader compilation)
 
-## Phase 10 — Flow Graph & Procedural Content 🔧
+## Phase 10 — Flow Graph & Procedural Content ✅
 
 Blueprint-like visual scripting and Blender-like procedural modeling.
 
@@ -197,24 +197,24 @@ Blueprint-like visual scripting and Blender-like procedural modeling.
 - [x] Procedural mesh graph library (primitives, operations, deformers)
 - [x] Procedural material & shader graphs
 - [x] LOD & mesh baking graphs
-- [ ] Deterministic animation graphs (bone manipulation, IK/FK, blend trees)
-- [ ] Collaborative graph editing (live cursors, conflict resolution)
+- [x] Deterministic animation graphs (bone manipulation, IK/FK, blend trees)
+- [x] Collaborative graph editing (live cursors, conflict resolution)
 
-## Phase 11 — AtlasAI & Game GUI Authoring 🔧
+## Phase 11 — AtlasAI & Game GUI Authoring ✅
 
 AI-assisted authoring and unified game UI system.
 
-- [ ] AtlasAI core (structured I/O, permission-gated intents)
-- [ ] Atlas Assistant panel (context-aware prompts, diff preview)
-- [ ] AI diff viewer (preview generated changes before applying)
-- [ ] AI-assisted flow graph refactoring
-- [ ] Web aggregation knowledge base
-- [ ] Game GUI asset format (layout tree, widget definitions, bindings)
-- [ ] Widget DSL for game UI (inventory, HUD, menus, dialogs)
-- [ ] Game GUI binding system (ECS → UI data flow)
-- [ ] Full editor authoring for all game mechanics UI
+- [x] AtlasAI core (structured I/O, permission-gated intents)
+- [x] Atlas Assistant panel (context-aware prompts, diff preview)
+- [x] AI diff viewer (preview generated changes before applying)
+- [x] AI-assisted flow graph refactoring
+- [x] Web aggregation knowledge base
+- [x] Game GUI asset format (layout tree, widget definitions, bindings)
+- [x] Widget DSL for game UI (inventory, HUD, menus, dialogs)
+- [x] Game GUI binding system (ECS → UI data flow)
+- [x] Full editor authoring for all game mechanics UI
 
-## Phase 12 — CI, Build & Template System 🔧
+## Phase 12 — CI, Build & Template System ✅
 
 Production-grade CI, build experience, and template repository support.
 
@@ -225,9 +225,9 @@ Production-grade CI, build experience, and template repository support.
 - [x] Build manifest (executable hashes, layout hashes, DSL version)
 - [x] atlas init tool (namespace rewrite, core freeze, editor branding)
 - [x] Template contract (ATLAS_TEMPLATE_CONTRACT.md for forks)
-- [ ] Determinism versioning strategy across forks
+- [x] Determinism versioning strategy across forks
 - [x] CI dashboard panel (in-editor CI results visualization)
-- [ ] Certified build mode (audit-grade verification artifacts)
+- [x] Certified build mode (audit-grade verification artifacts)
 
 ---
 
@@ -249,6 +249,6 @@ Production-grade CI, build experience, and template repository support.
 | Game Module System | ✅ Complete | IGameModule interface, ModuleLoader, AtlasGameplay library, EveOffline (shipped in-repo), SDK export |
 | GUI System & Editor Hardening | ✅ Complete | Custom GUI DSL, layout solver, editor self-hosting, permissions |
 | Replay & Formal Verification | ✅ Complete | TLA+ specs, TLC CI, proof viewer, replay→proof export, ShaderIR |
-| Flow Graph & Procedural Content | 🔧 In Progress | Flow Graph IR/VM/debugger complete, procedural modeling and codegen pending |
-| AtlasAI & Game GUI Authoring | 🔧 Planned | AI assistant, game UI authoring, widget DSL |
-| CI, Build & Template System | 🔧 In Progress | Determinism CI gate, contract bot, build manifest, schema, CI dashboard added |
+| Flow Graph & Procedural Content | ✅ Complete | Flow Graph IR/VM/debugger, procedural mesh/material/LOD, deterministic animation, collaborative editing |
+| AtlasAI & Game GUI Authoring | ✅ Complete | AI core, assistant panel, diff viewer, flow refactoring, web KB, game GUI asset/DSL/binding, mechanics UI |
+| CI, Build & Template System | ✅ Complete | Determinism CI gate, contract bot, build manifest, schema, CI dashboard, versioning, certified build |
