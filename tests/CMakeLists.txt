@@ -83,6 +83,7 @@ add_executable(AtlasTests
     test_permission_manager.cpp
     test_hud_overlay.cpp
     test_replay_timeline_panel.cpp
+    test_render.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
