@@ -28,6 +28,9 @@ FORBIDDEN_PATTERNS = [
     ("clock(", "Wall-clock time access"),
     ("gettimeofday", "Wall-clock time access"),
     ("clock_gettime", "Wall-clock time access"),
+    ("__m128", "SIMD intrinsics forbidden in simulation code"),
+    ("__m256", "SIMD intrinsics forbidden in simulation code"),
+    ("__m512", "SIMD intrinsics forbidden in simulation code"),
 ]
 
 # Directories to scan (relative to engine root)
@@ -46,6 +49,15 @@ SIMULATION_DIRS = [
 # forbidden APIs in comments/error messages, not actual usage)
 SKIP_DIRS = {
     "contract",
+    "render",
+    "platform",
+}
+
+# Files that legitimately use otherwise-forbidden APIs.
+# TickScheduler uses std::chrono for frame pacing (non-simulation logic).
+SKIP_FILES = {
+    "TickScheduler.cpp",
+    "TickScheduler.h",
 }
 
 # File extensions to scan
@@ -93,6 +105,8 @@ def main():
                 # Skip directories that reference forbidden APIs in
                 # comments or error messages (e.g. contract headers)
                 if any(skip in filepath.parts for skip in SKIP_DIRS):
+                    continue
+                if filepath.name in SKIP_FILES:
                     continue
                 all_violations.extend(scan_file(filepath))
 

@@ -85,6 +85,11 @@ public:
 
     const std::vector<WorldSnapshot>& Snapshots() const;
 
+    // Save tick broadcasting
+    void BroadcastSaveTick(uint32_t tick, uint64_t stateHash);
+    uint32_t LastSaveTick() const;
+    uint64_t LastSaveHash() const;
+
 private:
     NetMode m_mode = NetMode::Standalone;
     std::vector<NetPeer> m_peers;
@@ -101,6 +106,10 @@ private:
 
     // Optional callback for applying input frames during replay
     std::function<void(const InputFrame&)> m_inputApplyCallback;
+
+    // Save tick broadcasting state
+    uint32_t m_lastSaveTick = 0;
+    uint64_t m_lastSaveHash = 0;
 };
 
 }

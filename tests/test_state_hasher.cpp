@@ -181,7 +181,7 @@ void test_replay_save_load_with_hash() {
     {
         ReplayRecorder loader;
         assert(loader.LoadReplay(tmpPath));
-        assert(loader.Header().version == 2);
+        assert(loader.Header().version == 3);
         assert(loader.FrameCount() == 3);
         assert(loader.FrameAtTick(0)->stateHash == 0x1111);
         assert(loader.FrameAtTick(1)->stateHash == 0x2222);

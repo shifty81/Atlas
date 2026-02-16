@@ -62,6 +62,9 @@ public:
     /// Format a report as a multi-line string for logging / display.
     static std::string FormatReport(const DivergenceReport& report);
 
+    /// Export a report to a file.
+    static bool ExportReport(const DivergenceReport& report, const std::string& path);
+
     /// Whether the report indicates a critical divergence.
     static bool IsCritical(const DivergenceReport& report);
 

@@ -91,6 +91,9 @@ public:
     /// Get the current time context snapshot.
     const TimeContext& Context() const;
 
+    /// Set the tick counter directly (used for save/load only).
+    void SetTick(uint64_t tick);
+
     /// Reset all time state to zero.
     void Reset();
 

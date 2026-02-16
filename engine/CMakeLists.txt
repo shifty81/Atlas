@@ -116,6 +116,59 @@ elseif(APPLE)
     target_link_libraries(AtlasEngine PUBLIC dl)
 endif()
 
+# ============================================================
+# Simulation / Render Include Firewall
+# ============================================================
+# AtlasSimulation is an INTERFACE library that exposes ONLY the
+# simulation-safe source directories.  Downstream targets that
+# link against AtlasSimulation are guaranteed not to pull in
+# render, platform, or UI headers, enforcing the sim/render
+# separation documented in docs/ATLAS_SIMULATION_PHILOSOPHY.md.
+#
+# Simulation-safe directories:
+#   core, ecs, sim, net, graphvm, assets, world, ai, rules,
+#   schema, flow, gameplay, mod, physics, story, command,
+#   interaction, plugin, strategygraph, conversation, tile,
+#   sound, character, animation, weapon, module, audio, input,
+#   production, asset_graph
+#
+# Render / presentation directories (NOT included):
+#   render, platform, ui, camera
+# ============================================================
+add_library(AtlasSimulation INTERFACE)
+target_include_directories(AtlasSimulation INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/core>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ecs>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sim>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/net>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/graphvm>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/assets>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/world>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ai>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/rules>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/schema>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/flow>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/gameplay>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mod>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/physics>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/story>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/command>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/interaction>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/plugin>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/strategygraph>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/conversation>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tile>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sound>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/character>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/animation>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/weapon>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/module>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/audio>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/input>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/production>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/asset_graph>
+)
+
 # --- Install / Export ---
 install(TARGETS AtlasEngine
     EXPORT AtlasEngineTargets

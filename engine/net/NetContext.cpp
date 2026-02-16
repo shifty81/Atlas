@@ -1,6 +1,7 @@
 #include "NetContext.h"
 #include "../ecs/ECS.h"
 #include <algorithm>
+#include <cstring>
 
 namespace atlas::net {
 
@@ -151,6 +152,31 @@ void NetContext::ReplayFrom(uint32_t tick) {
 
 const std::vector<WorldSnapshot>& NetContext::Snapshots() const {
     return m_snapshots;
+}
+
+void NetContext::BroadcastSaveTick(uint32_t tick, uint64_t stateHash) {
+    m_lastSaveTick = tick;
+    m_lastSaveHash = stateHash;
+
+    Packet pkt;
+    pkt.type = 0xFF00;
+    pkt.tick = tick;
+
+    // Pack tick (4 bytes) + hash (8 bytes) into payload
+    pkt.payload.resize(sizeof(uint32_t) + sizeof(uint64_t));
+    std::memcpy(pkt.payload.data(), &tick, sizeof(uint32_t));
+    std::memcpy(pkt.payload.data() + sizeof(uint32_t), &stateHash, sizeof(uint64_t));
+    pkt.size = static_cast<uint16_t>(pkt.payload.size());
+
+    Broadcast(pkt);
+}
+
+uint32_t NetContext::LastSaveTick() const {
+    return m_lastSaveTick;
+}
+
+uint64_t NetContext::LastSaveHash() const {
+    return m_lastSaveHash;
 }
 
 }

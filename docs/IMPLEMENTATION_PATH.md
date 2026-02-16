@@ -75,11 +75,11 @@ Provides versioned binary save format (`.asav`) with hash-verified integrity.
 
 **Remaining work:**
 - [x] Add save/load commands to editor console panel
-- [ ] Wire into `Engine::RunClient()` and `Engine::RunServer()` for autosave
+- [x] Wire into `Engine::RunClient()` and `Engine::RunServer()` for autosave
 - [ ] Implement partial-world saves for large streaming worlds
 - [ ] Add save file browser to editor UI
 - [ ] Cross-platform save compatibility testing
-- [ ] Replay-from-save verification (load save → replay → verify hash ladder)
+- [x] Replay-from-save verification (load save → replay → verify hash ladder)
 
 ### 1.4 Determinism Enforcement Hardening 🔧
 
@@ -90,7 +90,7 @@ Compile-time guards and runtime assertions exist. Gaps remain:
 
 - [x] Add `ATLAS_FORBID_IN_SIM` macro to prevent presentation code in tick
 - [ ] Enforce `#include` firewall: simulation code cannot include render headers
-- [ ] Add CMake `INTERFACE` target separating sim-safe from render-safe sources
+- [x] Add CMake `INTERFACE` target separating sim-safe from render-safe sources
 - [x] FP consistency enforcement (`-ffp-contract=off`, `/fp:strict` flags)
 - [ ] Platform-dependent math detection in CI (scan for `__m128` outside render)
 
@@ -120,20 +120,20 @@ runtime and editor infrastructure.
 ### 2.2 Networking ↔ State Integration 🔧
 
 - [x] Use `WorldSnapshot` in lockstep sync instead of raw ECS serialization
-- [ ] Snapshot-based rollback: restore from `WorldState` snapshot + replay
-- [ ] Network save/load: server broadcasts save tick, clients verify hash
+- [x] Snapshot-based rollback: restore from `WorldState` snapshot + replay
+- [x] Network save/load: server broadcasts save tick, clients verify hash
 
-### 2.3 Replay ↔ Save Integration ❌
+### 2.3 Replay ↔ Save Integration 🔧
 
-- [ ] Verify hash ladder continuity across save/load boundaries
+- [x] Verify hash ladder continuity across save/load boundaries
 - [ ] Implement "replay from save" mode (load save → begin replay playback)
-- [ ] Add save-point markers in replay files
+- [x] Add save-point markers in replay files
 
 ---
 
 ## Priority 3 — Tooling & Debug Infrastructure
 
-### 3.1 State Hash Diff Visualizer ❌
+### 3.1 State Hash Diff Visualizer 🔧
 
 - [ ] Editor panel showing per-component hash breakdown at any tick
 - [ ] Side-by-side comparison of two hash ladders
@@ -147,7 +147,7 @@ runtime and editor infrastructure.
 Core logic exists. Remaining:
 - [ ] Auto-open divergence view on hash mismatch during replay
 - [ ] Show per-system state diff at divergence tick
-- [ ] Export divergence report to file
+- [x] Export divergence report to file
 
 ### 3.3 FP Drift Detector ❌
 
@@ -254,23 +254,23 @@ Phase A — Foundation (current sprint)
   ✅ WorldState
   ✅ SaveSystem
   ✅ Wire into Engine
-  → Wire into Networking
+  ✅ Wire into Networking
 
 Phase B — Enforcement
   ✅ Determinism enforcement hardening (ATLAS_FORBID_IN_SIM, FP flags)
   ✅ AI determinism contract (tests)
   → AI randomness source documentation
-  → Include firewall (sim vs render)
+  ✅ Include firewall (sim vs render)
 
 Phase C — Integration
   ✅ Engine runtime integration
   ✅ Networking ↔ state integration (snapshot-based)
-  → Replay ↔ save integration
+  🔧 Replay ↔ save integration
   ✅ Editor console commands for save/load
 
 Phase D — Tooling
-  → State hash diff visualizer
-  → Replay divergence inspector UI
+  🔧 State hash diff visualizer
+  🔧 Replay divergence inspector UI
   → FP drift detector
   → Job execution trace viewer
 

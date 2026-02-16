@@ -82,3 +82,40 @@ Because mechanics are assets, deterministic, and graph-based:
 - Mirror on client
 - Lockstep in P2P
 - Validate outputs
+
+## Simulation-First Rules
+
+All gameplay systems in Atlas are simulation-only. The following rules are
+enforced by the Atlas Core Contract:
+
+### Forbidden in Gameplay Code
+
+| Forbidden | Why |
+|-----------|-----|
+| `std::chrono` | Wall-clock time breaks determinism |
+| `rand()` / `<random>` | Non-deterministic RNG |
+| OS time APIs | Platform-dependent |
+| GPU/rendering calls | Presentation is not simulation |
+| File I/O | Side effects break replay |
+| Unordered containers | Iteration order is non-deterministic |
+
+### Required Practices
+
+- Use `DeterministicRNG` for all randomness (seeded, reproducible)
+- Use `TimeModel::Context().sim` for simulation time, never wall-clock
+- All gameplay state mutations occur only during simulation ticks
+- Gameplay systems must be registered with explicit execution order
+- All gameplay state must be categorized as `StateCategory::Simulated`
+
+### AI Randomness Sources
+
+AI systems must use **only** `DeterministicRNG` for any random decisions.
+The RNG seed is stored in the save file and replay header, ensuring that
+AI behavior is reproducible across:
+
+- Different machines (cross-platform determinism)
+- Save/load boundaries
+- Replay playback
+- Network rollback/resimulation
+
+See `engine/core/contract/DeterministicRNG.h` for the implementation.

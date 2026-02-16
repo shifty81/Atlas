@@ -88,6 +88,7 @@ add_executable(AtlasTests
     test_world_state.cpp
     test_save_system.cpp
     test_engine_integration.cpp
+    test_next_tasks.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
@@ -96,6 +97,7 @@ add_executable(AtlasTests
     ${CMAKE_SOURCE_DIR}/editor/panels/ProfilerPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ReplayTimelinePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/NetInspectorPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/StateHashDiffPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/tools/GamePackagerPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/tools/VisualDiff.cpp
     ${CMAKE_SOURCE_DIR}/editor/assistant/EditorAssistant.cpp
