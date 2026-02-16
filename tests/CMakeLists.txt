@@ -92,6 +92,7 @@ add_executable(AtlasTests
     test_gui_dsl_parser.cpp
     test_gui_input_recorder.cpp
     test_headless_gui.cpp
+    test_job_tracer.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
@@ -101,6 +102,7 @@ add_executable(AtlasTests
     ${CMAKE_SOURCE_DIR}/editor/panels/ReplayTimelinePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/NetInspectorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/StateHashDiffPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/JobTracePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/tools/GamePackagerPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/tools/VisualDiff.cpp
     ${CMAKE_SOURCE_DIR}/editor/assistant/EditorAssistant.cpp

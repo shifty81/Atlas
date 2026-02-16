@@ -784,6 +784,20 @@ void test_headless_gui_enqueue();
 void test_headless_gui_custom_command();
 void test_headless_gui_quoted_args();
 
+// Job Execution Tracer
+void test_job_tracer_empty();
+void test_job_tracer_single_tick();
+void test_job_tracer_multiple_ticks();
+void test_job_tracer_deterministic_hash();
+void test_job_tracer_different_order_different_hash();
+void test_job_tracer_compare_order();
+void test_job_tracer_max_history();
+void test_job_tracer_clear();
+void test_job_trace_panel_no_tracer();
+void test_job_trace_panel_consistent();
+void test_job_trace_panel_mismatch();
+void test_job_trace_panel_entries_at_tick();
+
 // Render and Platform tests
 void test_render_api_enum();
 void test_null_renderer();
@@ -1692,6 +1706,21 @@ int main() {
     test_headless_gui_enqueue();
     test_headless_gui_custom_command();
     test_headless_gui_quoted_args();
+
+    // Job Execution Tracer
+    std::cout << "\n--- Job Execution Tracer ---" << std::endl;
+    test_job_tracer_empty();
+    test_job_tracer_single_tick();
+    test_job_tracer_multiple_ticks();
+    test_job_tracer_deterministic_hash();
+    test_job_tracer_different_order_different_hash();
+    test_job_tracer_compare_order();
+    test_job_tracer_max_history();
+    test_job_tracer_clear();
+    test_job_trace_panel_no_tracer();
+    test_job_trace_panel_consistent();
+    test_job_trace_panel_mismatch();
+    test_job_trace_panel_entries_at_tick();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

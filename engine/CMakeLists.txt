@@ -75,6 +75,7 @@ add_library(AtlasEngine STATIC
     production/PlatformTarget.cpp
     sim/ReplayRecorder.cpp
     sim/StateHasher.cpp
+    sim/JobTracer.cpp
     sim/ReplayDivergenceInspector.cpp
     sim/TimeModel.cpp
     sim/WorldState.cpp
