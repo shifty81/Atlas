@@ -1,6 +1,7 @@
 #include "BehaviorGraph.h"
 #include <algorithm>
 #include <queue>
+#include <cstring>
 
 namespace atlas::ai {
 
@@ -178,6 +179,111 @@ size_t BehaviorGraph::NodeCount() const {
 
 bool BehaviorGraph::IsCompiled() const {
     return m_compiled;
+}
+
+std::vector<uint8_t> BehaviorGraph::SerializeState() const {
+    std::vector<uint8_t> buf;
+
+    auto writeU8 = [&](uint8_t v) { buf.push_back(v); };
+    auto writeU32 = [&](uint32_t v) {
+        size_t pos = buf.size();
+        buf.resize(pos + sizeof(uint32_t));
+        std::memcpy(buf.data() + pos, &v, sizeof(uint32_t));
+    };
+    auto writeU64 = [&](uint64_t v) {
+        size_t pos = buf.size();
+        buf.resize(pos + sizeof(uint64_t));
+        std::memcpy(buf.data() + pos, &v, sizeof(uint64_t));
+    };
+    auto writeFloat = [&](float v) {
+        size_t pos = buf.size();
+        buf.resize(pos + sizeof(float));
+        std::memcpy(buf.data() + pos, &v, sizeof(float));
+    };
+
+    // Compiled flag
+    writeU8(m_compiled ? 1 : 0);
+
+    // Execution order
+    writeU32(static_cast<uint32_t>(m_executionOrder.size()));
+    for (auto id : m_executionOrder) {
+        writeU32(id);
+    }
+
+    // Outputs map
+    writeU32(static_cast<uint32_t>(m_outputs.size()));
+    for (const auto& [key, val] : m_outputs) {
+        writeU64(key);
+        writeU8(static_cast<uint8_t>(val.type));
+        writeU32(static_cast<uint32_t>(val.data.size()));
+        for (float f : val.data) {
+            writeFloat(f);
+        }
+    }
+
+    return buf;
+}
+
+bool BehaviorGraph::DeserializeState(const std::vector<uint8_t>& data) {
+    size_t pos = 0;
+
+    auto readU8 = [&](uint8_t& v) -> bool {
+        if (pos + 1 > data.size()) return false;
+        v = data[pos++];
+        return true;
+    };
+    auto readU32 = [&](uint32_t& v) -> bool {
+        if (pos + sizeof(uint32_t) > data.size()) return false;
+        std::memcpy(&v, data.data() + pos, sizeof(uint32_t));
+        pos += sizeof(uint32_t);
+        return true;
+    };
+    auto readU64 = [&](uint64_t& v) -> bool {
+        if (pos + sizeof(uint64_t) > data.size()) return false;
+        std::memcpy(&v, data.data() + pos, sizeof(uint64_t));
+        pos += sizeof(uint64_t);
+        return true;
+    };
+    auto readFloat = [&](float& v) -> bool {
+        if (pos + sizeof(float) > data.size()) return false;
+        std::memcpy(&v, data.data() + pos, sizeof(float));
+        pos += sizeof(float);
+        return true;
+    };
+
+    uint8_t compiledFlag = 0;
+    if (!readU8(compiledFlag)) return false;
+    m_compiled = (compiledFlag != 0);
+
+    uint32_t orderSize = 0;
+    if (!readU32(orderSize)) return false;
+    if (orderSize > 1000000) return false;  // sanity limit
+    m_executionOrder.resize(orderSize);
+    for (uint32_t i = 0; i < orderSize; ++i) {
+        if (!readU32(m_executionOrder[i])) return false;
+    }
+
+    uint32_t outputCount = 0;
+    if (!readU32(outputCount)) return false;
+    if (outputCount > 1000000) return false;  // sanity limit
+    m_outputs.clear();
+    for (uint32_t i = 0; i < outputCount; ++i) {
+        uint64_t key = 0;
+        if (!readU64(key)) return false;
+        uint8_t typeVal = 0;
+        if (!readU8(typeVal)) return false;
+        uint32_t dataSize = 0;
+        if (!readU32(dataSize)) return false;
+        BehaviorValue val;
+        val.type = static_cast<BehaviorPinType>(typeVal);
+        val.data.resize(dataSize);
+        for (uint32_t j = 0; j < dataSize; ++j) {
+            if (!readFloat(val.data[j])) return false;
+        }
+        m_outputs[key] = std::move(val);
+    }
+
+    return true;
 }
 
 }

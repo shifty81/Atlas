@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <functional>
 
 namespace atlas::editor {
 
@@ -51,6 +52,11 @@ public:
     bool HasDivergence() const;
     int64_t DivergenceTick() const;
 
+    // Divergence callback
+    using DivergenceCallback = std::function<void(int64_t divergenceTick)>;
+    void SetOnDivergenceDetected(DivergenceCallback callback);
+    void CheckAndNotifyDivergence();
+
     // Input injection
     void InjectInput(uint32_t tick, const std::vector<uint8_t>& inputData);
     bool HasInjectedInputs() const;
@@ -65,6 +71,7 @@ private:
     uint32_t m_tickRate = 0;
     mutable ComparisonResult m_comparisonResult;
     mutable bool m_hasComparison = false;
+    DivergenceCallback m_divergenceCallback;
 };
 
 }

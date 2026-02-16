@@ -90,6 +90,7 @@ add_executable(AtlasTests
     test_save_system.cpp
     test_engine_integration.cpp
     test_next_tasks.cpp
+    test_next_tasks_phase2.cpp
     test_gui_dsl_parser.cpp
     test_gui_input_recorder.cpp
     test_headless_gui.cpp
@@ -104,6 +105,7 @@ add_executable(AtlasTests
     ${CMAKE_SOURCE_DIR}/editor/panels/ReplayTimelinePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/NetInspectorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/StateHashDiffPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/SaveFileBrowserPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/JobTracePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/tools/GamePackagerPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/tools/VisualDiff.cpp

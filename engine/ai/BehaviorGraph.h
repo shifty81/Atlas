@@ -99,6 +99,12 @@ public:
     size_t NodeCount() const;
     bool IsCompiled() const;
 
+    /// Serialize execution state (outputs + execution order) for save/load.
+    std::vector<uint8_t> SerializeState() const;
+
+    /// Deserialize previously saved execution state.
+    bool DeserializeState(const std::vector<uint8_t>& data);
+
 private:
     BehaviorNodeID m_nextID = 1;
     std::unordered_map<BehaviorNodeID, std::unique_ptr<BehaviorNode>> m_nodes;

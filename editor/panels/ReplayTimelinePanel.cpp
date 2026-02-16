@@ -180,4 +180,14 @@ std::vector<atlas::sim::ReplayFrame> ReplayTimelinePanel::BranchAt(uint32_t tick
     return branch;
 }
 
+void ReplayTimelinePanel::SetOnDivergenceDetected(DivergenceCallback callback) {
+    m_divergenceCallback = std::move(callback);
+}
+
+void ReplayTimelinePanel::CheckAndNotifyDivergence() {
+    if (HasDivergence() && m_divergenceCallback) {
+        m_divergenceCallback(DivergenceTick());
+    }
+}
+
 }

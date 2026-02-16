@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <vector>
 #include <string>
+#include <utility>
 
 #include "ReplayRecorder.h"  // for ReplayFrame
 #include "StateHasher.h"     // for HashEntry
@@ -35,6 +36,20 @@ struct DivergenceReport {
     uint32_t totalTicksCompared = 0;   ///< Total ticks that were compared
     uint32_t firstMatchingTicks = 0;   ///< Ticks that matched before divergence
     DivergenceSeverity severity = DivergenceSeverity::None;
+};
+
+/// Per-system state difference at a specific tick.
+struct SystemStateDiff {
+    std::string systemName;
+    uint64_t localHash = 0;
+    uint64_t remoteHash = 0;
+    bool matches = true;
+};
+
+/// Extended report with per-system breakdown.
+struct DetailedDivergenceReport {
+    DivergenceReport baseReport;
+    std::vector<SystemStateDiff> systemDiffs;
 };
 
 /// Inspects replay and hash-ladder data for divergences.
@@ -67,6 +82,13 @@ public:
 
     /// Whether the report indicates a critical divergence.
     static bool IsCritical(const DivergenceReport& report);
+
+    /// Build a detailed report with per-system state diff at the divergence tick.
+    static DetailedDivergenceReport CompareDetailed(
+        const StateHasher& local,
+        const StateHasher& remote,
+        const std::vector<std::pair<std::string, uint64_t>>& localSystemHashes,
+        const std::vector<std::pair<std::string, uint64_t>>& remoteSystemHashes);
 
     // --- Instance history tracking ---
 

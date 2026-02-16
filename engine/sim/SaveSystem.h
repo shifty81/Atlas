@@ -45,6 +45,25 @@ enum class SaveResult {
     IOError
 };
 
+/// Header for a partial (chunk-based) save file.
+struct PartialSaveHeader {
+    uint32_t magic = 0x41535057;  // "ASPW" (Atlas Save Partial World)
+    uint32_t version = 1;
+    uint32_t tickRate = 30;
+    uint64_t saveTick = 0;
+    uint64_t stateHash = 0;
+    uint32_t seed = 0;
+    uint32_t chunkCount = 0;      ///< Number of chunks in this save.
+};
+
+/// A single chunk entry in a partial save.
+struct ChunkSaveEntry {
+    int32_t x = 0;
+    int32_t y = 0;
+    int32_t z = 0;
+    std::vector<uint8_t> data;
+};
+
 /// Deterministic save/load system.
 class SaveSystem {
 public:
@@ -86,11 +105,29 @@ public:
     /// Clear loaded data.
     void Clear();
 
+    /// Save a partial world (subset of chunks) to a file.
+    SaveResult SavePartial(const std::string& path,
+                           uint64_t tick,
+                           uint32_t tickRate,
+                           uint32_t seed,
+                           const std::vector<ChunkSaveEntry>& chunks);
+
+    /// Load a partial world save.
+    SaveResult LoadPartial(const std::string& path);
+
+    /// Get the partial save header from the last successful LoadPartial().
+    const PartialSaveHeader& PartialHeader() const;
+
+    /// Get the chunk entries from the last successful LoadPartial().
+    const std::vector<ChunkSaveEntry>& Chunks() const;
+
 private:
     SaveHeader m_header;
     std::vector<uint8_t> m_ecsData;
     std::vector<uint8_t> m_auxData;
     std::string m_metadata;
+    PartialSaveHeader m_partialHeader;
+    std::vector<ChunkSaveEntry> m_chunks;
 };
 
 }  // namespace atlas::sim
