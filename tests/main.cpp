@@ -1005,6 +1005,60 @@ void test_attach_disconnect();
 void test_default_editor_dsl_parses();
 void test_default_editor_dsl_has_panels();
 
+// Proof Viewer Panel tests
+void test_proof_viewer_init();
+void test_proof_viewer_load_specs();
+void test_proof_viewer_select_spec();
+void test_proof_viewer_tokenize();
+void test_proof_viewer_invariants();
+void test_proof_viewer_verification_status();
+void test_proof_viewer_line_count();
+void test_proof_viewer_empty_select();
+
+// Replay Proof Exporter tests
+void test_proof_exporter_empty();
+void test_proof_exporter_add_entries();
+void test_proof_exporter_validate_chain_valid();
+void test_proof_exporter_validate_chain_invalid();
+void test_proof_exporter_export_tla();
+void test_proof_exporter_export_json();
+void test_proof_exporter_export_csv();
+void test_proof_exporter_save_points();
+void test_proof_exporter_format_entry();
+void test_proof_exporter_clear();
+
+// CI Dashboard Panel tests
+void test_ci_dashboard_init();
+void test_ci_dashboard_start_run();
+void test_ci_dashboard_add_checks();
+void test_ci_dashboard_complete_run_passed();
+void test_ci_dashboard_complete_run_failed();
+void test_ci_dashboard_partial_failure();
+void test_ci_dashboard_pass_rate();
+void test_ci_dashboard_history();
+void test_ci_dashboard_max_history();
+void test_ci_dashboard_summary();
+void test_ci_dashboard_clear();
+
+// TLC Model Checker
+void test_tlc_register_spec();
+void test_tlc_register_multiple_specs();
+void test_tlc_register_bad_path();
+void test_tlc_unregister_spec();
+void test_tlc_get_spec();
+void test_tlc_extract_invariants_replay();
+void test_tlc_extract_invariants_ecs();
+void test_tlc_extract_invariants_layout();
+void test_tlc_validate_spec();
+void test_tlc_check_spec();
+void test_tlc_check_spec_not_found();
+void test_tlc_check_all();
+void test_tlc_ci_check_pass();
+void test_tlc_format_report();
+void test_tlc_export_report();
+void test_tlc_path_management();
+void test_tlc_extract_invariants_static();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -2121,6 +2175,64 @@ int main() {
     test_attach_disconnect();
     test_default_editor_dsl_parses();
     test_default_editor_dsl_has_panels();
+
+    // Proof Viewer Panel
+    std::cout << "\n--- Proof Viewer Panel ---" << std::endl;
+    test_proof_viewer_init();
+    test_proof_viewer_load_specs();
+    test_proof_viewer_select_spec();
+    test_proof_viewer_tokenize();
+    test_proof_viewer_invariants();
+    test_proof_viewer_verification_status();
+    test_proof_viewer_line_count();
+    test_proof_viewer_empty_select();
+
+    // Replay Proof Exporter
+    std::cout << "\n--- Replay Proof Exporter ---" << std::endl;
+    test_proof_exporter_empty();
+    test_proof_exporter_add_entries();
+    test_proof_exporter_validate_chain_valid();
+    test_proof_exporter_validate_chain_invalid();
+    test_proof_exporter_export_tla();
+    test_proof_exporter_export_json();
+    test_proof_exporter_export_csv();
+    test_proof_exporter_save_points();
+    test_proof_exporter_format_entry();
+    test_proof_exporter_clear();
+
+    // CI Dashboard Panel
+    std::cout << "\n--- CI Dashboard Panel ---" << std::endl;
+    test_ci_dashboard_init();
+    test_ci_dashboard_start_run();
+    test_ci_dashboard_add_checks();
+    test_ci_dashboard_complete_run_passed();
+    test_ci_dashboard_complete_run_failed();
+    test_ci_dashboard_partial_failure();
+    test_ci_dashboard_pass_rate();
+    test_ci_dashboard_history();
+    test_ci_dashboard_max_history();
+    test_ci_dashboard_summary();
+    test_ci_dashboard_clear();
+
+    // TLC Model Checker
+    std::cout << "\n--- TLC Model Checker ---" << std::endl;
+    test_tlc_register_spec();
+    test_tlc_register_multiple_specs();
+    test_tlc_register_bad_path();
+    test_tlc_unregister_spec();
+    test_tlc_get_spec();
+    test_tlc_extract_invariants_replay();
+    test_tlc_extract_invariants_ecs();
+    test_tlc_extract_invariants_layout();
+    test_tlc_validate_spec();
+    test_tlc_check_spec();
+    test_tlc_check_spec_not_found();
+    test_tlc_check_all();
+    test_tlc_ci_check_pass();
+    test_tlc_format_report();
+    test_tlc_export_report();
+    test_tlc_path_management();
+    test_tlc_extract_invariants_static();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

@@ -107,6 +107,10 @@ add_executable(AtlasTests
     test_lockdown_phase2.cpp
     test_lockdown_phase3.cpp
     test_gui_completion.cpp
+    test_tlc_model_checker.cpp
+    test_proof_viewer.cpp
+    test_replay_proof_exporter.cpp
+    test_ci_dashboard.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
@@ -118,6 +122,8 @@ add_executable(AtlasTests
     ${CMAKE_SOURCE_DIR}/editor/panels/StateHashDiffPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/SaveFileBrowserPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/JobTracePanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/ProofViewerPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/CIDashboardPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/tools/GamePackagerPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/tools/VisualDiff.cpp
     ${CMAKE_SOURCE_DIR}/editor/assistant/EditorAssistant.cpp

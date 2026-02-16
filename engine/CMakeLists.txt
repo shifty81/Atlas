@@ -86,6 +86,7 @@ add_library(AtlasEngine STATIC
     production/BuildProfile.cpp
     production/PlatformTarget.cpp
     production/BuildManifest.cpp
+    sim/ReplayProofExporter.cpp
     sim/ReplayRecorder.cpp
     sim/StateHasher.cpp
     sim/JobTracer.cpp
@@ -102,6 +103,7 @@ add_library(AtlasEngine STATIC
     render/AtlasShaderIR.cpp
     sim/SimulationStateAuditor.cpp
     sim/DesyncReproducer.cpp
+    sim/TLCModelChecker.cpp
     assets/ServerAssetValidator.cpp
 )
 
