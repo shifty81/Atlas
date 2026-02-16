@@ -1,0 +1,53 @@
+#pragma once
+#include <cstdint>
+#include <string>
+
+namespace atlas::platform {
+
+struct WindowEvent {
+    enum class Type : uint8_t {
+        NoEvent,
+        Close,
+        Resize,
+        KeyDown,
+        KeyUp,
+        MouseMove,
+        MouseButtonDown,
+        MouseButtonUp,
+        TextInput
+    };
+
+    Type type = Type::NoEvent;
+    int32_t width = 0;
+    int32_t height = 0;
+    uint32_t keyCode = 0;
+    int32_t mouseX = 0;
+    int32_t mouseY = 0;
+    uint8_t mouseButton = 0;
+    char textChar = 0;
+};
+
+struct PlatformWindowConfig {
+    std::string title = "Atlas Engine";
+    int32_t width = 1280;
+    int32_t height = 720;
+    bool resizable = true;
+};
+
+class PlatformWindow {
+public:
+    virtual ~PlatformWindow() = default;
+
+    virtual bool Init(const PlatformWindowConfig& config) = 0;
+    virtual void Shutdown() = 0;
+
+    virtual bool PollEvent(WindowEvent& event) = 0;
+
+    virtual void SwapBuffers() = 0;
+
+    virtual int32_t Width() const = 0;
+    virtual int32_t Height() const = 0;
+    virtual bool IsOpen() const = 0;
+};
+
+} // namespace atlas::platform
