@@ -177,21 +177,21 @@ Replay system closure, hash ladder verification, and TLA+ formal proofs.
 - [x] Hash ladder verification (H[n] = Hash(H[n-1] || State[n] || Inputs[n]))
 - [x] Replay Timeline panel (scrub, compare, branch, inject inputs)
 - [x] Replay divergence inspector (auto-open diff view on hash mismatch)
-- [ ] TLA+ specifications (ecs.tla, replay.tla, layout.tla)
+- [x] TLA+ specifications (ecs.tla, replay.tla, layout.tla)
 - [ ] TLC model checker CI integration
 - [ ] Proof viewer panel (syntax-highlighted TLA+ in editor)
 - [ ] Replay → proof importer (trace → checkable format)
 - [x] Cross-platform replay equivalence verification
 - [x] Deterministic allocator (arena, stable IDs, no pointer-order dependence)
-- [ ] AtlasShaderIR (deterministic shader compilation)
+- [x] AtlasShaderIR (deterministic shader compilation)
 
 ## Phase 10 — Flow Graph & Procedural Content 🔧
 
 Blueprint-like visual scripting and Blender-like procedural modeling.
 
-- [ ] Flow Graph IR (file format, schema validation, version migration)
-- [ ] Flow Graph VM runtime (deterministic node execution)
-- [ ] Flow Graph debugger (breakpoints, timeline stepping, value inspection)
+- [x] Flow Graph IR (file format, schema validation, version migration)
+- [x] Flow Graph VM runtime (deterministic node execution)
+- [x] Flow Graph debugger (breakpoints, timeline stepping, value inspection)
 - [ ] Flow Graph → C++ codegen (release build optimization)
 - [ ] UI logic graphs (safe subset for UI behavior)
 - [ ] Procedural mesh graph library (primitives, operations, deformers)
@@ -220,9 +220,9 @@ Production-grade CI, build experience, and template repository support.
 
 - [x] Determinism CI gate (golden replay comparison, hash validation)
 - [x] Contract bot (automated PR violation scanning)
-- [ ] atlas.build.json schema (artifact definitions, validation requirements)
+- [x] atlas.build.json schema (artifact definitions, validation requirements)
 - [ ] First-run experience (one-command build, /run shortcuts)
-- [ ] Build manifest (executable hashes, layout hashes, DSL version)
+- [x] Build manifest (executable hashes, layout hashes, DSL version)
 - [ ] atlas init tool (namespace rewrite, core freeze, editor branding)
 - [ ] Template contract (ATLAS_TEMPLATE_CONTRACT.md for forks)
 - [ ] Determinism versioning strategy across forks
@@ -248,7 +248,7 @@ Production-grade CI, build experience, and template repository support.
 | Polish | ✅ Complete | Undo/redo, visual diff, profiler, replay recorder, crash analysis |
 | Game Module System | ✅ Complete | IGameModule interface, ModuleLoader, AtlasGameplay library, EveOffline (shipped in-repo), SDK export |
 | GUI System & Editor Hardening | ✅ Complete | Custom GUI DSL, layout solver, editor self-hosting, permissions |
-| Replay & Formal Verification | 🔧 In Progress | Hash ladder implemented, TLA+ specs and proof viewer pending |
-| Flow Graph & Procedural Content | 🔧 Planned | Flow Graph IR/VM, procedural modeling, animation graphs |
+| Replay & Formal Verification | 🔧 In Progress | TLA+ specs and ShaderIR complete, TLC CI and proof viewer pending |
+| Flow Graph & Procedural Content | 🔧 In Progress | Flow Graph IR/VM/debugger complete, procedural modeling and codegen pending |
 | AtlasAI & Game GUI Authoring | 🔧 Planned | AI assistant, game UI authoring, widget DSL |
-| CI, Build & Template System | 🔧 In Progress | Determinism CI gate and contract bot added, remaining items planned |
+| CI, Build & Template System | 🔧 In Progress | Determinism CI gate, contract bot, build manifest and schema added |

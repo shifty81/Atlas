@@ -68,6 +68,12 @@ public:
     size_t NodeCount() const;
     bool IsCompiled() const;
 
+    // Accessors for debugger / IR tooling
+    const std::vector<FlowNodeID>& ExecutionOrder() const;
+    FlowNode* GetNode(FlowNodeID id) const;
+    const std::vector<FlowEdge>& Edges() const;
+    void SetOutput(FlowNodeID node, FlowPortID port, FlowValue value);
+
 private:
     FlowNodeID m_nextID = 1;
     std::unordered_map<FlowNodeID, std::unique_ptr<FlowNode>> m_nodes;
