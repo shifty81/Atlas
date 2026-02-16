@@ -69,6 +69,7 @@ public:
     void RunServer();
 
     bool LoadAndReplay(const std::string& savePath);
+    bool ReplayFromSave(const std::string& savePath, const std::string& replayPath);
     bool RollbackToTick(uint64_t tick);
 
     bool Running() const;

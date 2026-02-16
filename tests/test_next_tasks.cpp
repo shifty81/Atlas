@@ -428,3 +428,144 @@ void test_hash_ladder_save_load_continuity() {
     std::remove(path.c_str());
     std::cout << "[PASS] test_hash_ladder_save_load_continuity" << std::endl;
 }
+
+// --- Replay from save ---
+
+void test_engine_replay_from_save() {
+    const std::string savePath = "/tmp/atlas_rfs_save.asav";
+    const std::string replayPath = "/tmp/atlas_rfs_replay.rply";
+    std::remove(savePath.c_str());
+    std::remove(replayPath.c_str());
+
+    // Step 1: Run engine for 10 ticks and save at tick 5
+    uint64_t savedTick = 0;
+    {
+        EngineConfig cfg;
+        cfg.mode = EngineMode::Server;
+        cfg.tickRate = 60;
+        cfg.maxTicks = 10;
+
+        Engine engine(cfg);
+        engine.InitCore();
+        engine.InitECS();
+        engine.InitNetworking();
+        engine.GetScheduler().SetFramePacing(false);
+
+        engine.GetWorld().CreateEntity();
+        engine.Run();
+
+        // Save at current tick after running for maxTicks
+        savedTick = engine.GetTimeModel().Context().sim.tick;
+        auto ecsData = engine.GetWorld().Serialize();
+        auto result = engine.GetSaveSystem().Save(savePath,
+            savedTick, cfg.tickRate, 0, ecsData);
+        assert(result == SaveResult::Success);
+    }
+
+    // Step 2: Create a replay with frames continuing from the save
+    {
+        ReplayRecorder recorder;
+        recorder.StartRecording(60, 42);
+        // Record frames for ticks 1-15 (some before save, some after)
+        for (uint32_t t = 1; t <= 15; ++t) {
+            recorder.RecordFrame(t, {static_cast<uint8_t>(t)});
+        }
+        recorder.StopRecording();
+        assert(recorder.SaveReplay(replayPath));
+    }
+
+    // Step 3: Replay from save
+    {
+        EngineConfig cfg;
+        cfg.mode = EngineMode::Server;
+        cfg.tickRate = 60;
+        cfg.maxTicks = 0;
+
+        Engine engine(cfg);
+        engine.InitCore();
+        engine.InitECS();
+        engine.InitNetworking();
+        engine.GetScheduler().SetFramePacing(false);
+
+        bool success = engine.ReplayFromSave(savePath, replayPath);
+        assert(success);
+
+        // After replay: tick should be saveTick + number of post-save frames
+        // Save was at tick 10, replay has frames 11-15 = 5 frames after save
+        assert(engine.GetTimeModel().Context().sim.tick == savedTick + 5);
+        assert(engine.GetWorld().EntityCount() >= 1);
+    }
+
+    std::remove(savePath.c_str());
+    std::remove(replayPath.c_str());
+    std::cout << "[PASS] test_engine_replay_from_save" << std::endl;
+}
+
+void test_engine_replay_from_save_bad_save() {
+    const std::string replayPath = "/tmp/atlas_rfs_replay2.rply";
+    {
+        ReplayRecorder recorder;
+        recorder.StartRecording(60);
+        recorder.RecordFrame(1, {1});
+        recorder.StopRecording();
+        recorder.SaveReplay(replayPath);
+    }
+
+    EngineConfig cfg;
+    cfg.mode = EngineMode::Server;
+    cfg.tickRate = 60;
+
+    Engine engine(cfg);
+    engine.InitCore();
+    engine.InitECS();
+    engine.InitNetworking();
+
+    bool success = engine.ReplayFromSave("/tmp/nonexistent.asav", replayPath);
+    assert(!success);
+
+    std::remove(replayPath.c_str());
+    std::cout << "[PASS] test_engine_replay_from_save_bad_save" << std::endl;
+}
+
+void test_engine_replay_from_save_bad_replay() {
+    const std::string savePath = "/tmp/atlas_rfs_save2.asav";
+    std::remove(savePath.c_str());
+
+    // Create a valid save
+    {
+        EngineConfig cfg;
+        cfg.mode = EngineMode::Server;
+        cfg.tickRate = 60;
+        cfg.maxTicks = 5;
+
+        Engine engine(cfg);
+        engine.InitCore();
+        engine.InitECS();
+        engine.InitNetworking();
+        engine.GetScheduler().SetFramePacing(false);
+        engine.Run();
+
+        auto ecsData = engine.GetWorld().Serialize();
+        engine.GetSaveSystem().Save(savePath,
+            engine.GetTimeModel().Context().sim.tick,
+            cfg.tickRate, 0, ecsData);
+    }
+
+    // Try to replay from save with bad replay path
+    {
+        EngineConfig cfg;
+        cfg.mode = EngineMode::Server;
+        cfg.tickRate = 60;
+
+        Engine engine(cfg);
+        engine.InitCore();
+        engine.InitECS();
+        engine.InitNetworking();
+
+        bool success = engine.ReplayFromSave(savePath, "/tmp/nonexistent.rply");
+        assert(!success);
+    }
+
+    std::remove(savePath.c_str());
+    std::cout << "[PASS] test_engine_replay_from_save_bad_replay" << std::endl;
+}

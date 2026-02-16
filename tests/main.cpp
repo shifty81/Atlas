@@ -745,6 +745,9 @@ void test_net_broadcast_save_tick();
 void test_state_hash_diff_panel_no_divergence();
 void test_state_hash_diff_panel_with_divergence();
 void test_hash_ladder_save_load_continuity();
+void test_engine_replay_from_save();
+void test_engine_replay_from_save_bad_save();
+void test_engine_replay_from_save_bad_replay();
 
 // GUI DSL Parser tests
 void test_dsl_parse_simple_layout();
@@ -784,6 +787,20 @@ void test_headless_gui_enqueue();
 void test_headless_gui_custom_command();
 void test_headless_gui_quoted_args();
 
+// Job Execution Tracer
+void test_job_tracer_empty();
+void test_job_tracer_single_tick();
+void test_job_tracer_multiple_ticks();
+void test_job_tracer_deterministic_hash();
+void test_job_tracer_different_order_different_hash();
+void test_job_tracer_compare_order();
+void test_job_tracer_max_history();
+void test_job_tracer_clear();
+void test_job_trace_panel_no_tracer();
+void test_job_trace_panel_consistent();
+void test_job_trace_panel_mismatch();
+void test_job_trace_panel_entries_at_tick();
+
 // Render and Platform tests
 void test_render_api_enum();
 void test_null_renderer();
@@ -798,6 +815,20 @@ void test_engine_headless_no_window();
 void test_engine_server_no_window();
 void test_platform_window_event_type();
 void test_platform_window_config();
+
+// Component Category
+void test_component_category_defaults();
+void test_component_category_simulated();
+void test_component_category_presentation();
+void test_component_category_debug();
+void test_component_category_derived();
+void test_component_category_assert_simulated();
+void test_component_category_assert_not_presentation();
+void test_component_category_runtime_query();
+
+// Include Firewall tests
+void test_include_firewall_sim_no_render();
+void test_include_firewall_contract_no_render();
 
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
@@ -1651,6 +1682,9 @@ int main() {
     test_state_hash_diff_panel_no_divergence();
     test_state_hash_diff_panel_with_divergence();
     test_hash_ladder_save_load_continuity();
+    test_engine_replay_from_save();
+    test_engine_replay_from_save_bad_save();
+    test_engine_replay_from_save_bad_replay();
 
     // GUI DSL Parser
     std::cout << "\n--- GUI DSL Parser ---" << std::endl;
@@ -1692,6 +1726,37 @@ int main() {
     test_headless_gui_enqueue();
     test_headless_gui_custom_command();
     test_headless_gui_quoted_args();
+
+    // Job Execution Tracer
+    std::cout << "\n--- Job Execution Tracer ---" << std::endl;
+    test_job_tracer_empty();
+    test_job_tracer_single_tick();
+    test_job_tracer_multiple_ticks();
+    test_job_tracer_deterministic_hash();
+    test_job_tracer_different_order_different_hash();
+    test_job_tracer_compare_order();
+    test_job_tracer_max_history();
+    test_job_tracer_clear();
+    test_job_trace_panel_no_tracer();
+    test_job_trace_panel_consistent();
+    test_job_trace_panel_mismatch();
+    test_job_trace_panel_entries_at_tick();
+
+    // Component Category
+    std::cout << "\n--- Component Category ---" << std::endl;
+    test_component_category_defaults();
+    test_component_category_simulated();
+    test_component_category_presentation();
+    test_component_category_debug();
+    test_component_category_derived();
+    test_component_category_assert_simulated();
+    test_component_category_assert_not_presentation();
+    test_component_category_runtime_query();
+
+    // Include Firewall
+    std::cout << "\n--- Include Firewall ---" << std::endl;
+    test_include_firewall_sim_no_render();
+    test_include_firewall_contract_no_render();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

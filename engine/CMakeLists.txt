@@ -75,6 +75,7 @@ add_library(AtlasEngine STATIC
     production/PlatformTarget.cpp
     sim/ReplayRecorder.cpp
     sim/StateHasher.cpp
+    sim/JobTracer.cpp
     sim/ReplayDivergenceInspector.cpp
     sim/TimeModel.cpp
     sim/WorldState.cpp
@@ -206,4 +207,28 @@ install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/AtlasEngineConfig.cmake"
     "${CMAKE_CURRENT_BINARY_DIR}/AtlasEngineConfigVersion.cmake"
     DESTINATION lib/cmake/AtlasEngine
+)
+
+# ============================================================
+# Include Firewall Enforcement
+# ============================================================
+# Simulation code must never include render headers.
+# This prevents accidental non-deterministic coupling.
+
+# Collect simulation sources
+file(GLOB_RECURSE SIM_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/sim/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sim/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/core/contract/*.h"
+)
+
+# Custom target that checks for forbidden includes
+add_custom_target(atlas_include_firewall
+    COMMAND ${CMAKE_COMMAND} -E echo "Checking include firewall..."
+    COMMAND ${CMAKE_COMMAND}
+        -DSIM_DIR=${CMAKE_CURRENT_SOURCE_DIR}/sim
+        -DCONTRACT_DIR=${CMAKE_CURRENT_SOURCE_DIR}/core/contract
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/check_include_firewall.cmake
+    COMMENT "Verifying simulation code does not include render headers"
+    VERBATIM
 )

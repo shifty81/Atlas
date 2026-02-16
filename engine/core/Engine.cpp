@@ -3,6 +3,7 @@
 #include "../render/GLRenderer.h"
 #include "../render/VulkanRenderer.h"
 #include "../sim/StateHasher.h"
+#include "../sim/ReplayRecorder.h"
 
 #ifdef __linux__
 #include "../platform/X11Window.h"
@@ -283,6 +284,40 @@ bool Engine::LoadAndReplay(const std::string& savePath) {
     }
 
     m_timeModel.SetTick(m_saveSystem.Header().saveTick);
+    return true;
+}
+
+bool Engine::ReplayFromSave(const std::string& savePath, const std::string& replayPath) {
+    // Step 1: Load save file to restore world state
+    auto result = m_saveSystem.Load(savePath);
+    if (result != sim::SaveResult::Success) {
+        return false;
+    }
+
+    if (!m_world.Deserialize(m_saveSystem.ECSData())) {
+        return false;
+    }
+
+    uint64_t saveTick = m_saveSystem.Header().saveTick;
+    m_timeModel.SetTick(saveTick);
+
+    // Step 2: Load replay file
+    sim::ReplayRecorder replay;
+    if (!replay.LoadReplay(replayPath)) {
+        return false;
+    }
+
+    // Step 3: Apply replay inputs from save tick forward
+    m_scheduler.SetTickRate(m_config.tickRate);
+    m_scheduler.SetFramePacing(false);
+
+    for (const auto& frame : replay.Frames()) {
+        if (frame.tick <= saveTick) continue;  // Skip frames before/at save point
+
+        m_timeModel.AdvanceTick();
+        m_world.Update(m_timeModel.Context().sim.fixedDeltaTime);
+    }
+
     return true;
 }
 

@@ -55,6 +55,7 @@ cmake_install.cmake
 compile_commands.json
 *.cmake
 !CMakeLists.txt
+!engine/cmake/*.cmake
 
 # Visual Studio
 .vs/
