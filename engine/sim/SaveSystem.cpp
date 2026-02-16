@@ -73,6 +73,14 @@ SaveResult SaveSystem::Load(const std::string& path) {
         return SaveResult::VersionMismatch;
     }
 
+    // Sanity check sizes to prevent malicious allocations.
+    static constexpr uint32_t kMaxDataSize = 256 * 1024 * 1024;  // 256 MB
+    if (header.ecsDataSize > kMaxDataSize ||
+        header.auxDataSize > kMaxDataSize ||
+        header.metadataSize > kMaxDataSize) {
+        return SaveResult::InvalidFormat;
+    }
+
     std::vector<uint8_t> ecsData(header.ecsDataSize);
     if (header.ecsDataSize > 0) {
         in.read(reinterpret_cast<char*>(ecsData.data()),
