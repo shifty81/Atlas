@@ -49,6 +49,15 @@ public:
     ValidationResult ValidateHeader(const std::string& filePath);
     static uint64_t ComputeFileHash(const std::string& filePath);
 
+    /// Lock an asset so it cannot be modified. Returns true on success.
+    bool LockAsset(const std::string& assetId);
+
+    /// Check whether an asset is locked (immutable).
+    bool IsAssetLocked(const std::string& assetId) const;
+
+    /// Returns the set of all locked asset IDs.
+    const std::vector<std::string>& LockedAssets() const;
+
     // --- Version migration ---
 
     void RegisterMigration(uint16_t fromVersion, uint16_t toVersion,
@@ -70,6 +79,7 @@ public:
 private:
     std::vector<MigrationRule> m_migrations;
     std::vector<AssetDependency> m_dependencies;
+    std::vector<std::string> m_lockedAssets;
 };
 
 }  // namespace atlas::asset

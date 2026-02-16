@@ -20,10 +20,15 @@ public:
     void SetFramePacing(bool enabled);
     bool FramePacingEnabled() const;
 
+    /// Lock the tick rate so it cannot be changed after initialization.
+    void LockTickRate();
+    bool IsTickRateLocked() const;
+
 private:
     uint32_t m_tickRate = 30;
     uint64_t m_currentTick = 0;
     bool m_framePacing = true;
+    bool m_tickRateLocked = false;
     std::chrono::steady_clock::time_point m_nextTick{};
     bool m_firstTick = true;
 };

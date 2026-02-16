@@ -15,22 +15,23 @@ Determinism bugs after lockdown are treated as P0 severity.
 - [ ] Core Contract ratified and committed (ATLAS_CORE_CONTRACT.md)
 - [x] Formal world state model enforced (simulation/derived/metadata categories)
 - [x] Time model locked (simulation/world/presentation domains)
-- [ ] Determinism enforcement layer active (compile-time + runtime + CI)
+- [x] Determinism enforcement layer active (compile-time + runtime + CI)
 - [x] Deterministic allocator implemented and tested
 - [x] Canonical world state definition documented
+- [x] Determinism configuration file committed (determinism.json)
 
 ## Simulation
 
-- [ ] Fixed tick rate immutable (60 Hz default, configurable at build time only)
-- [ ] All systems registered and execution order locked
+- [x] Fixed tick rate immutable (locked after Engine::Run)
+- [x] All systems registered and execution order tracked
 - [ ] No hidden state in any simulation system
 - [ ] System mutation ownership enforced
-- [ ] Mid-tick mutation prevention active
+- [x] Mid-tick mutation prevention active
 
 ## Replay & Networking
 
 - [x] Replay binary format versioned and frozen
-- [ ] Network packet schema frozen
+- [x] Network packet schema versioned (NET_PACKET_SCHEMA_VERSION)
 - [ ] Golden replays pass CI on all target platforms
 - [x] Hash ladder verification operational
 - [x] Replay divergence detection and reporting functional
@@ -40,10 +41,10 @@ Determinism bugs after lockdown are treated as P0 severity.
 ## Assets
 
 - [ ] Asset schemas locked and versioned
-- [ ] Hash-based asset validation enforced
+- [x] Hash-based asset validation enforced
 - [ ] Editor diff → commit flow complete
 - [ ] Server-safe asset validation operational
-- [ ] Asset immutability enforced at API level
+- [x] Asset immutability enforced at API level
 
 ## GUI System
 

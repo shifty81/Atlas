@@ -216,4 +216,25 @@ size_t AssetValidator::DependencyCount() const {
     return m_dependencies.size();
 }
 
+// ---------------------------------------------------------------------------
+// Asset immutability enforcement
+// ---------------------------------------------------------------------------
+
+bool AssetValidator::LockAsset(const std::string& assetId) {
+    if (IsAssetLocked(assetId)) return false;
+    m_lockedAssets.push_back(assetId);
+    return true;
+}
+
+bool AssetValidator::IsAssetLocked(const std::string& assetId) const {
+    for (const auto& id : m_lockedAssets) {
+        if (id == assetId) return true;
+    }
+    return false;
+}
+
+const std::vector<std::string>& AssetValidator::LockedAssets() const {
+    return m_lockedAssets;
+}
+
 }  // namespace atlas::asset
