@@ -272,7 +272,7 @@ These systems are implemented, tested, and functional:
 - **Replay recording** — record/playback with divergence detection
 - **ECS framework** — entity management with serialization and rollback support
 - **Networking** — lockstep and rollback foundations with client-server and P2P
-- **100+ unit tests pass** — 1 known pre-existing replay recorder edge case
+- **100+ unit tests pass** — 1 known pre-existing issue: `test_replay_record_frames` (inputData size assertion in `test_replay_recorder.cpp:45`)
 - **CI determinism gate** — automated verification that simulation is bit-exact
 - **Undo/redo** — command-pattern history across editor operations
 - **Project system** — schema-validated `.atlas` project files with multi-project support
