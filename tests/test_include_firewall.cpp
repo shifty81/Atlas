@@ -18,19 +18,22 @@ static bool fileContainsForbiddenInclude(const std::string& path) {
     std::ifstream file(path);
     if (!file.is_open()) return false;
 
+    // Skip lines where #include appears after a comment
     std::string line;
     while (std::getline(file, line)) {
-        // Skip comments
-        if (line.find("//") == 0) continue;
+        auto includePos = line.find("#include");
+        if (includePos == std::string::npos) continue;
+
+        // Skip if a comment appears before #include
+        auto commentPos = line.find("//");
+        if (commentPos != std::string::npos && commentPos < includePos) continue;
 
         // Check for render includes
-        if (line.find("#include") != std::string::npos) {
-            if (line.find("GLRenderer") != std::string::npos ||
-                line.find("VulkanRenderer") != std::string::npos ||
-                line.find("platform/X11Window") != std::string::npos ||
-                line.find("platform/PlatformWindow") != std::string::npos) {
-                return true;
-            }
+        if (line.find("GLRenderer") != std::string::npos ||
+            line.find("VulkanRenderer") != std::string::npos ||
+            line.find("platform/X11Window") != std::string::npos ||
+            line.find("platform/PlatformWindow") != std::string::npos) {
+            return true;
         }
     }
     return false;

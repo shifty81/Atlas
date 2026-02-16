@@ -454,7 +454,7 @@ void test_engine_replay_from_save() {
         engine.GetWorld().CreateEntity();
         engine.Run();
 
-        // Save at tick 10
+        // Save at current tick after running for maxTicks
         savedTick = engine.GetTimeModel().Context().sim.tick;
         auto ecsData = engine.GetWorld().Serialize();
         auto result = engine.GetSaveSystem().Save(savePath,
