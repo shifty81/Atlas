@@ -170,7 +170,7 @@ Advanced GUI architecture, editor refinements, and determinism enforcement.
 - [x] Client HUD overlay (tick count, determinism warnings, time controls)
 - [x] Headless server GUI (state-only panel tree, CLI commands)
 
-## Phase 9 — Replay & Formal Verification 🔧
+## Phase 9 — Replay & Formal Verification ✅
 
 Replay system closure, hash ladder verification, and TLA+ formal proofs.
 
@@ -178,9 +178,9 @@ Replay system closure, hash ladder verification, and TLA+ formal proofs.
 - [x] Replay Timeline panel (scrub, compare, branch, inject inputs)
 - [x] Replay divergence inspector (auto-open diff view on hash mismatch)
 - [x] TLA+ specifications (ecs.tla, replay.tla, layout.tla)
-- [ ] TLC model checker CI integration
-- [ ] Proof viewer panel (syntax-highlighted TLA+ in editor)
-- [ ] Replay → proof importer (trace → checkable format)
+- [x] TLC model checker CI integration (spec registration, invariant extraction, CI exit codes)
+- [x] Proof viewer panel (syntax-highlighted TLA+ in editor with tokenizer)
+- [x] Replay → proof importer (trace → TLA+/JSON/CSV checkable format)
 - [x] Cross-platform replay equivalence verification
 - [x] Deterministic allocator (arena, stable IDs, no pointer-order dependence)
 - [x] AtlasShaderIR (deterministic shader compilation)
@@ -226,7 +226,7 @@ Production-grade CI, build experience, and template repository support.
 - [ ] atlas init tool (namespace rewrite, core freeze, editor branding)
 - [ ] Template contract (ATLAS_TEMPLATE_CONTRACT.md for forks)
 - [ ] Determinism versioning strategy across forks
-- [ ] CI dashboard panel (in-editor CI results visualization)
+- [x] CI dashboard panel (in-editor CI results visualization)
 - [ ] Certified build mode (audit-grade verification artifacts)
 
 ---
@@ -248,7 +248,7 @@ Production-grade CI, build experience, and template repository support.
 | Polish | ✅ Complete | Undo/redo, visual diff, profiler, replay recorder, crash analysis |
 | Game Module System | ✅ Complete | IGameModule interface, ModuleLoader, AtlasGameplay library, EveOffline (shipped in-repo), SDK export |
 | GUI System & Editor Hardening | ✅ Complete | Custom GUI DSL, layout solver, editor self-hosting, permissions |
-| Replay & Formal Verification | 🔧 In Progress | TLA+ specs and ShaderIR complete, TLC CI and proof viewer pending |
+| Replay & Formal Verification | ✅ Complete | TLA+ specs, TLC CI, proof viewer, replay→proof export, ShaderIR |
 | Flow Graph & Procedural Content | 🔧 In Progress | Flow Graph IR/VM/debugger complete, procedural modeling and codegen pending |
 | AtlasAI & Game GUI Authoring | 🔧 Planned | AI assistant, game UI authoring, widget DSL |
-| CI, Build & Template System | 🔧 In Progress | Determinism CI gate, contract bot, build manifest and schema added |
+| CI, Build & Template System | 🔧 In Progress | Determinism CI gate, contract bot, build manifest, schema, CI dashboard added |
