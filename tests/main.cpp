@@ -384,6 +384,15 @@ void test_flow_ir_validate_valid();
 void test_flow_ir_validate_invalid();
 void test_flow_ir_migrate_v1();
 
+// Flow Codegen tests
+void test_flow_codegen_nonempty();
+void test_flow_codegen_function_signature();
+void test_flow_codegen_empty_graph();
+void test_flow_codegen_node_properties();
+void test_flow_codegen_edge_wiring();
+void test_flow_codegen_all_node_types();
+void test_flow_codegen_header_comment();
+
 // Flow Debugger tests
 void test_debugger_initial_state();
 void test_debugger_add_breakpoint();
@@ -1552,6 +1561,16 @@ int main() {
     test_flow_ir_validate_valid();
     test_flow_ir_validate_invalid();
     test_flow_ir_migrate_v1();
+
+    // Flow Codegen
+    std::cout << "\n--- Flow Codegen ---" << std::endl;
+    test_flow_codegen_nonempty();
+    test_flow_codegen_function_signature();
+    test_flow_codegen_empty_graph();
+    test_flow_codegen_node_properties();
+    test_flow_codegen_edge_wiring();
+    test_flow_codegen_all_node_types();
+    test_flow_codegen_header_comment();
 
     // Flow Debugger
     std::cout << "\n--- Flow Debugger ---" << std::endl;
