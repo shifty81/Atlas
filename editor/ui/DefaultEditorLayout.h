@@ -28,7 +28,6 @@ inline std::string DefaultEditorDSL() {
     }
     dock bottom 0.25 {
         tabs {
-            panel "Console"
             panel "WorldOutliner"
             panel "Permissions"
         }
