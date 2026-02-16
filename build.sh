@@ -26,6 +26,7 @@
 #   -c, --clean             Clean build directory before building
 #   -t, --test              Run tests after building
 #   -i, --install           Install SDK (headers + libraries) to OUTPUT_DIR/sdk
+#   -r, --run TARGET        Build and run TARGET (editor, server, client, runtime)
 #   -h, --help              Show this help message
 #
 # Examples:
@@ -33,6 +34,8 @@
 #   ./build.sh server client             # Build server and client only
 #   ./build.sh -b Debug editor --test    # Build editor in Debug mode and run tests
 #   ./build.sh --clean all               # Clean rebuild of everything
+#   ./build.sh --run editor              # Build and run AtlasEditor
+#   ./build.sh --run runtime -- --project projects/atlas-sample/sample.atlas
 #
 
 set -euo pipefail
@@ -46,6 +49,8 @@ OUTPUT_DIR="$SOURCE_DIR/dist"
 CLEAN=false
 RUN_TESTS=false
 INSTALL_SDK=false
+RUN_TARGET=""
+RUN_ARGS=()
 JOBS=""
 TARGETS=()
 
@@ -84,8 +89,11 @@ while [[ $# -gt 0 ]]; do
             CLEAN=true; shift ;;
         -t|--test)
             RUN_TESTS=true; shift ;;
+        -r|--run)
+            RUN_TARGET="$2"; shift 2 ;;
         -i|--install)
             INSTALL_SDK=true; shift ;;
+        --) shift; RUN_ARGS=("$@"); set -- ;;
         -h|--help)
             usage ;;
         -*)
@@ -94,6 +102,11 @@ while [[ $# -gt 0 ]]; do
             TARGETS+=("$1"); shift ;;
     esac
 done
+
+# If --run is specified, set that as the sole target
+if [ -n "$RUN_TARGET" ]; then
+    TARGETS=("$RUN_TARGET")
+fi
 
 # Default to "all" if no targets specified
 if [ ${#TARGETS[@]} -eq 0 ]; then
@@ -173,6 +186,9 @@ info "Output dir:    $OUTPUT_DIR"
 info "Targets:       ${CMAKE_TARGETS[*]}"
 info "Run tests:     $RUN_TESTS"
 info "Install SDK:   $INSTALL_SDK"
+if [ -n "$RUN_TARGET" ]; then
+    info "Run after build: $RUN_TARGET"
+fi
 info "Build log:     $BUILD_LOG"
 echo ""
 
@@ -276,3 +292,38 @@ echo ""
 echo "=== Build Finished: $(date '+%Y-%m-%d %H:%M:%S') ==="
 info "Build log saved to: $BUILD_LOG"
 echo ""
+
+# --- Run target ---
+if [ -n "$RUN_TARGET" ]; then
+    # Map short name to binary name
+    declare -A RUN_BINARY_MAP=(
+        ["server"]="AtlasServer"
+        ["client"]="AtlasClient"
+        ["editor"]="AtlasEditor"
+        ["runtime"]="AtlasRuntime"
+    )
+    binary_name="${RUN_BINARY_MAP[$RUN_TARGET]:-}"
+    if [ -z "$binary_name" ]; then
+        error "Cannot run target '$RUN_TARGET'. Valid targets: server, client, editor, runtime"
+        exit 1
+    fi
+
+    # Try dist/ first, then build subdirectory
+    run_path=""
+    if [ -f "$OUTPUT_DIR/$binary_name" ]; then
+        run_path="$OUTPUT_DIR/$binary_name"
+    elif [ -f "$BUILD_DIR/$RUN_TARGET/$binary_name" ]; then
+        run_path="$BUILD_DIR/$RUN_TARGET/$binary_name"
+    fi
+
+    if [ -z "$run_path" ]; then
+        error "Executable '$binary_name' not found in $OUTPUT_DIR/ or $BUILD_DIR/$RUN_TARGET/"
+        exit 1
+    fi
+
+    echo ""
+    info "Launching $binary_name..."
+    info "  $run_path ${RUN_ARGS[*]:-}"
+    echo ""
+    exec "$run_path" "${RUN_ARGS[@]}"
+fi
