@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <chrono>
 #include <functional>
+#include "../core/contract/SimulationGuard.h"
 
 namespace atlas::sim {
 

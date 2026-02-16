@@ -885,6 +885,9 @@ void test_asset_validator_circular_dependency();
 void test_asset_validator_no_circular_dependency();
 void test_asset_validator_compute_file_hash();
 
+// Golden Replay tests
+void run_golden_replay_tests();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -1871,6 +1874,10 @@ int main() {
     test_asset_validator_circular_dependency();
     test_asset_validator_no_circular_dependency();
     test_asset_validator_compute_file_hash();
+
+    // Golden Replays
+    std::cout << "\n--- Golden Replays ---" << std::endl;
+    run_golden_replay_tests();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

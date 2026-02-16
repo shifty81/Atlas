@@ -39,7 +39,9 @@ void TickScheduler::Tick(const std::function<void(float)>& callback) {
     }
 
     if (callback) {
+        ATLAS_SIM_TICK_BEGIN();
         callback(FixedDeltaTime());
+        ATLAS_SIM_TICK_END();
     }
     m_currentTick++;
 }

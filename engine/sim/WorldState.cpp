@@ -1,5 +1,6 @@
 #include "WorldState.h"
 #include "StateHasher.h"
+#include "../core/contract/SimulationGuard.h"
 #include <algorithm>
 
 namespace atlas::sim {
@@ -48,6 +49,9 @@ WorldSnapshot WorldState::TakeSnapshot(uint64_t tick,
 }
 
 void WorldState::PushSnapshot(WorldSnapshot snapshot) {
+    // Snapshots represent simulation state and should only be taken during ticks
+    ATLAS_SIM_MUTATION_GUARD();
+    
     m_snapshots.push_back(std::move(snapshot));
 
     // Enforce max snapshot limit.
