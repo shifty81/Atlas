@@ -11,6 +11,20 @@ void ReplayRecorder::StartRecording(uint32_t tickRate, uint32_t seed) {
     m_state = ReplayState::Recording;
 }
 
+void ReplayRecorder::StartFromSave(uint32_t saveTick, uint32_t tickRate, uint32_t seed) {
+    m_frames.clear();
+    m_header = ReplayHeader{};
+    m_header.tickRate = tickRate;
+    m_header.seed = seed;
+    m_state = ReplayState::Recording;
+
+    // Record an initial frame at saveTick
+    ReplayFrame frame;
+    frame.tick = saveTick;
+    m_frames.push_back(std::move(frame));
+    m_header.frameCount = 1;
+}
+
 void ReplayRecorder::RecordFrame(uint32_t tick, const std::vector<uint8_t>& inputData) {
     RecordFrame(tick, inputData, 0);
 }
@@ -27,6 +41,25 @@ void ReplayRecorder::RecordFrame(uint32_t tick, const std::vector<uint8_t>& inpu
 
 void ReplayRecorder::StopRecording() {
     m_state = ReplayState::Idle;
+}
+
+void ReplayRecorder::MarkSavePoint(uint32_t tick) {
+    for (auto& frame : m_frames) {
+        if (frame.tick == tick) {
+            frame.isSavePoint = true;
+            return;
+        }
+    }
+}
+
+std::vector<uint32_t> ReplayRecorder::SavePoints() const {
+    std::vector<uint32_t> result;
+    for (const auto& frame : m_frames) {
+        if (frame.isSavePoint) {
+            result.push_back(frame.tick);
+        }
+    }
+    return result;
 }
 
 bool ReplayRecorder::LoadReplay(const std::string& path) {
@@ -53,6 +86,11 @@ bool ReplayRecorder::LoadReplay(const std::string& path) {
         if (header.version >= 2) {
             file.read(reinterpret_cast<char*>(&frame.stateHash), sizeof(frame.stateHash));
         }
+        if (header.version >= 3) {
+            uint8_t sp = 0;
+            file.read(reinterpret_cast<char*>(&sp), sizeof(sp));
+            frame.isSavePoint = (sp != 0);
+        }
         m_frames.push_back(std::move(frame));
     }
 
@@ -74,6 +112,8 @@ bool ReplayRecorder::SaveReplay(const std::string& path) const {
             file.write(reinterpret_cast<const char*>(frame.inputData.data()), dataSize);
         }
         file.write(reinterpret_cast<const char*>(&frame.stateHash), sizeof(frame.stateHash));
+        uint8_t sp = frame.isSavePoint ? 1 : 0;
+        file.write(reinterpret_cast<const char*>(&sp), sizeof(sp));
     }
 
     return true;

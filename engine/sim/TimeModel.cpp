@@ -44,6 +44,10 @@ const TimeContext& TimeModel::Context() const {
     return m_ctx;
 }
 
+void TimeModel::SetTick(uint64_t tick) {
+    m_ctx.sim.tick = tick;
+}
+
 void TimeModel::Reset() {
     m_ctx = TimeContext{};
 }

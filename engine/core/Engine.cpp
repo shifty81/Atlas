@@ -120,6 +120,15 @@ void Engine::Run() {
     }
 }
 
+void Engine::PerformAutosaveIfNeeded(uint64_t tickCount) {
+    if (m_config.autosaveInterval > 0 && tickCount % m_config.autosaveInterval == 0) {
+        auto ecsData = m_world.Serialize();
+        m_saveSystem.Save(m_config.autosavePath,
+                          m_timeModel.Context().sim.tick,
+                          m_config.tickRate, 0, ecsData);
+    }
+}
+
 void Engine::ProcessWindowEvents() {
     if (!m_window) return;
 
@@ -216,6 +225,9 @@ void Engine::RunClient() {
         }
 
         tickCount++;
+
+        PerformAutosaveIfNeeded(tickCount);
+
         if (m_config.maxTicks > 0 && tickCount >= m_config.maxTicks) {
             m_running = false;
         }
@@ -239,11 +251,29 @@ void Engine::RunServer() {
             m_worldState.PushSnapshot(std::move(snapshot));
         });
         m_net.Flush();
+
         tickCount++;
+
+        PerformAutosaveIfNeeded(tickCount);
+
         if (m_config.maxTicks > 0 && tickCount >= m_config.maxTicks) {
             m_running = false;
         }
     }
+}
+
+bool Engine::LoadAndReplay(const std::string& savePath) {
+    auto result = m_saveSystem.Load(savePath);
+    if (result != sim::SaveResult::Success) {
+        return false;
+    }
+
+    if (!m_world.Deserialize(m_saveSystem.ECSData())) {
+        return false;
+    }
+
+    m_timeModel.SetTick(m_saveSystem.Header().saveTick);
+    return true;
 }
 
 bool Engine::Running() const {

@@ -47,6 +47,8 @@ struct EngineConfig {
     int32_t windowWidth = 1280;
     int32_t windowHeight = 720;
     bool headless = false;
+    uint32_t autosaveInterval = 0;            // 0 = disabled, >0 = autosave every N ticks
+    std::string autosavePath = "autosave.asav";
 };
 
 class Engine {
@@ -65,6 +67,8 @@ public:
     void RunEditor();
     void RunClient();
     void RunServer();
+
+    bool LoadAndReplay(const std::string& savePath);
 
     bool Running() const;
     void Shutdown();
@@ -86,6 +90,7 @@ public:
 
 private:
     void ProcessWindowEvents();
+    void PerformAutosaveIfNeeded(uint64_t tickCount);
 
     EngineConfig m_config;
     bool m_running = false;

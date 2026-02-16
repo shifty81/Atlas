@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <fstream>
 
 namespace atlas::sim {
 
@@ -148,6 +149,19 @@ std::string ReplayDivergenceInspector::FormatReport(
     os << "Severity  : " << sevStr << "\n";
 
     return os.str();
+}
+
+// ---------------------------------------------------------------------------
+// Export report to file
+// ---------------------------------------------------------------------------
+
+bool ReplayDivergenceInspector::ExportReport(
+        const DivergenceReport& report,
+        const std::string& path) {
+    std::ofstream out(path);
+    if (!out.is_open()) return false;
+    out << FormatReport(report);
+    return out.good();
 }
 
 // ---------------------------------------------------------------------------
