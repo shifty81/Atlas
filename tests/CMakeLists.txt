@@ -5,6 +5,7 @@ add_executable(AtlasTests
     test_components.cpp
     test_component_category.cpp
     test_asset.cpp
+    test_marketplace_importer.cpp
     test_net.cpp
     test_net_queue.cpp
     test_world.cpp

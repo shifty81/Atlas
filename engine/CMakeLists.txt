@@ -16,6 +16,7 @@ add_library(AtlasEngine STATIC
     assets/AssetRegistry.cpp
     assets/AssetBinary.cpp
     assets/AssetImporter.cpp
+    assets/MarketplaceImporter.cpp
     assets/AssetValidator.cpp
     net/NetContext.cpp
     net/Replication.cpp

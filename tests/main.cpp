@@ -27,6 +27,14 @@ void test_component_update();
 void test_asset_binary_roundtrip();
 void test_asset_registry_scan();
 
+// Marketplace importer tests
+void test_marketplace_registry();
+void test_itch_io_importer();
+void test_marketplace_metadata();
+void test_marketplace_import_options();
+void test_unreal_marketplace_importer();
+void test_unity_assetstore_importer();
+
 // Network tests
 void test_net_init();
 void test_net_authority();
@@ -2016,6 +2024,15 @@ int main() {
     test_asset_import_file_roundtrip();
     test_asset_import_file_not_found();
     test_asset_import_registry_import();
+
+    // Marketplace Importer
+    std::cout << "\n--- Marketplace Importer ---" << std::endl;
+    test_marketplace_registry();
+    test_itch_io_importer();
+    test_marketplace_metadata();
+    test_marketplace_import_options();
+    test_unreal_marketplace_importer();
+    test_unity_assetstore_importer();
 
     // Asset Validator
     std::cout << "\n--- Asset Validator ---" << std::endl;
