@@ -86,6 +86,8 @@ add_library(AtlasEngine STATIC
     production/BuildProfile.cpp
     production/PlatformTarget.cpp
     production/BuildManifest.cpp
+    procedural/ProceduralMeshGraph.cpp
+    procedural/ProceduralMeshNodes.cpp
     sim/ReplayProofExporter.cpp
     sim/ReplayRecorder.cpp
     sim/StateHasher.cpp
@@ -210,6 +212,7 @@ target_include_directories(AtlasSimulation INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/input>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/production>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/asset_graph>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/procedural>
 )
 
 # --- Install / Export ---

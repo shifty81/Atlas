@@ -10,6 +10,7 @@
 //      docs/ATLAS_DETERMINISM_ENFORCEMENT.md
 
 #include <cstdint>
+#include <cstdlib>
 
 // ---- Build Modes ----
 
@@ -54,6 +55,15 @@ static_assert(sizeof(double) == 8, "Double size mismatch — determinism at risk
 #define ATLAS_PRESENTATION_ONLY
 #define ATLAS_EDITOR_ONLY
 
+// ---- Cross-platform trap ----
+#if defined(_MSC_VER)
+  #define ATLAS_CONTRACT_TRAP() __debugbreak()
+#elif defined(__GNUC__) || defined(__clang__)
+  #define ATLAS_CONTRACT_TRAP() __builtin_trap()
+#else
+  #define ATLAS_CONTRACT_TRAP() std::abort()
+#endif
+
 // ---- Simulation Boundary Guard ----
 //
 // ATLAS_FORBID_IN_SIM(msg) — Place at the top of any function that must
@@ -67,7 +77,7 @@ static_assert(sizeof(double) == 8, "Double size mismatch — determinism at risk
           /* Presentation/IO function called in simulation build: */ \
           volatile int atlas_contract_violation = 0; \
           (void)atlas_contract_violation; \
-          __builtin_trap(); \
+          ATLAS_CONTRACT_TRAP(); \
       } while (0)
 #else
   #define ATLAS_FORBID_IN_SIM(msg) ((void)0)

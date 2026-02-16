@@ -192,9 +192,9 @@ Blueprint-like visual scripting and Blender-like procedural modeling.
 - [x] Flow Graph IR (file format, schema validation, version migration)
 - [x] Flow Graph VM runtime (deterministic node execution)
 - [x] Flow Graph debugger (breakpoints, timeline stepping, value inspection)
-- [ ] Flow Graph → C++ codegen (release build optimization)
+- [x] Flow Graph → C++ codegen (release build optimization)
 - [ ] UI logic graphs (safe subset for UI behavior)
-- [ ] Procedural mesh graph library (primitives, operations, deformers)
+- [x] Procedural mesh graph library (primitives, operations, deformers)
 - [ ] Procedural material & shader graphs
 - [ ] LOD & mesh baking graphs
 - [ ] Deterministic animation graphs (bone manipulation, IK/FK, blend trees)
@@ -223,8 +223,8 @@ Production-grade CI, build experience, and template repository support.
 - [x] atlas.build.json schema (artifact definitions, validation requirements)
 - [ ] First-run experience (one-command build, /run shortcuts)
 - [x] Build manifest (executable hashes, layout hashes, DSL version)
-- [ ] atlas init tool (namespace rewrite, core freeze, editor branding)
-- [ ] Template contract (ATLAS_TEMPLATE_CONTRACT.md for forks)
+- [x] atlas init tool (namespace rewrite, core freeze, editor branding)
+- [x] Template contract (ATLAS_TEMPLATE_CONTRACT.md for forks)
 - [ ] Determinism versioning strategy across forks
 - [x] CI dashboard panel (in-editor CI results visualization)
 - [ ] Certified build mode (audit-grade verification artifacts)

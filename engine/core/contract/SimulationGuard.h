@@ -19,6 +19,7 @@
 //      docs/ATLAS_DETERMINISM_ENFORCEMENT.md
 
 #include <atomic>
+#include <cstdlib>
 
 namespace atlas {
 
@@ -27,6 +28,15 @@ namespace atlas {
 inline std::atomic<bool> g_simulation_tick_active{false};
 
 }  // namespace atlas
+
+// ---- Cross-platform trap ----
+#if defined(_MSC_VER)
+  #define ATLAS_TRAP() __debugbreak()
+#elif defined(__GNUC__) || defined(__clang__)
+  #define ATLAS_TRAP() __builtin_trap()
+#else
+  #define ATLAS_TRAP() std::abort()
+#endif
 
 #define ATLAS_SIM_TICK_BEGIN() \
     ::atlas::g_simulation_tick_active.store(true, std::memory_order_release)
@@ -40,7 +50,7 @@ inline std::atomic<bool> g_simulation_tick_active{false};
   #define ATLAS_SIM_MUTATION_GUARD() \
       do { \
           if (!::atlas::g_simulation_tick_active.load(std::memory_order_acquire)) { \
-              __builtin_trap(); \
+              ATLAS_TRAP(); \
           } \
       } while (0)
 #endif

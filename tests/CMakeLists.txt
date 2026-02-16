@@ -36,6 +36,7 @@ add_executable(AtlasTests
     test_ui_screen.cpp
     test_flow.cpp
     test_flow_ir.cpp
+    test_flow_codegen.cpp
     test_flow_debugger.cpp
     test_shader_ir.cpp
     test_build_manifest.cpp
@@ -111,6 +112,7 @@ add_executable(AtlasTests
     test_proof_viewer.cpp
     test_replay_proof_exporter.cpp
     test_ci_dashboard.cpp
+    test_procedural_mesh.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp

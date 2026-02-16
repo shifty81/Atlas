@@ -341,6 +341,19 @@ void test_tilegraph_compile_chain();
 void test_tilegraph_execute();
 void test_tilegraph_deterministic();
 
+// Procedural Mesh Graph tests
+void test_procedural_add_nodes();
+void test_procedural_remove_node();
+void test_procedural_compile_empty();
+void test_procedural_cube();
+void test_procedural_plane();
+void test_procedural_sphere();
+void test_procedural_transform();
+void test_procedural_merge();
+void test_procedural_subdivide();
+void test_procedural_noise_determinism();
+void test_procedural_full_pipeline();
+
 // Sound Graph tests
 void test_soundgraph_add_nodes();
 void test_soundgraph_remove_node();
@@ -383,6 +396,15 @@ void test_flow_ir_roundtrip();
 void test_flow_ir_validate_valid();
 void test_flow_ir_validate_invalid();
 void test_flow_ir_migrate_v1();
+
+// Flow Codegen tests
+void test_flow_codegen_nonempty();
+void test_flow_codegen_function_signature();
+void test_flow_codegen_empty_graph();
+void test_flow_codegen_node_properties();
+void test_flow_codegen_edge_wiring();
+void test_flow_codegen_all_node_types();
+void test_flow_codegen_header_comment();
 
 // Flow Debugger tests
 void test_debugger_initial_state();
@@ -1505,6 +1527,20 @@ int main() {
     test_tilegraph_execute();
     test_tilegraph_deterministic();
 
+    // Procedural Mesh Graph
+    std::cout << "\n--- Procedural Mesh Graph ---" << std::endl;
+    test_procedural_add_nodes();
+    test_procedural_remove_node();
+    test_procedural_compile_empty();
+    test_procedural_cube();
+    test_procedural_plane();
+    test_procedural_sphere();
+    test_procedural_transform();
+    test_procedural_merge();
+    test_procedural_subdivide();
+    test_procedural_noise_determinism();
+    test_procedural_full_pipeline();
+
     // Sound Graph
     std::cout << "\n--- Sound Graph ---" << std::endl;
     test_soundgraph_add_nodes();
@@ -1552,6 +1588,16 @@ int main() {
     test_flow_ir_validate_valid();
     test_flow_ir_validate_invalid();
     test_flow_ir_migrate_v1();
+
+    // Flow Codegen
+    std::cout << "\n--- Flow Codegen ---" << std::endl;
+    test_flow_codegen_nonempty();
+    test_flow_codegen_function_signature();
+    test_flow_codegen_empty_graph();
+    test_flow_codegen_node_properties();
+    test_flow_codegen_edge_wiring();
+    test_flow_codegen_all_node_types();
+    test_flow_codegen_header_comment();
 
     // Flow Debugger
     std::cout << "\n--- Flow Debugger ---" << std::endl;
