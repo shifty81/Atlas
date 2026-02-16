@@ -61,8 +61,8 @@ Defines state categories:
 Provides snapshot/rollback support with configurable history depth.
 
 **Remaining work:**
-- [ ] Annotate every ECS component with its `StateCategory`
-- [ ] Enforce category at compile-time via type traits or tag types
+- [x] Annotate every ECS component with its `StateCategory`
+- [x] Enforce category at compile-time via type traits or tag types
 - [x] Add snapshot integration to lockstep rollback path in `NetContext`
 - [ ] Expose state block inspector in editor ECS panel
 
@@ -89,7 +89,7 @@ Provides versioned binary save format (`.asav`) with hash-verified integrity.
 Compile-time guards and runtime assertions exist. Gaps remain:
 
 - [x] Add `ATLAS_FORBID_IN_SIM` macro to prevent presentation code in tick
-- [ ] Enforce `#include` firewall: simulation code cannot include render headers
+- [x] Enforce `#include` firewall: simulation code cannot include render headers
 - [x] Add CMake `INTERFACE` target separating sim-safe from render-safe sources
 - [x] FP consistency enforcement (`-ffp-contract=off`, `/fp:strict` flags)
 - [ ] Platform-dependent math detection in CI (scan for `__m128` outside render)
@@ -126,7 +126,7 @@ runtime and editor infrastructure.
 ### 2.3 Replay ↔ Save Integration 🔧
 
 - [x] Verify hash ladder continuity across save/load boundaries
-- [ ] Implement "replay from save" mode (load save → begin replay playback)
+- [x] Implement "replay from save" mode (load save → begin replay playback)
 - [x] Add save-point markers in replay files
 
 ---
@@ -155,11 +155,14 @@ Core logic exists. Remaining:
 - [ ] CI job that cross-compiles and verifies golden replay hashes
 - [ ] Report showing which systems first diverge
 
-### 3.4 Job Execution Trace Viewer ❌
+### 3.4 Job Execution Trace Viewer ✅
 
-- [ ] Record system execution order each tick
-- [ ] Editor panel visualizing tick timeline (which system ran when)
-- [ ] Detect non-deterministic execution ordering
+**Files:** `engine/sim/JobTracer.h/cpp`, `editor/panels/JobTracePanel.h/cpp`
+**Tests:** `tests/test_job_tracer.cpp` (12 tests)
+
+- [x] Record system execution order each tick
+- [x] Editor panel visualizing tick timeline (which system ran when)
+- [x] Detect non-deterministic execution ordering
 
 ---
 
@@ -260,19 +263,19 @@ Phase B — Enforcement
   ✅ Determinism enforcement hardening (ATLAS_FORBID_IN_SIM, FP flags)
   ✅ AI determinism contract (tests)
   → AI randomness source documentation
-  ✅ Include firewall (sim vs render)
+  ✅ Include firewall (sim vs render, CMake + runtime tests)
 
 Phase C — Integration
   ✅ Engine runtime integration
   ✅ Networking ↔ state integration (snapshot-based)
-  🔧 Replay ↔ save integration
+  ✅ Replay ↔ save integration (ReplayFromSave)
   ✅ Editor console commands for save/load
 
 Phase D — Tooling
   🔧 State hash diff visualizer
   🔧 Replay divergence inspector UI
   → FP drift detector
-  → Job execution trace viewer
+  ✅ Job execution trace viewer (JobTracer + JobTracePanel)
 
 Phase E — Documentation
   → Harden existing docs to match implementation
