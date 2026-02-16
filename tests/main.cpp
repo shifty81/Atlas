@@ -1142,6 +1142,65 @@ void test_collab_resolve_first_writer_wins();
 void test_collab_no_conflicts();
 void test_collab_clear();
 
+// AtlasAI Core
+void test_ai_core_default_permissions();
+void test_ai_core_set_permissions();
+void test_ai_core_has_permission();
+void test_ai_core_register_intent();
+void test_ai_core_unregister_intent();
+void test_ai_core_list_intents();
+void test_ai_core_process_request();
+void test_ai_core_permission_denied();
+void test_ai_core_unknown_intent();
+void test_ai_core_history();
+void test_ai_core_clear();
+
+// Atlas Assistant Panel
+void test_assistant_panel_name();
+void test_assistant_panel_context();
+void test_assistant_panel_submit_prompt();
+void test_assistant_panel_suggestions();
+void test_assistant_panel_apply_suggestion();
+void test_assistant_panel_diff_preview();
+void test_assistant_panel_conversation();
+void test_assistant_panel_clear();
+
+// AI Diff Viewer Panel
+void test_diff_viewer_name();
+void test_diff_viewer_no_diff();
+void test_diff_viewer_load();
+void test_diff_viewer_accept_hunk();
+void test_diff_viewer_reject_hunk();
+void test_diff_viewer_accept_all();
+void test_diff_viewer_reject_all();
+void test_diff_viewer_apply();
+void test_diff_viewer_history();
+void test_diff_viewer_clear();
+
+// Flow Graph Refactorer
+void test_flow_refactorer_load();
+void test_flow_refactorer_find_dead_nodes();
+void test_flow_refactorer_find_chains();
+void test_flow_refactorer_find_duplicates();
+void test_flow_refactorer_analyze();
+void test_flow_refactorer_remove_dead();
+void test_flow_refactorer_rename();
+void test_flow_refactorer_simplify_chain();
+void test_flow_refactorer_history();
+void test_flow_refactorer_clear();
+
+// Web Aggregation KB
+void test_kb_add_entry();
+void test_kb_get_entry();
+void test_kb_remove_entry();
+void test_kb_search();
+void test_kb_search_by_category();
+void test_kb_search_by_tag();
+void test_kb_categories();
+void test_kb_tags();
+void test_kb_export_import();
+void test_kb_clear();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -2406,6 +2465,70 @@ int main() {
     test_collab_resolve_first_writer_wins();
     test_collab_no_conflicts();
     test_collab_clear();
+
+    // AtlasAI Core
+    std::cout << "\n--- AtlasAI Core ---" << std::endl;
+    test_ai_core_default_permissions();
+    test_ai_core_set_permissions();
+    test_ai_core_has_permission();
+    test_ai_core_register_intent();
+    test_ai_core_unregister_intent();
+    test_ai_core_list_intents();
+    test_ai_core_process_request();
+    test_ai_core_permission_denied();
+    test_ai_core_unknown_intent();
+    test_ai_core_history();
+    test_ai_core_clear();
+
+    // Atlas Assistant Panel
+    std::cout << "\n--- Atlas Assistant Panel ---" << std::endl;
+    test_assistant_panel_name();
+    test_assistant_panel_context();
+    test_assistant_panel_submit_prompt();
+    test_assistant_panel_suggestions();
+    test_assistant_panel_apply_suggestion();
+    test_assistant_panel_diff_preview();
+    test_assistant_panel_conversation();
+    test_assistant_panel_clear();
+
+    // AI Diff Viewer Panel
+    std::cout << "\n--- AI Diff Viewer Panel ---" << std::endl;
+    test_diff_viewer_name();
+    test_diff_viewer_no_diff();
+    test_diff_viewer_load();
+    test_diff_viewer_accept_hunk();
+    test_diff_viewer_reject_hunk();
+    test_diff_viewer_accept_all();
+    test_diff_viewer_reject_all();
+    test_diff_viewer_apply();
+    test_diff_viewer_history();
+    test_diff_viewer_clear();
+
+    // Flow Graph Refactorer
+    std::cout << "\n--- Flow Graph Refactorer ---" << std::endl;
+    test_flow_refactorer_load();
+    test_flow_refactorer_find_dead_nodes();
+    test_flow_refactorer_find_chains();
+    test_flow_refactorer_find_duplicates();
+    test_flow_refactorer_analyze();
+    test_flow_refactorer_remove_dead();
+    test_flow_refactorer_rename();
+    test_flow_refactorer_simplify_chain();
+    test_flow_refactorer_history();
+    test_flow_refactorer_clear();
+
+    // Web Aggregation KB
+    std::cout << "\n--- Web Aggregation KB ---" << std::endl;
+    test_kb_add_entry();
+    test_kb_get_entry();
+    test_kb_remove_entry();
+    test_kb_search();
+    test_kb_search_by_category();
+    test_kb_search_by_tag();
+    test_kb_categories();
+    test_kb_tags();
+    test_kb_export_import();
+    test_kb_clear();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

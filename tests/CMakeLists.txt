@@ -118,6 +118,11 @@ add_executable(AtlasTests
     test_ui_logic_graph.cpp
     test_det_animation.cpp
     test_collaborative_editor.cpp
+    test_atlas_ai_core.cpp
+    test_atlas_assistant_panel.cpp
+    test_ai_diff_viewer.cpp
+    test_flow_refactorer.cpp
+    test_web_aggregation_kb.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
@@ -136,6 +141,8 @@ add_executable(AtlasTests
     ${CMAKE_SOURCE_DIR}/editor/assistant/EditorAssistant.cpp
     ${CMAKE_SOURCE_DIR}/editor/assistant/AssetGraphAssistant.cpp
     ${CMAKE_SOURCE_DIR}/editor/ui/EditorAttachProtocol.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/AtlasAssistantPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/AIDiffViewerPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/ui/EditorLayout.cpp
 )
 

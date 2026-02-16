@@ -71,9 +71,12 @@ add_library(AtlasEngine STATIC
     flow/GameFlowNodes.cpp
     flow/FlowGraphIR.cpp
     flow/FlowGraphDebugger.cpp
+    flow/FlowGraphRefactorer.cpp
     schema/SchemaValidator.cpp
     graphvm/GraphCache.cpp
     ai/FactionRouter.cpp
+    ai/AtlasAICore.cpp
+    ai/WebAggregationKB.cpp
     asset_graph/AssetGraphExecutor.cpp
     audio/AudioEngine.cpp
     camera/Camera.cpp
