@@ -97,6 +97,7 @@ add_executable(AtlasTests
     ${CMAKE_SOURCE_DIR}/editor/panels/ProfilerPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ReplayTimelinePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/NetInspectorPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/StateHashDiffPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/tools/GamePackagerPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/tools/VisualDiff.cpp
     ${CMAKE_SOURCE_DIR}/editor/assistant/EditorAssistant.cpp

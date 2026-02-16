@@ -3,11 +3,15 @@
 #include "../engine/sim/ReplayRecorder.h"
 #include "../engine/sim/ReplayDivergenceInspector.h"
 #include "../engine/sim/SaveSystem.h"
+#include "../engine/sim/StateHasher.h"
+#include "../engine/net/NetContext.h"
+#include "../editor/panels/StateHashDiffPanel.h"
 #include <iostream>
 #include <cassert>
 #include <cstdio>
 #include <fstream>
 #include <string>
+#include <cstring>
 
 using namespace atlas;
 using namespace atlas::sim;
@@ -213,4 +217,214 @@ void test_divergence_export_report() {
 
     std::remove(path.c_str());
     std::cout << "[PASS] test_divergence_export_report" << std::endl;
+}
+
+// --- Engine RollbackToTick ---
+
+void test_engine_rollback_to_tick() {
+    EngineConfig cfg;
+    cfg.mode = EngineMode::Server;
+    cfg.tickRate = 60;
+    cfg.maxTicks = 10;
+
+    Engine engine(cfg);
+    engine.InitCore();
+    engine.InitECS();
+    engine.InitNetworking();
+    engine.GetScheduler().SetFramePacing(false);
+
+    engine.GetWorld().CreateEntity();
+    engine.Run();
+
+    // Verify we're at tick 10
+    assert(engine.GetTimeModel().Context().sim.tick == 10);
+
+    // Pick a snapshot tick (server mode snapshots every tick)
+    const auto* snap = engine.GetWorldState().SnapshotAtTick(5);
+    assert(snap != nullptr);
+
+    bool ok = engine.RollbackToTick(5);
+    assert(ok);
+    assert(engine.GetTimeModel().Context().sim.tick == 5);
+
+    // Rollback to non-existent tick should fail
+    bool bad = engine.RollbackToTick(9999);
+    assert(!bad);
+
+    std::cout << "[PASS] test_engine_rollback_to_tick" << std::endl;
+}
+
+// --- NetContext BroadcastSaveTick ---
+
+void test_net_broadcast_save_tick() {
+    net::NetContext net;
+    net.Init(net::NetMode::Server);
+
+    assert(net.LastSaveTick() == 0);
+    assert(net.LastSaveHash() == 0);
+
+    net.BroadcastSaveTick(42, 0xDEADBEEF);
+
+    assert(net.LastSaveTick() == 42);
+    assert(net.LastSaveHash() == 0xDEADBEEF);
+
+    // The broadcast should have queued a packet
+    net.Poll();
+    net::Packet pkt;
+    bool received = net.Receive(pkt);
+    assert(received);
+    assert(pkt.type == 0xFF00);
+    assert(pkt.tick == 42);
+    assert(pkt.payload.size() == sizeof(uint32_t) + sizeof(uint64_t));
+
+    // Verify payload contents
+    uint32_t payloadTick = 0;
+    uint64_t payloadHash = 0;
+    std::memcpy(&payloadTick, pkt.payload.data(), sizeof(uint32_t));
+    std::memcpy(&payloadHash, pkt.payload.data() + sizeof(uint32_t), sizeof(uint64_t));
+    assert(payloadTick == 42);
+    assert(payloadHash == 0xDEADBEEF);
+
+    std::cout << "[PASS] test_net_broadcast_save_tick" << std::endl;
+}
+
+// --- StateHashDiffPanel no divergence ---
+
+void test_state_hash_diff_panel_no_divergence() {
+    sim::StateHasher local;
+    sim::StateHasher remote;
+    local.Reset(42);
+    remote.Reset(42);
+
+    std::vector<uint8_t> state = {1, 2, 3};
+    std::vector<uint8_t> input = {4, 5};
+
+    for (uint64_t t = 1; t <= 5; ++t) {
+        local.AdvanceTick(t, state, input);
+        remote.AdvanceTick(t, state, input);
+    }
+
+    editor::StateHashDiffPanel panel;
+    panel.SetLocalHasher(&local);
+    panel.SetRemoteHasher(&remote);
+    panel.Refresh();
+
+    assert(!panel.HasDivergence());
+    assert(panel.FirstDivergenceTick() == -1);
+    assert(panel.Entries().size() == 5);
+    assert(panel.Summary() == "No divergence");
+
+    for (const auto& e : panel.Entries()) {
+        assert(e.matches);
+    }
+
+    std::cout << "[PASS] test_state_hash_diff_panel_no_divergence" << std::endl;
+}
+
+// --- StateHashDiffPanel with divergence ---
+
+void test_state_hash_diff_panel_with_divergence() {
+    sim::StateHasher local;
+    sim::StateHasher remote;
+    local.Reset(42);
+    remote.Reset(42);
+
+    std::vector<uint8_t> state = {1, 2, 3};
+    std::vector<uint8_t> input = {4, 5};
+
+    // Ticks 1-2: identical
+    for (uint64_t t = 1; t <= 2; ++t) {
+        local.AdvanceTick(t, state, input);
+        remote.AdvanceTick(t, state, input);
+    }
+
+    // Tick 3: diverge
+    std::vector<uint8_t> differentState = {9, 9, 9};
+    local.AdvanceTick(3, state, input);
+    remote.AdvanceTick(3, differentState, input);
+
+    editor::StateHashDiffPanel panel;
+    panel.SetLocalHasher(&local);
+    panel.SetRemoteHasher(&remote);
+    panel.Refresh();
+
+    assert(panel.HasDivergence());
+    assert(panel.FirstDivergenceTick() == 3);
+    assert(panel.Entries().size() == 3);
+
+    // First two should match
+    assert(panel.Entries()[0].matches);
+    assert(panel.Entries()[1].matches);
+    assert(!panel.Entries()[2].matches);
+
+    std::string summary = panel.Summary();
+    assert(summary.find("Divergence at tick 3") != std::string::npos);
+
+    std::cout << "[PASS] test_state_hash_diff_panel_with_divergence" << std::endl;
+}
+
+// --- Hash ladder save/load continuity ---
+
+void test_hash_ladder_save_load_continuity() {
+    const std::string path = "/tmp/atlas_hash_ladder_test.asav";
+    std::remove(path.c_str());
+
+    sim::StateHasher hasher;
+    hasher.Reset(99);
+
+    // Build up a hash ladder
+    std::vector<uint8_t> state = {10, 20, 30};
+    std::vector<uint8_t> input = {1};
+    for (uint64_t t = 1; t <= 5; ++t) {
+        hasher.AdvanceTick(t, state, input);
+    }
+    uint64_t hashBeforeSave = hasher.CurrentHash();
+
+    // Save world state
+    {
+        EngineConfig cfg;
+        cfg.mode = EngineMode::Server;
+        cfg.tickRate = 60;
+        cfg.maxTicks = 0;
+
+        Engine engine(cfg);
+        engine.InitCore();
+        engine.InitECS();
+        engine.InitNetworking();
+        engine.GetScheduler().SetFramePacing(false);
+
+        engine.GetWorld().CreateEntity();
+        auto ecsData = engine.GetWorld().Serialize();
+        auto result = engine.GetSaveSystem().Save(path, 5, cfg.tickRate, 0, ecsData);
+        assert(result == sim::SaveResult::Success);
+    }
+
+    // Load and re-hash
+    {
+        EngineConfig cfg;
+        cfg.mode = EngineMode::Server;
+        cfg.tickRate = 60;
+        cfg.maxTicks = 0;
+
+        Engine engine(cfg);
+        engine.InitCore();
+        engine.InitECS();
+        engine.InitNetworking();
+        engine.GetScheduler().SetFramePacing(false);
+
+        bool ok = engine.LoadAndReplay(path);
+        assert(ok);
+
+        // Rebuild hash ladder with same seed and same data
+        sim::StateHasher hasher2;
+        hasher2.Reset(99);
+        for (uint64_t t = 1; t <= 5; ++t) {
+            hasher2.AdvanceTick(t, state, input);
+        }
+
+        assert(hasher2.CurrentHash() == hashBeforeSave);
+    }
+
+    std::remove(path.c_str());
+    std::cout << "[PASS] test_hash_ladder_save_load_continuity" << std::endl;
 }

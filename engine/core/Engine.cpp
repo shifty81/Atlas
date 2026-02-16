@@ -262,6 +262,16 @@ void Engine::RunServer() {
     }
 }
 
+bool Engine::RollbackToTick(uint64_t tick) {
+    const auto* snapshot = m_worldState.SnapshotAtTick(tick);
+    if (!snapshot) return false;
+
+    if (!m_world.Deserialize(snapshot->ecsData)) return false;
+
+    m_timeModel.SetTick(tick);
+    return true;
+}
+
 bool Engine::LoadAndReplay(const std::string& savePath) {
     auto result = m_saveSystem.Load(savePath);
     if (result != sim::SaveResult::Success) {

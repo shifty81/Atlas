@@ -740,6 +740,11 @@ void test_replay_save_point_serialization();
 void test_replay_start_from_save();
 void test_engine_load_and_replay();
 void test_divergence_export_report();
+void test_engine_rollback_to_tick();
+void test_net_broadcast_save_tick();
+void test_state_hash_diff_panel_no_divergence();
+void test_state_hash_diff_panel_with_divergence();
+void test_hash_ladder_save_load_continuity();
 
 // Render and Platform tests
 void test_render_api_enum();
@@ -1603,6 +1608,11 @@ int main() {
     test_replay_start_from_save();
     test_engine_load_and_replay();
     test_divergence_export_report();
+    test_engine_rollback_to_tick();
+    test_net_broadcast_save_tick();
+    test_state_hash_diff_panel_no_divergence();
+    test_state_hash_diff_panel_with_divergence();
+    test_hash_ladder_save_load_continuity();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
