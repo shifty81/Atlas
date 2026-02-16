@@ -234,6 +234,11 @@ SaveResult SaveSystem::LoadPartial(const std::string& path) {
     }
 
     static constexpr uint32_t kMaxChunkDataSize = 256 * 1024 * 1024;  // 256 MB
+    static constexpr uint32_t kMaxChunkCount = 1000000;  // sanity limit
+
+    if (header.chunkCount > kMaxChunkCount) {
+        return SaveResult::InvalidFormat;
+    }
 
     std::vector<ChunkSaveEntry> chunks(header.chunkCount);
     for (uint32_t i = 0; i < header.chunkCount; ++i) {
