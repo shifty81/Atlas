@@ -90,6 +90,10 @@ add_library(AtlasEngine STATIC
     production/BuildManifest.cpp
     procedural/ProceduralMeshGraph.cpp
     procedural/ProceduralMeshNodes.cpp
+    procedural/ProceduralMaterialGraph.cpp
+    procedural/ProceduralMaterialNodes.cpp
+    procedural/LODBakingGraph.cpp
+    procedural/LODBakingNodes.cpp
     sim/ReplayProofExporter.cpp
     sim/ReplayRecorder.cpp
     sim/StateHasher.cpp
