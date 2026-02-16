@@ -265,7 +265,9 @@ bool UnrealMarketplaceImporter::ConvertUAsset(
         std::filesystem::copy_file(inputPath, outputPath, 
                                    std::filesystem::copy_options::overwrite_existing);
         return true;
-    } catch (...) {
+    } catch (const std::exception& e) {
+        // TODO: Add proper logging when Logger is available in this context
+        // For now, conversion failures will be reported through ImportResult
         return false;
     }
 }
@@ -357,7 +359,9 @@ bool UnityAssetStoreImporter::ConvertUnityPrefab(
         std::filesystem::copy_file(inputPath, outputPath,
                                    std::filesystem::copy_options::overwrite_existing);
         return true;
-    } catch (...) {
+    } catch (const std::exception& e) {
+        // TODO: Add proper logging when Logger is available in this context
+        // For now, conversion failures will be reported through ImportResult
         return false;
     }
 }

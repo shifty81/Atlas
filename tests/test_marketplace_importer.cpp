@@ -6,6 +6,9 @@
 
 using namespace atlas::asset;
 
+// Test suite for marketplace asset importing system
+// Tests cover registry, importers, metadata handling, and options
+
 void test_marketplace_registry() {
     MarketplaceImportRegistry registry;
     

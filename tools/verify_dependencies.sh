@@ -46,7 +46,7 @@ SERVER_BIN="${BUILD_DIR}/server/AtlasServer"
 if [ ! -f "$SERVER_BIN" ]; then
     echo -e "${YELLOW}SKIP${NC} (not built)"
 else
-    FORBIDDEN_LIBS=$(ldd "$SERVER_BIN" 2>&1 | grep -i -E "(vulkan|opengl|x11|xcb|glfw|sdl)" || true)
+    FORBIDDEN_LIBS=$(ldd "$SERVER_BIN" 2>&1 | grep -i -E "(vulkan|opengl|x11|xcb|wayland|glfw|sdl)" || true)
     
     if [ -z "$FORBIDDEN_LIBS" ]; then
         echo -e "${GREEN}✓${NC} No graphics libraries"
