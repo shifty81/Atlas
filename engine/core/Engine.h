@@ -90,6 +90,12 @@ public:
     platform::PlatformWindow* GetWindow() { return m_window.get(); }
     ui::UIRenderer* GetRenderer() { return m_renderer.get(); }
 
+    /// Returns the names of systems in their registered execution order.
+    const std::vector<std::string>& SystemExecutionOrder() const;
+
+    /// Register a named simulation system for execution-order tracking.
+    void RegisterSystem(const std::string& name);
+
 private:
     void ProcessWindowEvents();
     void PerformAutosaveIfNeeded(uint64_t tickCount);
@@ -105,6 +111,7 @@ private:
     ui::UIManager m_uiManager;
     std::unique_ptr<platform::PlatformWindow> m_window;
     std::unique_ptr<ui::UIRenderer> m_renderer;
+    std::vector<std::string> m_systemOrder;
 };
 
 }

@@ -25,6 +25,7 @@ void Engine::InitCore() {
     Logger::Init();
     Logger::Info("Engine core initialized");
     m_running = true;
+    RegisterSystem("Core");
 }
 
 void Engine::InitRender() {
@@ -98,6 +99,7 @@ void Engine::InitUI() {
 
 void Engine::InitECS() {
     Logger::Info("ECS initialized (empty world)");
+    RegisterSystem("ECS");
 }
 
 void Engine::InitNetworking() {
@@ -109,6 +111,7 @@ void Engine::InitNetworking() {
     }
     m_net.Init(netMode);
     Logger::Info("Networking initialized");
+    RegisterSystem("Networking");
 }
 
 void Engine::InitEditor() {
@@ -120,6 +123,7 @@ void Engine::InitEditor() {
 
 void Engine::Run() {
     m_scheduler.SetTickRate(m_config.tickRate);
+    m_scheduler.LockTickRate();
     m_timeModel.SetTickRate(m_config.tickRate);
 
     switch (m_config.mode) {
@@ -371,6 +375,14 @@ bool Engine::Can(Capability cap) const {
             return m_config.mode == EngineMode::Editor;
     }
     return false;
+}
+
+const std::vector<std::string>& Engine::SystemExecutionOrder() const {
+    return m_systemOrder;
+}
+
+void Engine::RegisterSystem(const std::string& name) {
+    m_systemOrder.push_back(name);
 }
 
 }

@@ -98,6 +98,7 @@ add_executable(AtlasTests
     test_include_firewall.cpp
     test_next_steps.cpp
     test_golden_replays.cpp
+    test_enforcement.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
@@ -117,5 +118,6 @@ add_executable(AtlasTests
 
 target_link_libraries(AtlasTests AtlasEngine AtlasGameplay EveOfflineModule Arena2DModule)
 target_include_directories(AtlasTests PRIVATE ${CMAKE_SOURCE_DIR}/editor)
+target_compile_definitions(AtlasTests PRIVATE CMAKE_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 
 add_test(NAME AtlasTests COMMAND AtlasTests)

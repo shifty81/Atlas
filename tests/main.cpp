@@ -888,6 +888,17 @@ void test_asset_validator_compute_file_hash();
 // Golden Replay tests
 void run_golden_replay_tests();
 
+// Enforcement tests
+void test_tick_rate_lock();
+void test_tick_rate_set_before_lock();
+void test_engine_locks_tick_rate_on_run();
+void test_engine_system_order();
+void test_engine_system_order_deterministic();
+void test_net_packet_schema_version();
+void test_asset_lock_and_check();
+void test_asset_lock_multiple();
+void test_determinism_config_exists();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -1878,6 +1889,18 @@ int main() {
     // Golden Replays
     std::cout << "\n--- Golden Replays ---" << std::endl;
     run_golden_replay_tests();
+
+    // Enforcement
+    std::cout << "\n--- Enforcement ---" << std::endl;
+    test_tick_rate_lock();
+    test_tick_rate_set_before_lock();
+    test_engine_locks_tick_rate_on_run();
+    test_engine_system_order();
+    test_engine_system_order_deterministic();
+    test_net_packet_schema_version();
+    test_asset_lock_and_check();
+    test_asset_lock_multiple();
+    test_determinism_config_exists();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

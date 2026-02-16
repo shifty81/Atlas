@@ -4,7 +4,16 @@
 namespace atlas::sim {
 
 void TickScheduler::SetTickRate(uint32_t hz) {
+    if (m_tickRateLocked) return;
     m_tickRate = hz > 0 ? hz : 1;
+}
+
+void TickScheduler::LockTickRate() {
+    m_tickRateLocked = true;
+}
+
+bool TickScheduler::IsTickRateLocked() const {
+    return m_tickRateLocked;
 }
 
 uint32_t TickScheduler::TickRate() const {

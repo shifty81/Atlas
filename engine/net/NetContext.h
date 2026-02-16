@@ -9,6 +9,10 @@ namespace atlas::ecs { class World; }
 
 namespace atlas::net {
 
+/// Version of the network packet schema.
+/// Increment when the Packet struct layout changes.
+constexpr uint32_t NET_PACKET_SCHEMA_VERSION = 1;
+
 enum class NetMode {
     Standalone,
     Client,
@@ -89,6 +93,9 @@ public:
     void BroadcastSaveTick(uint32_t tick, uint64_t stateHash);
     uint32_t LastSaveTick() const;
     uint64_t LastSaveHash() const;
+
+    /// Returns the packet schema version this context was built with.
+    static uint32_t PacketSchemaVersion() { return NET_PACKET_SCHEMA_VERSION; }
 
 private:
     NetMode m_mode = NetMode::Standalone;
