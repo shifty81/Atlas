@@ -180,4 +180,23 @@ bool GameFlowGraph::IsCompiled() const {
     return m_compiled;
 }
 
+const std::vector<FlowNodeID>& GameFlowGraph::ExecutionOrder() const {
+    return m_executionOrder;
+}
+
+FlowNode* GameFlowGraph::GetNode(FlowNodeID id) const {
+    auto it = m_nodes.find(id);
+    if (it == m_nodes.end()) return nullptr;
+    return it->second.get();
+}
+
+const std::vector<FlowEdge>& GameFlowGraph::Edges() const {
+    return m_edges;
+}
+
+void GameFlowGraph::SetOutput(FlowNodeID node, FlowPortID port, FlowValue value) {
+    uint64_t key = (static_cast<uint64_t>(node) << 32) | port;
+    m_outputs[key] = std::move(value);
+}
+
 }

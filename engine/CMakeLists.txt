@@ -64,6 +64,8 @@ add_library(AtlasEngine STATIC
     ui/HeadlessGUI.cpp
     flow/GameFlowGraph.cpp
     flow/GameFlowNodes.cpp
+    flow/FlowGraphIR.cpp
+    flow/FlowGraphDebugger.cpp
     schema/SchemaValidator.cpp
     graphvm/GraphCache.cpp
     ai/FactionRouter.cpp
