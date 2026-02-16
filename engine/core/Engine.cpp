@@ -363,6 +363,48 @@ bool Engine::ReplayFromSave(const std::string& savePath, const std::string& repl
     return true;
 }
 
+bool Engine::VerifySaveLoadDeterminism(const std::string& tmpPath, uint32_t extraTicks) {
+    // Step 1: Snapshot current state.
+    uint64_t currentTick = m_timeModel.Context().sim.tick;
+    auto ecsDataBefore = m_world.Serialize();
+    auto snapBefore = m_worldState.TakeSnapshot(currentTick, ecsDataBefore);
+
+    // Step 2: Simulate extra ticks and record the resulting hash.
+    m_scheduler.SetFramePacing(false);
+    for (uint32_t i = 0; i < extraTicks; ++i) {
+        m_timeModel.AdvanceTick();
+        m_world.Update(m_timeModel.Context().sim.fixedDeltaTime);
+    }
+    auto ecsDataAfter = m_world.Serialize();
+    uint64_t targetTick = m_timeModel.Context().sim.tick;
+    auto snapAfter = m_worldState.TakeSnapshot(targetTick, ecsDataAfter);
+    uint64_t expectedHash = snapAfter.stateHash;
+
+    // Step 3: Save the state we captured at currentTick.
+    auto saveResult = m_saveSystem.Save(tmpPath, currentTick,
+                                         m_config.tickRate, 0, ecsDataBefore);
+    if (saveResult != sim::SaveResult::Success) return false;
+
+    // Step 4: Load the save back and restore world state.
+    auto loadResult = m_saveSystem.Load(tmpPath);
+    if (loadResult != sim::SaveResult::Success) return false;
+
+    if (!m_world.Deserialize(m_saveSystem.ECSData())) return false;
+    m_timeModel.SetTick(currentTick);
+
+    // Step 5: Resimulate the same extra ticks.
+    for (uint32_t i = 0; i < extraTicks; ++i) {
+        m_timeModel.AdvanceTick();
+        m_world.Update(m_timeModel.Context().sim.fixedDeltaTime);
+    }
+
+    // Step 6: Compare hashes.
+    auto ecsDataReplay = m_world.Serialize();
+    auto snapReplay = m_worldState.TakeSnapshot(targetTick, ecsDataReplay);
+
+    return snapReplay.stateHash == expectedHash;
+}
+
 bool Engine::Running() const {
     return m_running;
 }

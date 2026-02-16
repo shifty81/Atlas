@@ -913,6 +913,29 @@ void test_mutation_can_mutate();
 void test_mutation_owned_components();
 void test_mutation_owner_of_unregistered();
 
+// Lockdown Phase 3 tests
+void test_auditor_empty_passes();
+void test_auditor_system_no_state_fails();
+void test_auditor_system_with_state_passes();
+void test_auditor_multiple_systems();
+void test_auditor_duplicate_register();
+void test_auditor_declared_blocks();
+void test_auditor_unregistered_declaration_warning();
+void test_auditor_clear();
+void test_server_validator_empty_manifest();
+void test_server_validator_register_and_check();
+void test_server_validator_hash_match();
+void test_server_validator_hash_mismatch();
+void test_server_validator_unknown_asset();
+void test_server_validator_file_validation();
+void test_server_validator_file_not_found();
+void test_server_validator_manifest();
+void test_verify_save_load_determinism();
+void test_desync_reproducer_output_dir();
+void test_desync_reproducer_capture();
+void test_desync_reproducer_generate_command();
+void test_desync_reproducer_multiple_captures();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -1930,6 +1953,30 @@ int main() {
     test_mutation_can_mutate();
     test_mutation_owned_components();
     test_mutation_owner_of_unregistered();
+
+    // Lockdown Phase 3
+    std::cout << "\n--- Lockdown Phase 3 ---" << std::endl;
+    test_auditor_empty_passes();
+    test_auditor_system_no_state_fails();
+    test_auditor_system_with_state_passes();
+    test_auditor_multiple_systems();
+    test_auditor_duplicate_register();
+    test_auditor_declared_blocks();
+    test_auditor_unregistered_declaration_warning();
+    test_auditor_clear();
+    test_server_validator_empty_manifest();
+    test_server_validator_register_and_check();
+    test_server_validator_hash_match();
+    test_server_validator_hash_mismatch();
+    test_server_validator_unknown_asset();
+    test_server_validator_file_validation();
+    test_server_validator_file_not_found();
+    test_server_validator_manifest();
+    test_verify_save_load_determinism();
+    test_desync_reproducer_output_dir();
+    test_desync_reproducer_capture();
+    test_desync_reproducer_generate_command();
+    test_desync_reproducer_multiple_captures();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

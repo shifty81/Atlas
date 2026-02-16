@@ -77,6 +77,11 @@ public:
     /// Returns true if hashes match (determinism verified).
     bool RollbackAndVerify(uint64_t snapshotTick, uint64_t targetTick);
 
+    /// Save the current world state, reload it, resimulate for the given
+    /// number of ticks, and compare the resulting state hash against a
+    /// fresh simulation run.  Returns true if hashes match.
+    bool VerifySaveLoadDeterminism(const std::string& tmpPath, uint32_t extraTicks);
+
     bool Running() const;
     void Shutdown();
 
