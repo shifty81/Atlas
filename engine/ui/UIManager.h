@@ -39,7 +39,8 @@ public:
     bool IsInitialized() const;
 
 private:
-    void RenderWidget(UIRenderer* renderer, uint32_t widgetId);
+    void RenderWidget(UIRenderer* renderer, uint32_t widgetId, int depth = 0);
+    static constexpr int kMaxRenderDepth = 64;
 
     GUIContext m_context = GUIContext::Editor;
     UIScreen m_screen;

@@ -73,10 +73,11 @@ bool X11Window::Init(const PlatformWindowConfig& config) {
     m_glContext = glXCreateContext(m_display, vi, nullptr, GL_TRUE);
     if (!m_glContext) {
         atlas::Logger::Error("X11: Failed to create GLX context");
+        XFree(vi);
         XDestroyWindow(m_display, m_window);
+        XFreeColormap(m_display, cmap);
         XCloseDisplay(m_display);
         m_display = nullptr;
-        XFree(vi);
         return false;
     }
 
@@ -140,8 +141,8 @@ bool X11Window::PollEvent(WindowEvent& event) {
                 event.type = WindowEvent::Type::KeyDown;
                 KeySym sym = XLookupKeysym(&xev.xkey, 0);
                 event.keyCode = static_cast<uint32_t>(sym);
-                char buf[4] = {};
-                int len = XLookupString(&xev.xkey, buf, sizeof(buf), nullptr, nullptr);
+                char buf[32] = {};
+                int len = XLookupString(&xev.xkey, buf, sizeof(buf) - 1, nullptr, nullptr);
                 if (len > 0) {
                     event.textChar = buf[0];
                 }

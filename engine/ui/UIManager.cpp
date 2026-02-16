@@ -58,7 +58,8 @@ void UIManager::Render(UIRenderer* renderer) {
     }
 }
 
-void UIManager::RenderWidget(UIRenderer* renderer, uint32_t widgetId) {
+void UIManager::RenderWidget(UIRenderer* renderer, uint32_t widgetId, int depth) {
+    if (depth >= kMaxRenderDepth) return;
     const UIWidget* widget = m_screen.GetWidget(widgetId);
     if (!widget || !widget->visible) return;
 
@@ -123,7 +124,7 @@ void UIManager::RenderWidget(UIRenderer* renderer, uint32_t widgetId) {
     // Render children
     auto children = m_screen.GetChildren(widgetId);
     for (uint32_t childId : children) {
-        RenderWidget(renderer, childId);
+        RenderWidget(renderer, childId, depth + 1);
     }
 }
 
