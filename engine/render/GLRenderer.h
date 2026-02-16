@@ -1,6 +1,10 @@
 #pragma once
 #include "../ui/UIRenderer.h"
 
+#ifdef DrawText
+#undef DrawText
+#endif
+
 namespace atlas::render {
 
 class GLRenderer : public ui::UIRenderer {
