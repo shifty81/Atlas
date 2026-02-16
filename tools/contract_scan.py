@@ -53,6 +53,13 @@ SKIP_DIRS = {
     "platform",
 }
 
+# Files that legitimately use otherwise-forbidden APIs.
+# TickScheduler uses std::chrono for frame pacing (non-simulation logic).
+SKIP_FILES = {
+    "TickScheduler.cpp",
+    "TickScheduler.h",
+}
+
 # File extensions to scan
 SOURCE_EXTENSIONS = {".cpp", ".h", ".hpp", ".cxx"}
 
@@ -98,6 +105,8 @@ def main():
                 # Skip directories that reference forbidden APIs in
                 # comments or error messages (e.g. contract headers)
                 if any(skip in filepath.parts for skip in SKIP_DIRS):
+                    continue
+                if filepath.name in SKIP_FILES:
                     continue
                 all_violations.extend(scan_file(filepath))
 
