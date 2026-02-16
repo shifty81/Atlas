@@ -26,8 +26,7 @@ All core engine systems are implemented and tested.
 
 ## Phase 2 — Editor 🔧
 
-The editor framework is in place with docking and several functional panels.
-Some panels are scaffolded but not yet feature-complete.
+The editor framework is in place with docking and functional panels. Draw() methods are no-ops awaiting a UI rendering backend (ImGui or custom).
 
 - [x] UI framework (EditorPanel base class, visibility control)
 - [x] Panel docking system (recursive dock nodes, horizontal/vertical splits)
@@ -137,7 +136,7 @@ Multi-project architecture with schema validation and plugin support.
 
 ## Phase 6 — Production ✅
 
-Production tooling is complete with packager, cooker, build profiles, mod loading, and platform targeting.
+Production tooling is functional with build profiles, mod loading, and platform targeting. The packager and asset cooker are UI scaffolding only.
 
 - [x] Game packager panel (UI scaffolding for build targets and modes)
 - [x] Asset cooker (source → binary cooking with header, batch processing, progress callbacks)
@@ -157,7 +156,7 @@ All polish systems are implemented.
 
 ## Phase 8 — GUI System & Editor Hardening 🔧
 
-Advanced GUI architecture, editor refinements, and determinism enforcement.
+Advanced GUI architecture, editor refinements, and determinism enforcement. Self-hosting is partial; Unreal-grade aesthetics are pending.
 
 - [x] Custom GUI widget system (layout solver, DSL compiler, deterministic rendering)
 - [x] GUI DSL (declarative layout language with docking, splits, tabs)
@@ -202,7 +201,7 @@ Blueprint-like visual scripting and Blender-like procedural modeling.
 
 ## Phase 11 — AtlasAI & Game GUI Authoring ✅
 
-AI-assisted authoring and unified game UI system.
+AI-assisted authoring and unified game UI system. Framework and intent routing exist; no LLM backend is wired.
 
 - [x] AtlasAI core (structured I/O, permission-gated intents)
 - [x] Atlas Assistant panel (context-aware prompts, diff preview)
@@ -242,13 +241,13 @@ Production-grade CI, build experience, and template repository support.
 | Gameplay | ✅ Complete | Camera, input, physics, audio, mechanics |
 | Interaction/Voice | ✅ Complete | Unified intent pipeline |
 | Project/Plugin | ✅ Complete | Multi-project, schema validation, plugins, game modules |
-| Editor Framework | ✅ Complete | Docking, all panels implemented including graph editor and asset browser |
-| Networking | ✅ Complete | API, lockstep/rollback, replication rules |
-| Production Tools | ✅ Complete | Packager, asset cooker, build profiles, mod loader, platform targeting |
+| Editor Framework | 🔧 Functional | All panel logic works, rendering layer (Draw() methods) deferred pending UI backend |
+| Networking | 🔧 Functional | API, lockstep/rollback, replication work; needs production hardening |
+| Production Tools | 🔧 Functional | Build scripts work, asset cooker/packager are UI scaffolding |
 | Polish | ✅ Complete | Undo/redo, visual diff, profiler, replay recorder, crash analysis |
 | Game Module System | ✅ Complete | IGameModule interface, ModuleLoader, AtlasGameplay library, EveOffline (shipped in-repo), SDK export |
-| GUI System & Editor Hardening | ✅ Complete | Custom GUI DSL, layout solver, editor self-hosting, permissions |
-| Replay & Formal Verification | ✅ Complete | TLA+ specs, TLC CI, proof viewer, replay→proof export, ShaderIR |
+| GUI System & Editor Hardening | 🔧 Functional | DSL and layout solver work, self-hosting partial, Unreal-grade aesthetics pending |
+| Replay & Formal Verification | ✅ Complete | TLA+ specs, TLC CI, proof viewer, replay→proof export, ShaderIR — 1 known issue: `test_replay_record_frames` inputData assertion (`test_replay_recorder.cpp:45`) |
 | Flow Graph & Procedural Content | ✅ Complete | Flow Graph IR/VM/debugger, procedural mesh/material/LOD, deterministic animation, collaborative editing |
-| AtlasAI & Game GUI Authoring | ✅ Complete | AI core, assistant panel, diff viewer, flow refactoring, web KB, game GUI asset/DSL/binding, mechanics UI |
-| CI, Build & Template System | ✅ Complete | Determinism CI gate, contract bot, build manifest, schema, CI dashboard, versioning, certified build |
+| AtlasAI & Game GUI Authoring | 🔧 Functional | Framework and routing exist, no LLM backend wired |
+| CI, Build & Template System | 🔧 Functional | CI gates and build scripts work, certified build pipeline scaffolded |

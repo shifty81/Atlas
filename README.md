@@ -20,14 +20,16 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 
 ### Key Features
 
-- **Standalone Editor** — Blender-style authoring environment with dockable panels
-- **Runtime Client & Server** — Lean player runtime and headless authoritative server
-- **Graph VM** — Deterministic bytecode virtual machine for hot-reloadable gameplay logic
-- **Graph-Based Systems** — 14+ graph types for world gen, animation, AI, audio, UI, and more
-- **Procedural Generation** — Planet-scale terrain, galaxies, tiles, weapons, and characters
+- **Deterministic Simulation** — Bit-exact reproducible ticks with hash-ladder verification and CI determinism gate
+- **Standalone Editor** — Blender-style authoring environment with 14+ dockable panels and AI assistant framework
+- **Runtime Client & Server** — Lean player runtime and headless authoritative server sharing one engine core
+- **Graph VM** — Deterministic bytecode virtual machine with compile/execute, hot-reload, and serialization
+- **Graph-Based Systems** — 14 domain-specific graph types for world gen, animation, AI, audio, UI, and more
+- **Procedural Generation** — Planet-scale terrain, galaxies, tiles, weapons, characters, and narrative
 - **AI Systems** — Behavior graphs, memory with decay, faction relationships, strategy decisions
-- **Networking** — Client-server and P2P with lockstep/rollback foundations
-- **Project System** — Multi-project support with schema-validated `.atlas` project files
+- **Networking** — Client-server and P2P with lockstep/rollback, replication rules, and replay
+- **Project & Plugin System** — Multi-project support with schema-validated `.atlas` files, mod loader, and plugin registry
+- **Replay & Verification** — Full replay recording, divergence detection, and TLA+ formal specifications
 
 ---
 
@@ -36,19 +38,33 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 > See [docs/09_DEVELOPMENT_ROADMAP.md](docs/09_DEVELOPMENT_ROADMAP.md) for full details.
 
 ```
-  Phase 1        Phase 2        Phase 3        Phase 4        Phase 5        Phase 6        Phase 7
- Core Engine      Editor       Networking    World Gen       Gameplay      Production       Polish
-────────────────────────────────────────────────────────────────────────────────────────────────────
- ██████████     ██████████     ██████████     ██████████     ██████████     ██████████     ██████████
-   100%           100%           100%           100%           100%           100%           100%
-  ✅ Done        ✅ Done        ✅ Done        ✅ Done        ✅ Done        ✅ Done        ✅ Done
+  Phase 1       Phase 2       Phase 3       Phase 4       Phase 5      Phase 5b      Phase 5c
+ Core Engine     Editor      Networking    World Gen     Gameplay     Graph Sys     AI Systems
+──────────────────────────────────────────────────────────────────────────────────────────────────
+ ██████████    ███████░░░    ████████░░    ██████████    ██████████    ██████████    ██████████
+   100%           70%           85%          100%          100%          100%          100%
+  ✅ Done      🔧 Func      🔧 Func       ✅ Done       ✅ Done       ✅ Done       ✅ Done
+
+  Phase 5d      Phase 5e      Phase 6       Phase 7       Phase 8       Phase 9       Phase 10
+ Interaction   Proj/Plugin   Production     Polish       GUI Harden   Replay/Verify  Flow Graph
+──────────────────────────────────────────────────────────────────────────────────────────────────
+ ██████████    ██████████    ██████░░░░    ██████████    ███████░░░    █████████░    ██████████
+   100%          100%           60%          100%           75%           95%          100%
+  ✅ Done       ✅ Done      🔧 Func       ✅ Done       🔧 Func       ✅ Done       ✅ Done
+
+  Phase 11      Phase 12
+ AtlasAI/GUI   CI & Build
+──────────────────────────
+ ███████░░░    ████████░░
+    70%           80%
+  🔧 Func      🔧 Func
 ```
 
 <table>
 <tr>
-<td width="14%">
+<td width="25%">
 
-**Phase 1 — Core Engine** ✅
+**Phase 1 — Core Engine** ✅ 100%
 
 - ✅ Bootstrap & config
 - ✅ ECS framework
@@ -58,34 +74,33 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 - ✅ Hot reload
 
 </td>
-<td width="14%">
+<td width="25%">
 
-**Phase 2 — Editor** ✅
+**Phase 2 — Editor** 🔧 70%
 
 - ✅ UI framework
 - ✅ Panel docking system
-- ✅ Console panel
-- ✅ World graph panel
-- ✅ ECS inspector
-- ✅ Graph editor
-- ✅ Asset browser
+- ✅ 14+ panels with logic
+- ✅ Console, inspector, graph editor
+- 📋 Rendering layer (Draw() are no-ops)
+- 📋 UI backend integration
 
 </td>
-<td width="14%">
+<td width="25%">
 
-**Phase 3 — Networking** ✅
+**Phase 3 — Networking** 🔧 85%
 
 - ✅ NetContext API
 - ✅ Dedicated server loop
 - ✅ P2P support
 - ✅ Lockstep sync
 - ✅ Rollback/replay
-- ✅ Replication rules
+- 📋 Production hardening
 
 </td>
-<td width="14%">
+<td width="25%">
 
-**Phase 4 — World Gen** ✅
+**Phase 4 — World Gen** ✅ 100%
 
 - ✅ WorldLayout interface
 - ✅ Cube-sphere math
@@ -96,9 +111,11 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 - ✅ Galaxy generation
 
 </td>
-<td width="14%">
+</tr>
+<tr>
+<td width="25%">
 
-**Phase 5 — Gameplay** ✅
+**Phase 5 — Gameplay** ✅ 100%
 
 - ✅ Mechanic assets
 - ✅ Camera system
@@ -107,20 +124,63 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 - ✅ Audio system
 
 </td>
-<td width="14%">
+<td width="25%">
 
-**Phase 6 — Production** ✅
+**Phase 5b — Graph Systems** ✅ 100%
 
-- ✅ Game packager
-- ✅ Asset cooker
-- ✅ Build profiles
-- ✅ Mod loader
-- ✅ Platform targeting
+- ✅ All 14 graph types
+- ✅ Compile & execute paths
+- ✅ Serialization
+- ✅ Graph VM integration
 
 </td>
-<td width="14%">
+<td width="25%">
 
-**Phase 7 — Polish** ✅
+**Phase 5c — AI Systems** ✅ 100%
+
+- ✅ Behavior graphs
+- ✅ Memory with decay
+- ✅ Faction relationships
+- ✅ Strategy decisions
+- ✅ Conversation graphs
+
+</td>
+<td width="25%">
+
+**Phase 5d — Interaction** ✅ 100%
+
+- ✅ Intent/utterance system
+- ✅ Voice command registry
+- ✅ Console command parsing
+- ✅ Interaction debugger
+
+</td>
+</tr>
+<tr>
+<td width="25%">
+
+**Phase 5e — Project/Plugin** ✅ 100%
+
+- ✅ Project loading & validation
+- ✅ Schema validation system
+- ✅ Plugin registry
+- ✅ Mod asset loader
+
+</td>
+<td width="25%">
+
+**Phase 6 — Production** 🔧 60%
+
+- 📋 Game packager (UI scaffolded)
+- 📋 Asset cooker (build stubs)
+- ✅ Build profiles
+- ✅ Mod loader
+- 📋 Platform targeting
+
+</td>
+<td width="25%">
+
+**Phase 7 — Polish** ✅ 100%
 
 - ✅ Undo/redo system
 - ✅ Visual diff tools
@@ -129,12 +189,95 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 - ✅ Crash analysis
 
 </td>
+<td width="25%">
+
+**Phase 8 — GUI & Editor Hardening** 🔧 75%
+
+- ✅ GUI DSL & layout solver
+- ✅ Panel framework
+- 🔧 Self-hosting (partial)
+- 📋 Full Unreal-grade aesthetics
+
+</td>
+</tr>
+<tr>
+<td width="25%">
+
+**Phase 9 — Replay & Verification** ✅ 95%
+
+- ✅ Hash-ladder replay
+- ✅ Divergence detection
+- ✅ TLA+ formal specs
+- 🔧 Replay recorder edge case
+
+</td>
+<td width="25%">
+
+**Phase 10 — Flow Graph & Procedural** ✅ 100%
+
+- ✅ Blueprint-like flow graph
+- ✅ IR & debugger
+- ✅ Procedural modeling
+- ✅ Mesh/material graphs
+
+</td>
+<td width="25%">
+
+**Phase 11 — AtlasAI & Game GUI** 🔧 70%
+
+- ✅ AI assistant framework
+- ✅ Web aggregation design
+- 📋 LLM backend integration
+- 🔧 Game GUI widget DSL
+
+</td>
+<td width="25%">
+
+**Phase 12 — CI & Build** 🔧 80%
+
+- ✅ CI determinism gate
+- ✅ Build system & scripts
+- 📋 Certified build pipeline
+- 🔧 First-run experience
+
+</td>
 </tr>
 </table>
 
 | Status | Meaning |
 |--------|---------|
-| ✅ Done | Phase fully implemented |
+| ✅ Complete | Fully implemented and tested |
+| 🔧 Functional | Core logic works, some features need polish |
+| 📋 Scaffolded | Headers/interfaces exist, implementation in progress |
+
+---
+
+## 🖥️ Editor Status
+
+| Area | Status |
+|------|--------|
+| **Panel count** | 14+ panels with functional logic (Console, ECS Inspector, Graph Editor, World Graph, Net Inspector, Profiler, etc.) |
+| **Rendering layer** | Deferred — `Draw()` methods are currently no-ops awaiting a UI backend (ImGui or custom) |
+| **Docking infrastructure** | ✅ Layout serialization, split/tab docking framework exists |
+| **AI assistant** | ✅ Framework present (explain, suggest, generate) — no LLM backend wired yet |
+| **GUI DSL** | ✅ Custom DSL and layout solver implemented |
+
+## ✅ What Works Today
+
+These systems are implemented, tested, and functional:
+
+- **Deterministic simulation engine** — bit-exact tick execution with hash-ladder verification
+- **14 graph system types** — all have compile, execute, and serialization paths
+- **Full save/load** — binary asset format with hash integrity checking
+- **Replay recording** — record/playback with divergence detection
+- **ECS framework** — entity management with serialization and rollback support
+- **Networking** — lockstep and rollback foundations with client-server and P2P
+- **100+ unit tests pass** — 1 known pre-existing issue: `test_replay_record_frames` (inputData size assertion in `test_replay_recorder.cpp:45`)
+- **CI determinism gate** — automated verification that simulation is bit-exact
+- **Undo/redo** — command-pattern history across editor operations
+- **Project system** — schema-validated `.atlas` project files with multi-project support
+- **World generation** — cube-sphere, voxel, terrain, galaxy, noise, and streaming
+- **AI systems** — behavior graphs, faction memory, strategy decisions, conversation graphs
 
 ---
 
@@ -362,6 +505,7 @@ See the [docs/](docs/) directory for detailed documentation:
 | [Core Contract](docs/ATLAS_CORE_CONTRACT.md) | Non-negotiable engine invariants |
 | [Determinism Enforcement](docs/ATLAS_DETERMINISM_ENFORCEMENT.md) | Compile-time, runtime, CI enforcement |
 | [Lockdown Checklist](docs/ATLAS_LOCKDOWN_CHECKLIST.md) | Engine feature-freeze gate |
+| [Editor Status](docs/EDITOR_STATUS.md) | Editor completion status and gap analysis |
 | [Building](docs/BUILDING.md) | Build prerequisites, script usage, logs, troubleshooting |
 | [Architecture Reference](docs/ARCHITECTURE.md) | Detailed module-by-module reference |
 | [Naming Conventions](docs/ATLAS_NAMING_CONVENTIONS.md) | Code style and naming rules |
