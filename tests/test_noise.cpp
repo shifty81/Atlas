@@ -63,9 +63,10 @@ void test_fbm_deterministic() {
 
 void test_perlin_spatial_variation() {
     // Different positions should produce different values
-    float v1 = NoiseGenerator::Perlin2D(0.0f, 0.0f);
-    float v2 = NoiseGenerator::Perlin2D(10.0f, 10.0f);
-    float v3 = NoiseGenerator::Perlin2D(100.0f, 100.0f);
+    // Use non-integer coordinates because Perlin noise returns 0 at grid points
+    float v1 = NoiseGenerator::Perlin2D(0.5f, 0.5f);
+    float v2 = NoiseGenerator::Perlin2D(10.5f, 10.5f);
+    float v3 = NoiseGenerator::Perlin2D(100.5f, 100.5f);
 
     // At least 2 of 3 should be different (very high probability)
     bool allSame = (v1 == v2) && (v2 == v3);

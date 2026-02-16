@@ -686,6 +686,36 @@ void test_hud_step_forward();
 void test_hud_determinism_status();
 void test_hud_visibility();
 
+// Time Model tests
+void test_time_model_defaults();
+void test_time_model_set_tick_rate();
+void test_time_model_advance_tick();
+void test_time_model_world_dilation();
+void test_time_model_world_pause();
+void test_time_model_presentation();
+void test_time_model_reset();
+void test_simulation_time_elapsed();
+
+// World State tests
+void test_world_state_register_block();
+void test_world_state_find_block();
+void test_world_state_snapshot();
+void test_world_state_snapshot_deterministic();
+void test_world_state_push_and_retrieve();
+void test_world_state_max_snapshots();
+void test_world_state_prune();
+void test_world_state_clear();
+void test_world_state_derived_rebuild();
+
+// Save System tests
+void test_save_system_save_and_load();
+void test_save_system_hash_integrity();
+void test_save_system_file_not_found();
+void test_save_system_validate();
+void test_save_system_invalid_format();
+void test_save_system_empty_data();
+void test_save_system_clear();
+
 // Render and Platform tests
 void test_render_api_enum();
 void test_null_renderer();
@@ -1488,6 +1518,39 @@ int main() {
     test_hud_step_forward();
     test_hud_determinism_status();
     test_hud_visibility();
+
+    // Time Model
+    std::cout << "\n--- Time Model ---" << std::endl;
+    test_time_model_defaults();
+    test_time_model_set_tick_rate();
+    test_time_model_advance_tick();
+    test_time_model_world_dilation();
+    test_time_model_world_pause();
+    test_time_model_presentation();
+    test_time_model_reset();
+    test_simulation_time_elapsed();
+
+    // World State
+    std::cout << "\n--- World State ---" << std::endl;
+    test_world_state_register_block();
+    test_world_state_find_block();
+    test_world_state_snapshot();
+    test_world_state_snapshot_deterministic();
+    test_world_state_push_and_retrieve();
+    test_world_state_max_snapshots();
+    test_world_state_prune();
+    test_world_state_clear();
+    test_world_state_derived_rebuild();
+
+    // Save System
+    std::cout << "\n--- Save System ---" << std::endl;
+    test_save_system_save_and_load();
+    test_save_system_hash_integrity();
+    test_save_system_file_not_found();
+    test_save_system_validate();
+    test_save_system_invalid_format();
+    test_save_system_empty_data();
+    test_save_system_clear();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

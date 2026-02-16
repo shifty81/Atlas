@@ -117,6 +117,11 @@ Atlas/
 ### Simulation (`engine/sim/`)
 - Fixed-rate tick scheduler
 - Deterministic time stepping
+- Time model (SimulationTime / WorldTime / PresentationTime layers)
+- Formal world state model (state categorization, snapshotting, rollback)
+- Save/load system (versioned binary format with hash integrity verification)
+- Replay recorder and hash ladder verification
+- Replay divergence inspector
 
 ### World Generation (`engine/world/`)
 - Cube-sphere planetary projection with LOD

@@ -20,6 +20,9 @@ All core engine systems are implemented and tested.
 - [x] Hot reload (file timestamp polling)
 - [x] Schema validation system (versioned schemas, field integrity checks)
 - [x] Tick scheduler (fixed-rate deterministic time stepping)
+- [x] Time model (SimulationTime / WorldTime / PresentationTime layers)
+- [x] Formal world state model (state categorization, snapshotting, rollback)
+- [x] Save/load system (versioned binary format with hash integrity verification)
 
 ## Phase 2 — Editor 🔧
 

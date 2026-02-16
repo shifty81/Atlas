@@ -13,11 +13,11 @@ Determinism bugs after lockdown are treated as P0 severity.
 ## Core
 
 - [ ] Core Contract ratified and committed (ATLAS_CORE_CONTRACT.md)
-- [ ] Formal world state model enforced (simulation/derived/metadata categories)
-- [ ] Time model locked (simulation/world/presentation domains)
+- [x] Formal world state model enforced (simulation/derived/metadata categories)
+- [x] Time model locked (simulation/world/presentation domains)
 - [ ] Determinism enforcement layer active (compile-time + runtime + CI)
-- [ ] Deterministic allocator implemented and tested
-- [ ] Canonical world state definition documented
+- [x] Deterministic allocator implemented and tested
+- [x] Canonical world state definition documented
 
 ## Simulation
 
@@ -29,11 +29,11 @@ Determinism bugs after lockdown are treated as P0 severity.
 
 ## Replay & Networking
 
-- [ ] Replay binary format versioned and frozen
+- [x] Replay binary format versioned and frozen
 - [ ] Network packet schema frozen
 - [ ] Golden replays pass CI on all target platforms
-- [ ] Hash ladder verification operational
-- [ ] Replay divergence detection and reporting functional
+- [x] Hash ladder verification operational
+- [x] Replay divergence detection and reporting functional
 - [ ] Save/load determinism verified across replay boundaries
 - [ ] Rollback/resimulation produces identical hashes
 

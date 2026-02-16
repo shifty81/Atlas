@@ -73,6 +73,9 @@ add_library(AtlasEngine STATIC
     sim/ReplayRecorder.cpp
     sim/StateHasher.cpp
     sim/ReplayDivergenceInspector.cpp
+    sim/TimeModel.cpp
+    sim/WorldState.cpp
+    sim/SaveSystem.cpp
     core/DeterministicAllocator.cpp
     core/PermissionManager.cpp
     ui/HUDOverlay.cpp
