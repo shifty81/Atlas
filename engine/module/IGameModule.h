@@ -36,9 +36,9 @@ public:
     virtual ~IGameModule() = default;
 };
 
-using CreateGameModuleFn = std::unique_ptr<IGameModule>(*)();
+using CreateGameModuleFn = IGameModule*(*)();
 
 } // namespace atlas::module
 
 // Factory symbol exported by each game module (dll/so):
-// extern "C" std::unique_ptr<atlas::module::IGameModule> CreateGameModule();
+// extern "C" atlas::module::IGameModule* CreateGameModule();

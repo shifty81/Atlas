@@ -11,7 +11,7 @@
 
 using namespace atlas::module;
 
-extern "C" std::unique_ptr<atlas::module::IGameModule> CreateGameModule();
+extern "C" atlas::module::IGameModule* CreateGameModule();
 
 static GameModuleContext MakeTestContext(atlas::ecs::World& world,
                                         atlas::net::NetContext& net,
@@ -115,7 +115,7 @@ void test_eveoffline_lifecycle() {
 }
 
 void test_eveoffline_factory() {
-    auto mod = CreateGameModule();
+    std::unique_ptr<atlas::module::IGameModule> mod(CreateGameModule());
     assert(mod != nullptr);
     auto desc = mod->Describe();
     assert(std::string(desc.name) == "EveOffline");

@@ -1,12 +1,15 @@
 #include "Engine.h"
 #include "Logger.h"
-#include "../render/GLRenderer.h"
 #include "../render/VulkanRenderer.h"
 #include "../sim/StateHasher.h"
 #include "../sim/ReplayRecorder.h"
 
-#ifdef __linux__
+#ifdef ATLAS_HAS_X11
 #include "../platform/X11Window.h"
+#endif
+
+#if !defined(__linux__) || defined(ATLAS_HAS_X11)
+#include "../render/GLRenderer.h"
 #endif
 
 namespace atlas {
@@ -35,12 +38,8 @@ void Engine::InitRender() {
         return;
     }
 
-#ifdef __linux__
+#ifdef ATLAS_HAS_X11
     auto window = std::make_unique<platform::X11Window>();
-#else
-    Logger::Error("No platform window implementation for this OS");
-    return;
-#endif
 
     platform::PlatformWindowConfig winCfg;
     switch (m_config.mode) {
@@ -58,12 +57,21 @@ void Engine::InitRender() {
     }
 
     m_window = std::move(window);
+#else
+    Logger::Error("No platform window implementation for this OS");
+    return;
+#endif
 
     if (m_config.renderAPI == render::RenderAPI::OpenGL) {
+#if !defined(__linux__) || defined(ATLAS_HAS_X11)
         auto gl = std::make_unique<render::GLRenderer>();
         gl->SetViewport(m_config.windowWidth, m_config.windowHeight);
         m_renderer = std::move(gl);
         Logger::Info("OpenGL renderer initialized");
+#else
+        Logger::Error("OpenGL renderer not available (no GL support)");
+        return;
+#endif
     } else if (m_config.renderAPI == render::RenderAPI::Vulkan) {
         auto vk = std::make_unique<render::VulkanRenderer>();
         vk->SetViewport(m_config.windowWidth, m_config.windowHeight);
@@ -141,6 +149,7 @@ void Engine::ProcessWindowEvents() {
                 break;
             case platform::WindowEvent::Type::Resize:
                 if (m_renderer) {
+#if !defined(__linux__) || defined(ATLAS_HAS_X11)
                     if (m_config.renderAPI == render::RenderAPI::OpenGL) {
                         static_cast<render::GLRenderer*>(m_renderer.get())
                             ->SetViewport(event.width, event.height);
@@ -148,6 +157,10 @@ void Engine::ProcessWindowEvents() {
                         static_cast<render::VulkanRenderer*>(m_renderer.get())
                             ->SetViewport(event.width, event.height);
                     }
+#else
+                    static_cast<render::VulkanRenderer*>(m_renderer.get())
+                        ->SetViewport(event.width, event.height);
+#endif
                 }
                 break;
             case platform::WindowEvent::Type::MouseButtonDown: {

@@ -11,7 +11,7 @@
 
 using namespace atlas::module;
 
-extern "C" std::unique_ptr<atlas::module::IGameModule> CreateArena2DModule();
+extern "C" atlas::module::IGameModule* CreateArena2DModule();
 
 static GameModuleContext MakeArena2DTestContext(atlas::ecs::World& world,
                                                 atlas::net::NetContext& net,
@@ -113,7 +113,7 @@ void test_arena2d_lifecycle() {
 }
 
 void test_arena2d_factory() {
-    auto mod = CreateArena2DModule();
+    std::unique_ptr<atlas::module::IGameModule> mod(CreateArena2DModule());
     assert(mod != nullptr);
     auto desc = mod->Describe();
     assert(std::string(desc.name) == "Arena2D");

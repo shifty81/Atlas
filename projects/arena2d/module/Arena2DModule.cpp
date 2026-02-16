@@ -88,6 +88,6 @@ void Arena2DModule::OnShutdown(atlas::module::GameModuleContext& ctx) {
 } // namespace arena2d
 
 // Factory function for dynamic loading
-extern "C" std::unique_ptr<atlas::module::IGameModule> CreateArena2DModule() {
-    return std::make_unique<arena2d::Arena2DModule>();
+extern "C" atlas::module::IGameModule* CreateArena2DModule() {
+    return new arena2d::Arena2DModule();
 }

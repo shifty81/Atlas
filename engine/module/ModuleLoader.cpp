@@ -50,7 +50,7 @@ ModuleLoadResult ModuleLoader::Load(const std::string& path) {
     m_handle = lib;
 #endif
 
-    m_module = fn();
+    m_module.reset(fn());
     return ModuleLoadResult::Success;
 }
 

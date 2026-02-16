@@ -100,6 +100,6 @@ void EveOfflineModule::OnShutdown(atlas::module::GameModuleContext& ctx) {
 } // namespace eveoffline
 
 // Factory function for dynamic loading
-extern "C" std::unique_ptr<atlas::module::IGameModule> CreateGameModule() {
-    return std::make_unique<eveoffline::EveOfflineModule>();
+extern "C" atlas::module::IGameModule* CreateGameModule() {
+    return new eveoffline::EveOfflineModule();
 }

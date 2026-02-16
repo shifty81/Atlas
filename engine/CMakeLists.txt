@@ -1,3 +1,10 @@
+# Detect optional platform dependencies early
+if(UNIX AND NOT APPLE)
+    find_package(X11 QUIET)
+    find_package(OpenGL QUIET)
+    find_library(VULKAN_LIB vulkan)
+endif()
+
 add_library(AtlasEngine STATIC
     core/Engine.cpp
     core/Logger.cpp
@@ -84,10 +91,20 @@ add_library(AtlasEngine STATIC
     core/PermissionManager.cpp
     ui/HUDOverlay.cpp
     module/ModuleLoader.cpp
-    render/GLRenderer.cpp
     render/VulkanRenderer.cpp
-    platform/X11Window.cpp
 )
+
+# Conditionally add platform/render sources that require X11 or OpenGL
+if(UNIX AND NOT APPLE)
+    if(X11_FOUND)
+        target_sources(AtlasEngine PRIVATE platform/X11Window.cpp)
+    endif()
+    if(OpenGL_FOUND)
+        target_sources(AtlasEngine PRIVATE render/GLRenderer.cpp)
+    endif()
+else()
+    target_sources(AtlasEngine PRIVATE render/GLRenderer.cpp)
+endif()
 
 target_include_directories(AtlasEngine PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -108,11 +125,15 @@ endif()
 
 # Link dynamic loading library on Unix
 if(UNIX AND NOT APPLE)
-    find_package(X11 REQUIRED)
-    find_package(OpenGL REQUIRED)
-    find_library(VULKAN_LIB vulkan)
-    target_link_libraries(AtlasEngine PUBLIC dl ${X11_LIBRARIES} OpenGL::GL)
-    target_include_directories(AtlasEngine PRIVATE ${X11_INCLUDE_DIR})
+    target_link_libraries(AtlasEngine PUBLIC dl)
+    if(X11_FOUND)
+        target_link_libraries(AtlasEngine PUBLIC ${X11_LIBRARIES})
+        target_include_directories(AtlasEngine PRIVATE ${X11_INCLUDE_DIR})
+        target_compile_definitions(AtlasEngine PRIVATE ATLAS_HAS_X11)
+    endif()
+    if(OpenGL_FOUND)
+        target_link_libraries(AtlasEngine PUBLIC OpenGL::GL)
+    endif()
     if(VULKAN_LIB)
         target_link_libraries(AtlasEngine PUBLIC ${VULKAN_LIB})
     endif()

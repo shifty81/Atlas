@@ -1,4 +1,3 @@
-#include "../engine/render/GLRenderer.h"
 #include "../engine/render/VulkanRenderer.h"
 #include "../engine/render/RenderAPI.h"
 #include "../engine/ui/UIRenderer.h"
@@ -7,6 +6,10 @@
 #include "../engine/core/Engine.h"
 #include <iostream>
 #include <cassert>
+
+#if !defined(__linux__) || defined(ATLAS_HAS_X11)
+#include "../engine/render/GLRenderer.h"
+#endif
 
 using namespace atlas;
 using namespace atlas::ui;
@@ -38,10 +41,14 @@ void test_null_renderer() {
 }
 
 void test_gl_renderer_viewport() {
+#if !defined(__linux__) || defined(ATLAS_HAS_X11)
     GLRenderer renderer;
     renderer.SetViewport(1920, 1080);
     // GLRenderer stores viewport; no crash on set
     std::cout << "[PASS] test_gl_renderer_viewport" << std::endl;
+#else
+    std::cout << "[SKIP] test_gl_renderer_viewport (no GL support)" << std::endl;
+#endif
 }
 
 void test_vulkan_renderer_viewport() {
