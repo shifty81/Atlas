@@ -1,5 +1,11 @@
 #include "Engine.h"
 #include "Logger.h"
+#include "../render/GLRenderer.h"
+#include "../render/VulkanRenderer.h"
+
+#ifdef __linux__
+#include "../platform/X11Window.h"
+#endif
 
 namespace atlas {
 
@@ -21,6 +27,48 @@ void Engine::InitRender() {
         Logger::Info("Server mode: rendering disabled");
         return;
     }
+
+    if (m_config.headless) {
+        Logger::Info("Headless mode: rendering disabled");
+        return;
+    }
+
+#ifdef __linux__
+    auto window = std::make_unique<platform::X11Window>();
+#else
+    Logger::Error("No platform window implementation for this OS");
+    return;
+#endif
+
+    platform::PlatformWindowConfig winCfg;
+    switch (m_config.mode) {
+        case EngineMode::Editor: winCfg.title = "Atlas Editor"; break;
+        case EngineMode::Client: winCfg.title = "Atlas Client"; break;
+        default: winCfg.title = "Atlas Engine"; break;
+    }
+    winCfg.width = m_config.windowWidth;
+    winCfg.height = m_config.windowHeight;
+    winCfg.resizable = true;
+
+    if (!window->Init(winCfg)) {
+        Logger::Error("Failed to create platform window");
+        return;
+    }
+
+    m_window = std::move(window);
+
+    if (m_config.renderAPI == render::RenderAPI::OpenGL) {
+        auto gl = std::make_unique<render::GLRenderer>();
+        gl->SetViewport(m_config.windowWidth, m_config.windowHeight);
+        m_renderer = std::move(gl);
+        Logger::Info("OpenGL renderer initialized");
+    } else if (m_config.renderAPI == render::RenderAPI::Vulkan) {
+        auto vk = std::make_unique<render::VulkanRenderer>();
+        vk->SetViewport(m_config.windowWidth, m_config.windowHeight);
+        m_renderer = std::move(vk);
+        Logger::Info("Vulkan renderer initialized (stub)");
+    }
+
     Logger::Info("Render system initialized");
 }
 
@@ -32,6 +80,9 @@ void Engine::InitUI() {
         case EngineMode::Server: guiCtx = ui::GUIContext::Server; break;
     }
     m_uiManager.Init(guiCtx);
+    if (m_renderer) {
+        m_uiManager.SetRenderer(m_renderer.get());
+    }
     Logger::Info("UI system initialized");
 }
 
@@ -67,18 +118,65 @@ void Engine::Run() {
     }
 }
 
+void Engine::ProcessWindowEvents() {
+    if (!m_window) return;
+
+    platform::WindowEvent event;
+    while (m_window->PollEvent(event)) {
+        switch (event.type) {
+            case platform::WindowEvent::Type::Close:
+                m_running = false;
+                break;
+            case platform::WindowEvent::Type::Resize:
+                if (m_renderer) {
+                    if (m_config.renderAPI == render::RenderAPI::OpenGL) {
+                        static_cast<render::GLRenderer*>(m_renderer.get())
+                            ->SetViewport(event.width, event.height);
+                    } else {
+                        static_cast<render::VulkanRenderer*>(m_renderer.get())
+                            ->SetViewport(event.width, event.height);
+                    }
+                }
+                break;
+            case platform::WindowEvent::Type::MouseButtonDown: {
+                ui::UICommand cmd;
+                cmd.type = ui::UICommandType::ButtonPress;
+                cmd.valueFloat = static_cast<float>(event.mouseX);
+                cmd.valueString = std::to_string(event.mouseY);
+                m_uiManager.GetCommandBus().Enqueue(std::move(cmd));
+                break;
+            }
+            default:
+                break;
+        }
+    }
+}
+
 void Engine::RunEditor() {
     Logger::Info("Running Atlas Editor");
     uint64_t tickCount = 0;
     while (m_running) {
+        ProcessWindowEvents();
         m_net.Poll();
         m_scheduler.Tick([this](float dt) {
             m_world.Update(dt);
             ui::UIContext uiCtx{};
+            if (m_window) {
+                uiCtx.screenWidth = static_cast<float>(m_window->Width());
+                uiCtx.screenHeight = static_cast<float>(m_window->Height());
+            }
             uiCtx.deltaTime = dt;
             uiCtx.tick = static_cast<uint32_t>(m_scheduler.CurrentTick());
             m_uiManager.Update(uiCtx);
         });
+
+        if (m_renderer && m_window && m_window->IsOpen()) {
+            m_renderer->BeginFrame();
+            m_uiManager.Render(m_renderer.get());
+            m_renderer->EndFrame();
+            m_window->SwapBuffers();
+        }
+
         tickCount++;
         if (m_config.maxTicks > 0 && tickCount >= m_config.maxTicks) {
             m_running = false;
@@ -90,14 +188,27 @@ void Engine::RunClient() {
     Logger::Info("Running Atlas Client");
     uint64_t tickCount = 0;
     while (m_running) {
+        ProcessWindowEvents();
         m_net.Poll();
         m_scheduler.Tick([this](float dt) {
             m_world.Update(dt);
             ui::UIContext uiCtx{};
+            if (m_window) {
+                uiCtx.screenWidth = static_cast<float>(m_window->Width());
+                uiCtx.screenHeight = static_cast<float>(m_window->Height());
+            }
             uiCtx.deltaTime = dt;
             uiCtx.tick = static_cast<uint32_t>(m_scheduler.CurrentTick());
             m_uiManager.Update(uiCtx);
         });
+
+        if (m_renderer && m_window && m_window->IsOpen()) {
+            m_renderer->BeginFrame();
+            m_uiManager.Render(m_renderer.get());
+            m_renderer->EndFrame();
+            m_window->SwapBuffers();
+        }
+
         tickCount++;
         if (m_config.maxTicks > 0 && tickCount >= m_config.maxTicks) {
             m_running = false;
@@ -130,6 +241,11 @@ void Engine::Shutdown() {
         Logger::Info("Engine shutting down");
         m_uiManager.Shutdown();
         m_net.Shutdown();
+        m_renderer.reset();
+        if (m_window) {
+            m_window->Shutdown();
+            m_window.reset();
+        }
         m_running = false;
         Logger::Shutdown();
     }

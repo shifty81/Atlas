@@ -18,6 +18,7 @@ void UIManager::Init(GUIContext context) {
 
 void UIManager::Shutdown() {
     m_commandBus.Clear();
+    m_renderer = nullptr;
     m_initialized = false;
 }
 
@@ -36,6 +37,94 @@ void UIManager::Update(const UIContext& ctx) {
 
     if (m_graph.IsCompiled()) {
         m_graph.Execute(ctx);
+    }
+}
+
+void UIManager::SetRenderer(UIRenderer* renderer) {
+    m_renderer = renderer;
+}
+
+UIRenderer* UIManager::GetRenderer() const {
+    return m_renderer;
+}
+
+void UIManager::Render(UIRenderer* renderer) {
+    if (!m_initialized || !renderer) return;
+
+    // Walk root-level widgets (parentId == 0) and render them
+    auto roots = m_screen.GetChildren(0);
+    for (uint32_t id : roots) {
+        RenderWidget(renderer, id);
+    }
+}
+
+void UIManager::RenderWidget(UIRenderer* renderer, uint32_t widgetId, int depth) {
+    if (depth >= kMaxRenderDepth) return;
+    const UIWidget* widget = m_screen.GetWidget(widgetId);
+    if (!widget || !widget->visible) return;
+
+    UIRect rect;
+    rect.x = static_cast<int32_t>(widget->x);
+    rect.y = static_cast<int32_t>(widget->y);
+    rect.w = static_cast<int32_t>(widget->width);
+    rect.h = static_cast<int32_t>(widget->height);
+
+    switch (widget->type) {
+        case UIWidgetType::Panel: {
+            UIColor bg = {40, 42, 48, 255};
+            renderer->DrawRect(rect, bg);
+            UIColor border = {80, 82, 88, 255};
+            renderer->DrawBorder(rect, 1, border);
+            break;
+        }
+        case UIWidgetType::Button: {
+            UIColor bg = {60, 90, 140, 255};
+            renderer->DrawRect(rect, bg);
+            UIColor border = {100, 130, 180, 255};
+            renderer->DrawBorder(rect, 1, border);
+            UIColor textColor = {220, 220, 220, 255};
+            renderer->DrawText(rect, widget->name, textColor);
+            break;
+        }
+        case UIWidgetType::Text: {
+            UIColor textColor = {200, 200, 200, 255};
+            renderer->DrawText(rect, widget->name, textColor);
+            break;
+        }
+        case UIWidgetType::Image: {
+            UIColor tint = {255, 255, 255, 255};
+            renderer->DrawImage(rect, 0, tint);
+            break;
+        }
+        case UIWidgetType::List: {
+            UIColor bg = {35, 37, 42, 255};
+            renderer->DrawRect(rect, bg);
+            UIColor border = {70, 72, 78, 255};
+            renderer->DrawBorder(rect, 1, border);
+            break;
+        }
+        case UIWidgetType::SlotGrid: {
+            UIColor bg = {45, 47, 52, 255};
+            renderer->DrawRect(rect, bg);
+            UIColor border = {80, 82, 88, 255};
+            renderer->DrawBorder(rect, 1, border);
+            break;
+        }
+        case UIWidgetType::InputField: {
+            UIColor bg = {30, 32, 36, 255};
+            renderer->DrawRect(rect, bg);
+            UIColor border = {70, 100, 150, 255};
+            renderer->DrawBorder(rect, 1, border);
+            UIColor textColor = {180, 180, 180, 255};
+            renderer->DrawText(rect, widget->name, textColor);
+            break;
+        }
+    }
+
+    // Render children
+    auto children = m_screen.GetChildren(widgetId);
+    for (uint32_t childId : children) {
+        RenderWidget(renderer, childId, depth + 1);
     }
 }
 

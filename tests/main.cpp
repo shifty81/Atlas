@@ -686,6 +686,21 @@ void test_hud_step_forward();
 void test_hud_determinism_status();
 void test_hud_visibility();
 
+// Render and Platform tests
+void test_render_api_enum();
+void test_null_renderer();
+void test_gl_renderer_viewport();
+void test_vulkan_renderer_viewport();
+void test_ui_manager_set_renderer();
+void test_ui_manager_render_empty();
+void test_ui_manager_render_widgets();
+void test_ui_manager_render_null_renderer();
+void test_engine_config_render_fields();
+void test_engine_headless_no_window();
+void test_engine_server_no_window();
+void test_platform_window_event_type();
+void test_platform_window_config();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -800,6 +815,22 @@ int main() {
     test_terrain_heightmap_mesh();
     test_terrain_normals_computed();
     test_terrain_resolution_one();
+
+    // Render and Platform
+    std::cout << "\n--- Render and Platform ---" << std::endl;
+    test_render_api_enum();
+    test_null_renderer();
+    test_gl_renderer_viewport();
+    test_vulkan_renderer_viewport();
+    test_ui_manager_set_renderer();
+    test_ui_manager_render_empty();
+    test_ui_manager_render_widgets();
+    test_ui_manager_render_null_renderer();
+    test_engine_config_render_fields();
+    test_engine_headless_no_window();
+    test_engine_server_no_window();
+    test_platform_window_event_type();
+    test_platform_window_config();
 
     // Noise
     std::cout << "\n--- Noise Generator ---" << std::endl;

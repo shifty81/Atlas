@@ -77,6 +77,9 @@ add_library(AtlasEngine STATIC
     core/PermissionManager.cpp
     ui/HUDOverlay.cpp
     module/ModuleLoader.cpp
+    render/GLRenderer.cpp
+    render/VulkanRenderer.cpp
+    platform/X11Window.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC
@@ -86,7 +89,14 @@ target_include_directories(AtlasEngine PUBLIC
 
 # Link dynamic loading library on Unix
 if(UNIX AND NOT APPLE)
-    target_link_libraries(AtlasEngine PUBLIC dl)
+    find_package(X11 REQUIRED)
+    find_package(OpenGL REQUIRED)
+    find_library(VULKAN_LIB vulkan)
+    target_link_libraries(AtlasEngine PUBLIC dl ${X11_LIBRARIES} OpenGL::GL)
+    target_include_directories(AtlasEngine PRIVATE ${X11_INCLUDE_DIR})
+    if(VULKAN_LIB)
+        target_link_libraries(AtlasEngine PUBLIC ${VULKAN_LIB})
+    endif()
 elseif(APPLE)
     target_link_libraries(AtlasEngine PUBLIC dl)
 endif()
