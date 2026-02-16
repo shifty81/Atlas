@@ -366,6 +366,46 @@ void test_gameflowgraph_compile_chain();
 void test_gameflowgraph_execute();
 void test_gameflowgraph_deterministic();
 
+// Flow IR tests
+void test_flow_ir_default_values();
+void test_flow_ir_add_nodes();
+void test_flow_ir_add_edges();
+void test_flow_ir_to_json();
+void test_flow_ir_roundtrip();
+void test_flow_ir_validate_valid();
+void test_flow_ir_validate_invalid();
+void test_flow_ir_migrate_v1();
+
+// Flow Debugger tests
+void test_debugger_initial_state();
+void test_debugger_add_breakpoint();
+void test_debugger_remove_breakpoint();
+void test_debugger_clear_breakpoints();
+void test_debugger_execute_no_breakpoints();
+void test_debugger_breakpoint_pause();
+void test_debugger_step_node();
+
+// Shader IR tests
+void test_shader_module_defaults();
+void test_shader_passthrough_vertex();
+void test_shader_solid_color_fragment();
+void test_shader_validate_valid();
+void test_shader_validate_empty();
+void test_shader_hash_deterministic();
+void test_shader_hash_different();
+void test_shader_serialize_roundtrip();
+
+// Build Manifest tests
+void test_manifest_defaults();
+void test_manifest_add_artifact();
+void test_manifest_find_artifact();
+void test_manifest_find_missing();
+void test_manifest_validate_valid();
+void test_manifest_validate_missing_fields();
+void test_manifest_to_json();
+void test_manifest_roundtrip();
+void test_manifest_verify_hash();
+
 // UIGraph tests
 void test_uigraph_add_nodes();
 void test_uigraph_remove_node();
@@ -1439,6 +1479,50 @@ int main() {
     test_gameflowgraph_compile_chain();
     test_gameflowgraph_execute();
     test_gameflowgraph_deterministic();
+
+    // Flow IR
+    std::cout << "\n--- Flow IR ---" << std::endl;
+    test_flow_ir_default_values();
+    test_flow_ir_add_nodes();
+    test_flow_ir_add_edges();
+    test_flow_ir_to_json();
+    test_flow_ir_roundtrip();
+    test_flow_ir_validate_valid();
+    test_flow_ir_validate_invalid();
+    test_flow_ir_migrate_v1();
+
+    // Flow Debugger
+    std::cout << "\n--- Flow Debugger ---" << std::endl;
+    test_debugger_initial_state();
+    test_debugger_add_breakpoint();
+    test_debugger_remove_breakpoint();
+    test_debugger_clear_breakpoints();
+    test_debugger_execute_no_breakpoints();
+    test_debugger_breakpoint_pause();
+    test_debugger_step_node();
+
+    // Shader IR
+    std::cout << "\n--- Shader IR ---" << std::endl;
+    test_shader_module_defaults();
+    test_shader_passthrough_vertex();
+    test_shader_solid_color_fragment();
+    test_shader_validate_valid();
+    test_shader_validate_empty();
+    test_shader_hash_deterministic();
+    test_shader_hash_different();
+    test_shader_serialize_roundtrip();
+
+    // Build Manifest
+    std::cout << "\n--- Build Manifest ---" << std::endl;
+    test_manifest_defaults();
+    test_manifest_add_artifact();
+    test_manifest_find_artifact();
+    test_manifest_find_missing();
+    test_manifest_validate_valid();
+    test_manifest_validate_missing_fields();
+    test_manifest_to_json();
+    test_manifest_roundtrip();
+    test_manifest_verify_hash();
 
     // UI Graph
     std::cout << "\n--- UI Graph ---" << std::endl;
