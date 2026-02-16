@@ -755,6 +755,24 @@ void test_engine_replay_from_save_bad_replay();
 void test_state_hash_diff_panel_component_breakdown();
 void test_state_hash_diff_panel_no_component_divergence();
 
+// Next Tasks Phase 2 tests
+void test_behaviorgraph_serialize_state();
+void test_behaviorgraph_serialize_empty();
+void test_partial_save_and_load();
+void test_partial_save_hash_integrity();
+void test_partial_save_empty_chunks();
+void test_save_file_browser_scan();
+void test_save_file_browser_empty_dir();
+void test_save_file_browser_select();
+void test_hash_ladder_comparison();
+void test_hash_ladder_comparison_no_divergence();
+void test_divergence_detail();
+void test_divergence_detail_no_divergence();
+void test_replay_auto_divergence_callback();
+void test_replay_no_divergence_callback();
+void test_detailed_divergence_report();
+void test_detailed_divergence_report_no_divergence();
+
 // GUI DSL Parser tests
 void test_dsl_parse_simple_layout();
 void test_dsl_parse_split();
@@ -1697,6 +1715,25 @@ int main() {
     test_engine_replay_from_save_bad_replay();
     test_state_hash_diff_panel_component_breakdown();
     test_state_hash_diff_panel_no_component_divergence();
+
+    // Next Tasks Phase 2
+    std::cout << "\n--- Next Tasks Phase 2 ---" << std::endl;
+    test_behaviorgraph_serialize_state();
+    test_behaviorgraph_serialize_empty();
+    test_partial_save_and_load();
+    test_partial_save_hash_integrity();
+    test_partial_save_empty_chunks();
+    test_save_file_browser_scan();
+    test_save_file_browser_empty_dir();
+    test_save_file_browser_select();
+    test_hash_ladder_comparison();
+    test_hash_ladder_comparison_no_divergence();
+    test_divergence_detail();
+    test_divergence_detail_no_divergence();
+    test_replay_auto_divergence_callback();
+    test_replay_no_divergence_callback();
+    test_detailed_divergence_report();
+    test_detailed_divergence_report_no_divergence();
 
     // GUI DSL Parser
     std::cout << "\n--- GUI DSL Parser ---" << std::endl;

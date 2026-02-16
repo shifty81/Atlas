@@ -24,6 +24,24 @@ struct ComponentHashBreakdown {
     std::vector<ComponentHashEntry> components;
 };
 
+/// Result of comparing two complete hash ladders side-by-side.
+struct HashLadderComparison {
+    std::vector<HashDiffEntry> entries;
+    int64_t firstDivergenceTick = -1;
+    size_t matchCount = 0;
+    size_t totalCount = 0;
+    double matchPercentage = 100.0;
+};
+
+/// Detailed information about the first divergence point.
+struct DivergenceDetail {
+    int64_t tick = -1;
+    uint64_t localHash = 0;
+    uint64_t remoteHash = 0;
+    std::vector<ComponentHashEntry> divergentComponents;
+    std::string summary;
+};
+
 class StateHashDiffPanel {
 public:
     void SetLocalHasher(const sim::StateHasher* local);
@@ -40,6 +58,13 @@ public:
     const ComponentHashBreakdown& GetComponentBreakdown() const;
     bool HasComponentBreakdown() const;
     std::vector<std::string> DivergentComponents() const;
+
+    /// Compare two hash ladders side-by-side and return full results.
+    HashLadderComparison CompareHashLadders(const sim::StateHasher& a,
+                                            const sim::StateHasher& b) const;
+
+    /// Get detailed information about the first divergence, including which components diverge.
+    DivergenceDetail GetDivergenceDetail() const;
 
 private:
     const sim::StateHasher* m_local = nullptr;

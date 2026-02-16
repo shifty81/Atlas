@@ -76,8 +76,8 @@ Provides versioned binary save format (`.asav`) with hash-verified integrity.
 **Remaining work:**
 - [x] Add save/load commands to editor console panel
 - [x] Wire into `Engine::RunClient()` and `Engine::RunServer()` for autosave
-- [ ] Implement partial-world saves for large streaming worlds
-- [ ] Add save file browser to editor UI
+- [x] Implement partial-world saves for large streaming worlds
+- [x] Add save file browser to editor UI
 - [ ] Cross-platform save compatibility testing
 - [x] Replay-from-save verification (load save → replay → verify hash ladder)
 
@@ -99,7 +99,7 @@ Compile-time guards and runtime assertions exist. Gaps remain:
 AI systems must produce bit-identical decisions given identical inputs.
 
 - [x] Document allowed randomness sources in AI systems (DeterministicRNG only)
-- [ ] Serialize planner state for save/load (BehaviorGraph execution state)
+- [x] Serialize planner state for save/load (BehaviorGraph execution state)
 - [x] Add determinism test: same AIMemory + inputs → same BehaviorGraph output
 - [x] Verify RelationshipModel determinism across save/load boundary
 
@@ -136,8 +136,8 @@ runtime and editor infrastructure.
 ### 3.1 State Hash Diff Visualizer 🔧
 
 - [x] Editor panel showing per-component hash breakdown at any tick
-- [ ] Side-by-side comparison of two hash ladders
-- [ ] Highlight first divergence point with component-level detail
+- [x] Side-by-side comparison of two hash ladders
+- [x] Highlight first divergence point with component-level detail
 
 ### 3.2 Replay Divergence Inspector UI 🔧
 
@@ -145,8 +145,8 @@ runtime and editor infrastructure.
           `editor/panels/ReplayTimelinePanel.h/cpp`
 
 Core logic exists. Remaining:
-- [ ] Auto-open divergence view on hash mismatch during replay
-- [ ] Show per-system state diff at divergence tick
+- [x] Auto-open divergence view on hash mismatch during replay
+- [x] Show per-system state diff at divergence tick
 - [x] Export divergence report to file
 
 ### 3.3 FP Drift Detector ❌
@@ -273,8 +273,8 @@ Phase C — Integration
   ✅ Editor console commands for save/load
 
 Phase D — Tooling
-  🔧 State hash diff visualizer
-  🔧 Replay divergence inspector UI
+  ✅ State hash diff visualizer
+  ✅ Replay divergence inspector UI
   → FP drift detector
   ✅ Job execution trace viewer (JobTracer + JobTracePanel)
 

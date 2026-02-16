@@ -198,4 +198,44 @@ void ReplayDivergenceInspector::ClearHistory() {
     m_lastReport = DivergenceReport{};
 }
 
+DetailedDivergenceReport ReplayDivergenceInspector::CompareDetailed(
+        const StateHasher& local,
+        const StateHasher& remote,
+        const std::vector<std::pair<std::string, uint64_t>>& localSystemHashes,
+        const std::vector<std::pair<std::string, uint64_t>>& remoteSystemHashes) {
+    DetailedDivergenceReport result;
+    result.baseReport = Compare(local, remote);
+
+    // Build per-system diffs by pairing entries with the same name
+    size_t count = std::min(localSystemHashes.size(), remoteSystemHashes.size());
+    for (size_t i = 0; i < count; ++i) {
+        SystemStateDiff diff;
+        diff.systemName = localSystemHashes[i].first;
+        diff.localHash = localSystemHashes[i].second;
+        diff.remoteHash = remoteSystemHashes[i].second;
+        diff.matches = (diff.localHash == diff.remoteHash);
+        result.systemDiffs.push_back(std::move(diff));
+    }
+
+    // Handle any remaining entries from the longer list
+    for (size_t i = count; i < localSystemHashes.size(); ++i) {
+        SystemStateDiff diff;
+        diff.systemName = localSystemHashes[i].first;
+        diff.localHash = localSystemHashes[i].second;
+        diff.remoteHash = 0;
+        diff.matches = false;
+        result.systemDiffs.push_back(std::move(diff));
+    }
+    for (size_t i = count; i < remoteSystemHashes.size(); ++i) {
+        SystemStateDiff diff;
+        diff.systemName = remoteSystemHashes[i].first;
+        diff.localHash = 0;
+        diff.remoteHash = remoteSystemHashes[i].second;
+        diff.matches = false;
+        result.systemDiffs.push_back(std::move(diff));
+    }
+
+    return result;
+}
+
 }  // namespace atlas::sim

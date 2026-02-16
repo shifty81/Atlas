@@ -167,4 +167,119 @@ void SaveSystem::Clear() {
     m_metadata.clear();
 }
 
+SaveResult SaveSystem::SavePartial(const std::string& path,
+                                   uint64_t tick,
+                                   uint32_t tickRate,
+                                   uint32_t seed,
+                                   const std::vector<ChunkSaveEntry>& chunks) {
+    // Compute hash over all chunk data.
+    uint64_t hash = 0;
+    for (const auto& chunk : chunks) {
+        if (!chunk.data.empty()) {
+            hash = StateHasher::HashCombine(hash, chunk.data.data(), chunk.data.size());
+        }
+    }
+
+    PartialSaveHeader header;
+    header.saveTick = tick;
+    header.tickRate = tickRate;
+    header.seed = seed;
+    header.stateHash = hash;
+    header.chunkCount = static_cast<uint32_t>(chunks.size());
+
+    std::ofstream out(path, std::ios::binary);
+    if (!out.is_open()) {
+        return SaveResult::IOError;
+    }
+
+    out.write(reinterpret_cast<const char*>(&header), sizeof(header));
+
+    for (const auto& chunk : chunks) {
+        out.write(reinterpret_cast<const char*>(&chunk.x), sizeof(int32_t));
+        out.write(reinterpret_cast<const char*>(&chunk.y), sizeof(int32_t));
+        out.write(reinterpret_cast<const char*>(&chunk.z), sizeof(int32_t));
+        uint32_t dataSize = static_cast<uint32_t>(chunk.data.size());
+        out.write(reinterpret_cast<const char*>(&dataSize), sizeof(uint32_t));
+        if (dataSize > 0) {
+            out.write(reinterpret_cast<const char*>(chunk.data.data()),
+                      static_cast<std::streamsize>(dataSize));
+        }
+    }
+
+    if (!out.good()) {
+        return SaveResult::IOError;
+    }
+
+    return SaveResult::Success;
+}
+
+SaveResult SaveSystem::LoadPartial(const std::string& path) {
+    std::ifstream in(path, std::ios::binary);
+    if (!in.is_open()) {
+        return SaveResult::FileNotFound;
+    }
+
+    PartialSaveHeader header;
+    in.read(reinterpret_cast<char*>(&header), sizeof(header));
+    if (!in.good()) {
+        return SaveResult::InvalidFormat;
+    }
+
+    if (header.magic != 0x41535057) {
+        return SaveResult::InvalidFormat;
+    }
+
+    if (header.version != 1) {
+        return SaveResult::VersionMismatch;
+    }
+
+    static constexpr uint32_t kMaxChunkDataSize = 256 * 1024 * 1024;  // 256 MB
+
+    std::vector<ChunkSaveEntry> chunks(header.chunkCount);
+    for (uint32_t i = 0; i < header.chunkCount; ++i) {
+        in.read(reinterpret_cast<char*>(&chunks[i].x), sizeof(int32_t));
+        in.read(reinterpret_cast<char*>(&chunks[i].y), sizeof(int32_t));
+        in.read(reinterpret_cast<char*>(&chunks[i].z), sizeof(int32_t));
+        uint32_t dataSize = 0;
+        in.read(reinterpret_cast<char*>(&dataSize), sizeof(uint32_t));
+        if (dataSize > kMaxChunkDataSize) {
+            return SaveResult::InvalidFormat;
+        }
+        chunks[i].data.resize(dataSize);
+        if (dataSize > 0) {
+            in.read(reinterpret_cast<char*>(chunks[i].data.data()),
+                    static_cast<std::streamsize>(dataSize));
+        }
+    }
+
+    if (!in.good() && !in.eof()) {
+        return SaveResult::IOError;
+    }
+
+    // Verify hash integrity.
+    uint64_t hash = 0;
+    for (const auto& chunk : chunks) {
+        if (!chunk.data.empty()) {
+            hash = StateHasher::HashCombine(hash, chunk.data.data(), chunk.data.size());
+        }
+    }
+
+    if (hash != header.stateHash) {
+        return SaveResult::HashMismatch;
+    }
+
+    m_partialHeader = header;
+    m_chunks = std::move(chunks);
+
+    return SaveResult::Success;
+}
+
+const PartialSaveHeader& SaveSystem::PartialHeader() const {
+    return m_partialHeader;
+}
+
+const std::vector<ChunkSaveEntry>& SaveSystem::Chunks() const {
+    return m_chunks;
+}
+
 }  // namespace atlas::sim

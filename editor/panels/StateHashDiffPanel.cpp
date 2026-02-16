@@ -95,4 +95,77 @@ std::vector<std::string> StateHashDiffPanel::DivergentComponents() const {
     return result;
 }
 
+HashLadderComparison StateHashDiffPanel::CompareHashLadders(
+        const sim::StateHasher& a,
+        const sim::StateHasher& b) const {
+    HashLadderComparison result;
+
+    const auto& ah = a.History();
+    const auto& bh = b.History();
+    size_t count = std::min(ah.size(), bh.size());
+    result.totalCount = count;
+    result.matchCount = 0;
+
+    for (size_t i = 0; i < count; ++i) {
+        HashDiffEntry entry;
+        entry.tick = ah[i].tick;
+        entry.localHash = ah[i].hash;
+        entry.remoteHash = bh[i].hash;
+        entry.matches = (entry.localHash == entry.remoteHash);
+        result.entries.push_back(entry);
+
+        if (entry.matches) {
+            ++result.matchCount;
+        } else if (result.firstDivergenceTick < 0) {
+            result.firstDivergenceTick = static_cast<int64_t>(entry.tick);
+        }
+    }
+
+    result.matchPercentage = (count > 0)
+        ? (static_cast<double>(result.matchCount) / static_cast<double>(count)) * 100.0
+        : 100.0;
+
+    return result;
+}
+
+DivergenceDetail StateHashDiffPanel::GetDivergenceDetail() const {
+    DivergenceDetail detail;
+
+    if (!HasDivergence()) {
+        detail.summary = "No divergence";
+        return detail;
+    }
+
+    // Find first non-matching entry
+    for (const auto& e : m_entries) {
+        if (!e.matches) {
+            detail.tick = static_cast<int64_t>(e.tick);
+            detail.localHash = e.localHash;
+            detail.remoteHash = e.remoteHash;
+            break;
+        }
+    }
+
+    // Include component breakdown if available at that tick
+    if (m_hasComponentBreakdown &&
+        static_cast<int64_t>(m_componentBreakdown.tick) == detail.tick) {
+        for (const auto& c : m_componentBreakdown.components) {
+            if (!c.matches) {
+                detail.divergentComponents.push_back(c);
+            }
+        }
+    }
+
+    char buf[256];
+    std::snprintf(buf, sizeof(buf),
+        "Divergence at tick %lld: local=0x%llX remote=0x%llX, %zu divergent component(s)",
+        (long long)detail.tick,
+        (unsigned long long)detail.localHash,
+        (unsigned long long)detail.remoteHash,
+        detail.divergentComponents.size());
+    detail.summary = buf;
+
+    return detail;
+}
+
 }
