@@ -42,7 +42,7 @@ Defines three canonical time layers:
 **Remaining work:**
 - [x] Wire `TimeModel` into `Engine` to replace raw `TickScheduler` delta calls
 - [x] Expose `TimeContext` to ECS system callbacks
-- [ ] Add `WorldTime` dilation controls to editor HUD overlay
+- [x] Add `WorldTime` dilation controls to editor HUD overlay
 
 ### 1.2 Formal World State Model ✅
 
@@ -64,7 +64,7 @@ Provides snapshot/rollback support with configurable history depth.
 - [x] Annotate every ECS component with its `StateCategory`
 - [x] Enforce category at compile-time via type traits or tag types
 - [x] Add snapshot integration to lockstep rollback path in `NetContext`
-- [ ] Expose state block inspector in editor ECS panel
+- [x] Expose state block inspector in editor ECS panel
 
 ### 1.3 Save / Load System ✅
 
@@ -81,7 +81,7 @@ Provides versioned binary save format (`.asav`) with hash-verified integrity.
 - [ ] Cross-platform save compatibility testing
 - [x] Replay-from-save verification (load save → replay → verify hash ladder)
 
-### 1.4 Determinism Enforcement Hardening 🔧
+### 1.4 Determinism Enforcement Hardening ✅
 
 **Files:** `engine/core/contract/AtlasContract.h`, `SimulationGuard.h`,
           `DeterministicRNG.h`, `DeterministicAllocator.h`
@@ -92,13 +92,13 @@ Compile-time guards and runtime assertions exist. Gaps remain:
 - [x] Enforce `#include` firewall: simulation code cannot include render headers
 - [x] Add CMake `INTERFACE` target separating sim-safe from render-safe sources
 - [x] FP consistency enforcement (`-ffp-contract=off`, `/fp:strict` flags)
-- [ ] Platform-dependent math detection in CI (scan for `__m128` outside render)
+- [x] Platform-dependent math detection in CI (scan for `__m128` outside render)
 
 ### 1.5 AI Determinism Contract 🔧
 
 AI systems must produce bit-identical decisions given identical inputs.
 
-- [ ] Document allowed randomness sources in AI systems (DeterministicRNG only)
+- [x] Document allowed randomness sources in AI systems (DeterministicRNG only)
 - [ ] Serialize planner state for save/load (BehaviorGraph execution state)
 - [x] Add determinism test: same AIMemory + inputs → same BehaviorGraph output
 - [x] Verify RelationshipModel determinism across save/load boundary
@@ -135,7 +135,7 @@ runtime and editor infrastructure.
 
 ### 3.1 State Hash Diff Visualizer 🔧
 
-- [ ] Editor panel showing per-component hash breakdown at any tick
+- [x] Editor panel showing per-component hash breakdown at any tick
 - [ ] Side-by-side comparison of two hash ladders
 - [ ] Highlight first divergence point with component-level detail
 
@@ -262,7 +262,8 @@ Phase A — Foundation (current sprint)
 Phase B — Enforcement
   ✅ Determinism enforcement hardening (ATLAS_FORBID_IN_SIM, FP flags)
   ✅ AI determinism contract (tests)
-  → AI randomness source documentation
+  ✅ AI randomness source documentation
+  ✅ Platform-dependent math detection in CI
   ✅ Include firewall (sim vs render, CMake + runtime tests)
 
 Phase C — Integration

@@ -28,9 +28,17 @@ FORBIDDEN_PATTERNS = [
     ("clock(", "Wall-clock time access"),
     ("gettimeofday", "Wall-clock time access"),
     ("clock_gettime", "Wall-clock time access"),
-    ("__m128", "SIMD intrinsics forbidden in simulation code"),
-    ("__m256", "SIMD intrinsics forbidden in simulation code"),
-    ("__m512", "SIMD intrinsics forbidden in simulation code"),
+]
+
+# Platform-dependent math patterns: forbidden in simulation code
+# but allowed in render/platform directories
+PLATFORM_MATH_PATTERNS = [
+    ("__m128", "Platform-dependent SIMD intrinsics"),
+    ("__m256", "Platform-dependent SIMD intrinsics"),
+    ("__m512", "Platform-dependent SIMD intrinsics"),
+    ("_mm_", "SSE intrinsics forbidden in simulation code"),
+    ("_mm256_", "AVX intrinsics forbidden in simulation code"),
+    ("_mm512_", "AVX-512 intrinsics forbidden in simulation code"),
 ]
 
 # Directories to scan (relative to engine root)
@@ -55,16 +63,19 @@ SKIP_DIRS = {
 
 # Files that legitimately use otherwise-forbidden APIs.
 # TickScheduler uses std::chrono for frame pacing (non-simulation logic).
+# JobTracer uses std::chrono for execution timing (debug/tooling, not sim).
 SKIP_FILES = {
     "TickScheduler.cpp",
     "TickScheduler.h",
+    "JobTracer.cpp",
+    "JobTracer.h",
 }
 
 # File extensions to scan
 SOURCE_EXTENSIONS = {".cpp", ".h", ".hpp", ".cxx"}
 
 
-def scan_file(filepath: pathlib.Path) -> list[str]:
+def scan_file(filepath: pathlib.Path, include_platform_math: bool = True) -> list[str]:
     """Scan a single file for contract violations."""
     violations = []
     try:
@@ -77,6 +88,14 @@ def scan_file(filepath: pathlib.Path) -> list[str]:
             violations.append(
                 f"{filepath}: uses forbidden API `{pattern}` — {reason}"
             )
+
+    if include_platform_math:
+        for pattern, reason in PLATFORM_MATH_PATTERNS:
+            if pattern in text:
+                violations.append(
+                    f"{filepath}: uses forbidden API `{pattern}` — {reason}"
+                )
+
     return violations
 
 

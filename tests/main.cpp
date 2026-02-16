@@ -456,6 +456,8 @@ void test_inspector_empty_world();
 void test_inspector_entities_with_components();
 void test_inspector_select_entity();
 void test_inspector_refreshes_on_draw();
+void test_inspector_state_blocks_empty();
+void test_inspector_state_blocks_with_world_state();
 
 // Replication tests
 void test_replication_add_rule();
@@ -685,6 +687,8 @@ void test_hud_time_controls();
 void test_hud_step_forward();
 void test_hud_determinism_status();
 void test_hud_visibility();
+void test_hud_world_dilation();
+void test_hud_world_paused();
 
 // Time Model tests
 void test_time_model_defaults();
@@ -748,6 +752,8 @@ void test_hash_ladder_save_load_continuity();
 void test_engine_replay_from_save();
 void test_engine_replay_from_save_bad_save();
 void test_engine_replay_from_save_bad_replay();
+void test_state_hash_diff_panel_component_breakdown();
+void test_state_hash_diff_panel_no_component_divergence();
 
 // GUI DSL Parser tests
 void test_dsl_parse_simple_layout();
@@ -1414,6 +1420,8 @@ int main() {
     test_inspector_entities_with_components();
     test_inspector_select_entity();
     test_inspector_refreshes_on_draw();
+    test_inspector_state_blocks_empty();
+    test_inspector_state_blocks_with_world_state();
 
     // Story
     std::cout << "\n--- Story System ---" << std::endl;
@@ -1617,6 +1625,8 @@ int main() {
     test_hud_step_forward();
     test_hud_determinism_status();
     test_hud_visibility();
+    test_hud_world_dilation();
+    test_hud_world_paused();
 
     // Time Model
     std::cout << "\n--- Time Model ---" << std::endl;
@@ -1685,6 +1695,8 @@ int main() {
     test_engine_replay_from_save();
     test_engine_replay_from_save_bad_save();
     test_engine_replay_from_save_bad_replay();
+    test_state_hash_diff_panel_component_breakdown();
+    test_state_hash_diff_panel_no_component_divergence();
 
     // GUI DSL Parser
     std::cout << "\n--- GUI DSL Parser ---" << std::endl;

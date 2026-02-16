@@ -569,3 +569,67 @@ void test_engine_replay_from_save_bad_replay() {
     std::remove(savePath.c_str());
     std::cout << "[PASS] test_engine_replay_from_save_bad_replay" << std::endl;
 }
+
+// --- StateHashDiffPanel per-component breakdown ---
+
+void test_state_hash_diff_panel_component_breakdown() {
+    editor::StateHashDiffPanel panel;
+    assert(!panel.HasComponentBreakdown());
+    assert(panel.DivergentComponents().empty());
+
+    editor::ComponentHashBreakdown breakdown;
+    breakdown.tick = 42;
+
+    editor::ComponentHashEntry comp1;
+    comp1.name = "Transform";
+    comp1.localHash = 0x1111;
+    comp1.remoteHash = 0x1111;
+    comp1.matches = true;
+    breakdown.components.push_back(comp1);
+
+    editor::ComponentHashEntry comp2;
+    comp2.name = "Health";
+    comp2.localHash = 0x2222;
+    comp2.remoteHash = 0x3333;
+    comp2.matches = false;
+    breakdown.components.push_back(comp2);
+
+    editor::ComponentHashEntry comp3;
+    comp3.name = "Physics";
+    comp3.localHash = 0x4444;
+    comp3.remoteHash = 0x5555;
+    comp3.matches = false;
+    breakdown.components.push_back(comp3);
+
+    panel.SetComponentBreakdown(breakdown);
+    assert(panel.HasComponentBreakdown());
+    assert(panel.GetComponentBreakdown().tick == 42);
+    assert(panel.GetComponentBreakdown().components.size() == 3);
+
+    auto divergent = panel.DivergentComponents();
+    assert(divergent.size() == 2);
+    assert(divergent[0] == "Health");
+    assert(divergent[1] == "Physics");
+
+    std::cout << "[PASS] test_state_hash_diff_panel_component_breakdown" << std::endl;
+}
+
+void test_state_hash_diff_panel_no_component_divergence() {
+    editor::StateHashDiffPanel panel;
+
+    editor::ComponentHashBreakdown breakdown;
+    breakdown.tick = 10;
+
+    editor::ComponentHashEntry comp1;
+    comp1.name = "Transform";
+    comp1.localHash = 0xAAAA;
+    comp1.remoteHash = 0xAAAA;
+    comp1.matches = true;
+    breakdown.components.push_back(comp1);
+
+    panel.SetComponentBreakdown(breakdown);
+    assert(panel.HasComponentBreakdown());
+    assert(panel.DivergentComponents().empty());
+
+    std::cout << "[PASS] test_state_hash_diff_panel_no_component_divergence" << std::endl;
+}
