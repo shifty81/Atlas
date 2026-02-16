@@ -48,8 +48,8 @@ Determinism bugs after lockdown are treated as P0 severity.
 ## GUI System
 
 - [ ] GUI layout solver produces identical output on all platforms
-- [ ] GUI input replay functional
-- [ ] GUI DSL compiler operational
+- [x] GUI input replay functional
+- [x] GUI DSL compiler operational
 - [ ] All main editor panels present and functional
 
 ## Tooling

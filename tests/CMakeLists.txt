@@ -89,6 +89,9 @@ add_executable(AtlasTests
     test_save_system.cpp
     test_engine_integration.cpp
     test_next_tasks.cpp
+    test_gui_dsl_parser.cpp
+    test_gui_input_recorder.cpp
+    test_headless_gui.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp

@@ -746,6 +746,44 @@ void test_state_hash_diff_panel_no_divergence();
 void test_state_hash_diff_panel_with_divergence();
 void test_hash_ladder_save_load_continuity();
 
+// GUI DSL Parser tests
+void test_dsl_parse_simple_layout();
+void test_dsl_parse_split();
+void test_dsl_parse_nested_splits();
+void test_dsl_parse_dock();
+void test_dsl_parse_tabs();
+void test_dsl_parse_full_example();
+void test_dsl_parse_comments();
+void test_dsl_parse_error_missing_layout();
+void test_dsl_parse_error_unterminated_string();
+void test_dsl_parse_error_unknown_statement();
+void test_dsl_version();
+void test_dsl_parse_dock_targets();
+
+// GUI Input Recorder tests
+void test_recorder_initial_state();
+void test_recorder_start_stop_recording();
+void test_recorder_record_events();
+void test_recorder_record_only_when_recording();
+void test_recorder_playback();
+void test_recorder_save_load();
+void test_recorder_load_invalid_file();
+void test_recorder_load_nonexistent_file();
+
+// Headless GUI tests
+void test_headless_gui_init();
+void test_headless_gui_available_commands();
+void test_headless_gui_widget_count();
+void test_headless_gui_widget_info();
+void test_headless_gui_widget_info_not_found();
+void test_headless_gui_unknown_command();
+void test_headless_gui_empty_command();
+void test_headless_gui_help();
+void test_headless_gui_status();
+void test_headless_gui_enqueue();
+void test_headless_gui_custom_command();
+void test_headless_gui_quoted_args();
+
 // Render and Platform tests
 void test_render_api_enum();
 void test_null_renderer();
@@ -1613,6 +1651,47 @@ int main() {
     test_state_hash_diff_panel_no_divergence();
     test_state_hash_diff_panel_with_divergence();
     test_hash_ladder_save_load_continuity();
+
+    // GUI DSL Parser
+    std::cout << "\n--- GUI DSL Parser ---" << std::endl;
+    test_dsl_parse_simple_layout();
+    test_dsl_parse_split();
+    test_dsl_parse_nested_splits();
+    test_dsl_parse_dock();
+    test_dsl_parse_tabs();
+    test_dsl_parse_full_example();
+    test_dsl_parse_comments();
+    test_dsl_parse_error_missing_layout();
+    test_dsl_parse_error_unterminated_string();
+    test_dsl_parse_error_unknown_statement();
+    test_dsl_version();
+    test_dsl_parse_dock_targets();
+
+    // GUI Input Recorder
+    std::cout << "\n--- GUI Input Recorder ---" << std::endl;
+    test_recorder_initial_state();
+    test_recorder_start_stop_recording();
+    test_recorder_record_events();
+    test_recorder_record_only_when_recording();
+    test_recorder_playback();
+    test_recorder_save_load();
+    test_recorder_load_invalid_file();
+    test_recorder_load_nonexistent_file();
+
+    // Headless GUI
+    std::cout << "\n--- Headless GUI ---" << std::endl;
+    test_headless_gui_init();
+    test_headless_gui_available_commands();
+    test_headless_gui_widget_count();
+    test_headless_gui_widget_info();
+    test_headless_gui_widget_info_not_found();
+    test_headless_gui_unknown_command();
+    test_headless_gui_empty_command();
+    test_headless_gui_help();
+    test_headless_gui_status();
+    test_headless_gui_enqueue();
+    test_headless_gui_custom_command();
+    test_headless_gui_quoted_args();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
