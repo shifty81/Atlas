@@ -56,6 +56,20 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# --- Setup log ---
+LOG_DIR="$SOURCE_DIR/logs"
+mkdir -p "$LOG_DIR"
+SETUP_LOG="$LOG_DIR/setup.log"
+
+# Redirect all output to both console and setup log
+exec > >(tee -a "$SETUP_LOG") 2>&1
+
+# Write a header to the setup log
+echo ""
+echo "=== Atlas Setup Log ==="
+echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
+echo ""
+
 echo ""
 echo -e "${BOLD}╔══════════════════════════════════════╗${RESET}"
 echo -e "${BOLD}║      Atlas Engine — First-Run Setup   ║${RESET}"
@@ -213,4 +227,7 @@ info "  ./run.sh runtime <project.atlas>  # Launch runtime with a project"
 info "  ./build.sh --run editor           # Build and run the editor"
 echo ""
 info "For more options, run: ./build.sh --help"
+echo ""
+echo "=== Setup Finished: $(date '+%Y-%m-%d %H:%M:%S') ==="
+info "Setup log saved to: $SETUP_LOG"
 echo ""
