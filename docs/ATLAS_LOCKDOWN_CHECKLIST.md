@@ -12,7 +12,7 @@ Determinism bugs after lockdown are treated as P0 severity.
 
 ## Core
 
-- [ ] Core Contract ratified and committed (ATLAS_CORE_CONTRACT.md)
+- [x] Core Contract ratified and committed (ATLAS_CORE_CONTRACT.md)
 - [x] Formal world state model enforced (simulation/derived/metadata categories)
 - [x] Time model locked (simulation/world/presentation domains)
 - [x] Determinism enforcement layer active (compile-time + runtime + CI)
@@ -24,7 +24,7 @@ Determinism bugs after lockdown are treated as P0 severity.
 
 - [x] Fixed tick rate immutable (locked after Engine::Run)
 - [x] All systems registered and execution order tracked
-- [ ] No hidden state in any simulation system
+- [x] No hidden state in any simulation system (SimulationStateAuditor)
 - [x] System mutation ownership enforced
 - [x] Mid-tick mutation prevention active
 
@@ -35,7 +35,7 @@ Determinism bugs after lockdown are treated as P0 severity.
 - [ ] Golden replays pass CI on all target platforms
 - [x] Hash ladder verification operational
 - [x] Replay divergence detection and reporting functional
-- [ ] Save/load determinism verified across replay boundaries
+- [x] Save/load determinism verified across replay boundaries
 - [x] Rollback/resimulation produces identical hashes
 
 ## Assets
@@ -43,7 +43,7 @@ Determinism bugs after lockdown are treated as P0 severity.
 - [x] Asset schemas locked and versioned
 - [x] Hash-based asset validation enforced
 - [ ] Editor diff → commit flow complete
-- [ ] Server-safe asset validation operational
+- [x] Server-safe asset validation operational
 - [x] Asset immutability enforced at API level
 
 ## GUI System
@@ -57,7 +57,7 @@ Determinism bugs after lockdown are treated as P0 severity.
 
 - [ ] Truth UI (minimal editor) functional
 - [ ] Replay divergence inspectable in editor
-- [ ] One-command reproduction of any determinism bug
+- [x] One-command reproduction of any determinism bug (DesyncReproducer)
 - [ ] State hash visualizer operational
 - [ ] Job execution trace viewer available
 

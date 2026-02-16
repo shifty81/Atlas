@@ -95,6 +95,9 @@ add_library(AtlasEngine STATIC
     ui/HUDOverlay.cpp
     module/ModuleLoader.cpp
     render/VulkanRenderer.cpp
+    sim/SimulationStateAuditor.cpp
+    sim/DesyncReproducer.cpp
+    assets/ServerAssetValidator.cpp
 )
 
 # Conditionally add platform/render sources that require X11 or OpenGL

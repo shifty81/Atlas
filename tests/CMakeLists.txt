@@ -100,6 +100,7 @@ add_executable(AtlasTests
     test_golden_replays.cpp
     test_enforcement.cpp
     test_lockdown_phase2.cpp
+    test_lockdown_phase3.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp

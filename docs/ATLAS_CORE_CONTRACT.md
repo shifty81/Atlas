@@ -1,7 +1,13 @@
 # Atlas Core Contract
 
+**Status: RATIFIED**
+**Ratification Date: 2026-02-16**
+
 **This document defines the non-negotiable rules of the Atlas Engine.**
 **Any system, tool, mod, or feature that violates this contract is considered invalid by design.**
+
+All code merged into the Atlas repository is bound by this contract.
+Violations block merge and are treated as P0 severity bugs.
 
 ---
 
