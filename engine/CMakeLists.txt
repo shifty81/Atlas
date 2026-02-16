@@ -55,6 +55,8 @@ add_library(AtlasEngine STATIC
     weapon/WeaponNodes.cpp
     ui/UIGraph.cpp
     ui/UINodes.cpp
+    ui/UILogicGraph.cpp
+    ui/UILogicNodes.cpp
     ui/UIScreenGraph.cpp
     ui/UICommandBus.cpp
     ui/GUIInputRecorder.cpp

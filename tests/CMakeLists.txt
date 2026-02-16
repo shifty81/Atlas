@@ -113,6 +113,7 @@ add_executable(AtlasTests
     test_replay_proof_exporter.cpp
     test_ci_dashboard.cpp
     test_procedural_mesh.cpp
+    test_ui_logic_graph.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp

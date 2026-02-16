@@ -354,6 +354,19 @@ void test_procedural_subdivide();
 void test_procedural_noise_determinism();
 void test_procedural_full_pipeline();
 
+// UI Logic Graph tests
+void test_ui_logic_add_nodes();
+void test_ui_logic_remove_node();
+void test_ui_logic_compile_empty();
+void test_ui_logic_compile_cycle_detection();
+void test_ui_logic_condition_node();
+void test_ui_logic_action_node();
+void test_ui_logic_databind_node();
+void test_ui_logic_transition_node();
+void test_ui_logic_timer_node();
+void test_ui_logic_gate_node_pass();
+void test_ui_logic_gate_node_block();
+
 // Sound Graph tests
 void test_soundgraph_add_nodes();
 void test_soundgraph_remove_node();
@@ -1540,6 +1553,20 @@ int main() {
     test_procedural_subdivide();
     test_procedural_noise_determinism();
     test_procedural_full_pipeline();
+
+    // UI Logic Graph
+    std::cout << "\n--- UI Logic Graph ---" << std::endl;
+    test_ui_logic_add_nodes();
+    test_ui_logic_remove_node();
+    test_ui_logic_compile_empty();
+    test_ui_logic_compile_cycle_detection();
+    test_ui_logic_condition_node();
+    test_ui_logic_action_node();
+    test_ui_logic_databind_node();
+    test_ui_logic_transition_node();
+    test_ui_logic_timer_node();
+    test_ui_logic_gate_node_pass();
+    test_ui_logic_gate_node_block();
 
     // Sound Graph
     std::cout << "\n--- Sound Graph ---" << std::endl;
