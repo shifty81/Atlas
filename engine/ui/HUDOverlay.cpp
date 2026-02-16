@@ -126,4 +126,21 @@ bool HUDOverlay::IsVisible() const {
     return m_visible;
 }
 
+void HUDOverlay::SetWorldDilation(double dilation) {
+    if (dilation < 0.0) dilation = 0.0;
+    m_worldDilation = dilation;
+}
+
+double HUDOverlay::GetWorldDilation() const {
+    return m_worldDilation;
+}
+
+void HUDOverlay::SetWorldPaused(bool paused) {
+    m_worldPaused = paused;
+}
+
+bool HUDOverlay::IsWorldPaused() const {
+    return m_worldPaused;
+}
+
 } // namespace atlas::ui

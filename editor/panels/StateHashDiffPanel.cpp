@@ -71,4 +71,28 @@ std::string StateHashDiffPanel::Summary() const {
     return "No divergence";
 }
 
+void StateHashDiffPanel::SetComponentBreakdown(const ComponentHashBreakdown& breakdown) {
+    m_componentBreakdown = breakdown;
+    m_hasComponentBreakdown = true;
+}
+
+const ComponentHashBreakdown& StateHashDiffPanel::GetComponentBreakdown() const {
+    return m_componentBreakdown;
+}
+
+bool StateHashDiffPanel::HasComponentBreakdown() const {
+    return m_hasComponentBreakdown;
+}
+
+std::vector<std::string> StateHashDiffPanel::DivergentComponents() const {
+    std::vector<std::string> result;
+    if (!m_hasComponentBreakdown) return result;
+    for (const auto& c : m_componentBreakdown.components) {
+        if (!c.matches) {
+            result.push_back(c.name);
+        }
+    }
+    return result;
+}
+
 }

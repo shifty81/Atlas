@@ -143,3 +143,33 @@ void test_hud_visibility() {
     std::cout << "[PASS] test_hud_visibility" << std::endl;
 }
 
+void test_hud_world_dilation() {
+    HUDOverlay hud;
+    assert(hud.GetWorldDilation() == 1.0);
+
+    hud.SetWorldDilation(2.0);
+    assert(hud.GetWorldDilation() == 2.0);
+
+    hud.SetWorldDilation(0.5);
+    assert(hud.GetWorldDilation() == 0.5);
+
+    // Negative dilation clamped to 0
+    hud.SetWorldDilation(-1.0);
+    assert(hud.GetWorldDilation() == 0.0);
+
+    std::cout << "[PASS] test_hud_world_dilation" << std::endl;
+}
+
+void test_hud_world_paused() {
+    HUDOverlay hud;
+    assert(!hud.IsWorldPaused());
+
+    hud.SetWorldPaused(true);
+    assert(hud.IsWorldPaused());
+
+    hud.SetWorldPaused(false);
+    assert(!hud.IsWorldPaused());
+
+    std::cout << "[PASS] test_hud_world_paused" << std::endl;
+}
+

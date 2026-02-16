@@ -53,6 +53,12 @@ public:
     void StepBackward();
     const TimeControlState& GetTimeControl() const;
 
+    // WorldTime dilation controls
+    void SetWorldDilation(double dilation);
+    double GetWorldDilation() const;
+    void SetWorldPaused(bool paused);
+    bool IsWorldPaused() const;
+
     // Determinism display
     void SetStateHash(uint64_t hash);
     uint64_t GetStateHash() const;
@@ -73,6 +79,8 @@ private:
     uint64_t m_stateHash = 0;
     bool m_determinismOk = true;
     bool m_visible = true;
+    double m_worldDilation = 1.0;
+    bool m_worldPaused = false;
 };
 
 } // namespace atlas::ui

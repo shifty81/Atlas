@@ -1,9 +1,11 @@
 #include "../editor/panels/ECSInspectorPanel.h"
+#include "../engine/sim/WorldState.h"
 #include <iostream>
 #include <cassert>
 
 using namespace atlas::ecs;
 using namespace atlas::editor;
+using namespace atlas::sim;
 
 struct InspTestPosition {
     float x = 0.0f;
@@ -80,4 +82,42 @@ void test_inspector_refreshes_on_draw() {
     assert(panel.LastSnapshot().size() == 3);
 
     std::cout << "[PASS] test_inspector_refreshes_on_draw" << std::endl;
+}
+
+void test_inspector_state_blocks_empty() {
+    World world;
+    ECSInspectorPanel panel(world);
+    panel.Draw();
+
+    assert(panel.StateBlocks().empty());
+    assert(panel.StateBlockSummary() == "Blocks: 0 (Sim=0 Derived=0 Pres=0 Debug=0)");
+
+    std::cout << "[PASS] test_inspector_state_blocks_empty" << std::endl;
+}
+
+void test_inspector_state_blocks_with_world_state() {
+    World world;
+    WorldState worldState;
+    worldState.RegisterBlock("Transform", StateCategory::Simulated, 1, 24);
+    worldState.RegisterBlock("PathCache", StateCategory::Derived, 2, 128);
+    worldState.RegisterBlock("RenderProxy", StateCategory::Presentation, 3, 64);
+
+    ECSInspectorPanel panel(world);
+    panel.SetWorldState(&worldState);
+    panel.Draw();
+
+    assert(panel.StateBlocks().size() == 3);
+    assert(panel.StateBlocks()[0].name == "Transform");
+    assert(panel.StateBlocks()[0].category == StateCategory::Simulated);
+    assert(panel.StateBlocks()[1].name == "PathCache");
+    assert(panel.StateBlocks()[1].category == StateCategory::Derived);
+    assert(panel.StateBlocks()[2].name == "RenderProxy");
+    assert(panel.StateBlocks()[2].category == StateCategory::Presentation);
+
+    std::string summary = panel.StateBlockSummary();
+    assert(summary.find("Sim=1") != std::string::npos);
+    assert(summary.find("Derived=1") != std::string::npos);
+    assert(summary.find("Pres=1") != std::string::npos);
+
+    std::cout << "[PASS] test_inspector_state_blocks_with_world_state" << std::endl;
 }

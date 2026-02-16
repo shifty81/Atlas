@@ -1,4 +1,34 @@
 #pragma once
+// ============================================================
+// Atlas AI — Behavior Graph
+// ============================================================
+//
+// DETERMINISM CONTRACT:
+//   All AI systems MUST produce bit-identical decisions given
+//   identical inputs. This is enforced by the following rules:
+//
+//   1. Randomness: Use ONLY atlas::DeterministicRNG (from
+//      core/contract/DeterministicRNG.h). Standard library
+//      random facilities and OS entropy are FORBIDDEN.
+//
+//   2. Decision reproducibility: The same AIMemory + inputs
+//      must produce the same BehaviorGraph output on every
+//      platform and across save/load boundaries.
+//
+//   3. Planner state: All BehaviorGraph execution state
+//      (active node, blackboard, running status) must be
+//      serializable for save/load.
+//
+//   4. No wall-clock time: AI planning horizons use
+//      SimulationTime ticks, never real-time.
+//
+//   5. No floating-point ambiguity: AI scoring uses
+//      deterministic comparison (no platform-dependent FP
+//      rounding in decision thresholds).
+//
+// See: docs/ATLAS_CORE_CONTRACT.md §5 (AI Determinism)
+//      docs/ATLAS_DETERMINISM_ENFORCEMENT.md
+// ============================================================
 #include <cstdint>
 #include <vector>
 #include <string>

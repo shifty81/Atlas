@@ -1,4 +1,16 @@
 #pragma once
+// ============================================================
+// Atlas AI — Memory System
+// ============================================================
+//
+// DETERMINISM CONTRACT:
+//   AIMemory stores key-value facts for AI decision making.
+//   All entries are deterministic and serializable. Memory
+//   contents participate in state hashing and must be
+//   identical across client/server for the same simulation
+//   tick. See BehaviorGraph.h for the full AI determinism
+//   contract.
+// ============================================================
 #include <string>
 #include <unordered_map>
 #include <cstdint>
