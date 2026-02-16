@@ -51,6 +51,7 @@ add_library(AtlasEngine STATIC
     ui/UIManager.cpp
     ui/UIRenderer.cpp
     ui/UILayoutSolver.cpp
+    ui/HeadlessGUI.cpp
     flow/GameFlowGraph.cpp
     flow/GameFlowNodes.cpp
     schema/SchemaValidator.cpp
