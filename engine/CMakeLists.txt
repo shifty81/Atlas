@@ -125,7 +125,7 @@ add_library(AtlasEngine STATIC
     assets/ServerAssetValidator.cpp
 )
 
-# Conditionally add platform/render sources that require X11 or OpenGL
+# Conditionally add platform/render sources that require X11, Win32, or OpenGL
 if(UNIX AND NOT APPLE)
     if(X11_FOUND)
         target_sources(AtlasEngine PRIVATE platform/X11Window.cpp)
@@ -133,6 +133,8 @@ if(UNIX AND NOT APPLE)
     if(OpenGL_FOUND)
         target_sources(AtlasEngine PRIVATE render/GLRenderer.cpp)
     endif()
+elseif(WIN32)
+    target_sources(AtlasEngine PRIVATE platform/Win32Window.cpp render/GLRenderer.cpp)
 else()
     target_sources(AtlasEngine PRIVATE render/GLRenderer.cpp)
 endif()
@@ -171,10 +173,8 @@ if(UNIX AND NOT APPLE)
 elseif(APPLE)
     target_link_libraries(AtlasEngine PUBLIC dl)
 elseif(WIN32)
-    find_package(OpenGL QUIET)
-    if(OpenGL_FOUND)
-        target_link_libraries(AtlasEngine PUBLIC OpenGL::GL)
-    endif()
+    target_compile_definitions(AtlasEngine PRIVATE ATLAS_HAS_WIN32)
+    target_link_libraries(AtlasEngine PUBLIC opengl32 gdi32 user32)
 endif()
 
 # ============================================================

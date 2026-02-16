@@ -8,6 +8,10 @@
 #include "../platform/X11Window.h"
 #endif
 
+#ifdef ATLAS_HAS_WIN32
+#include "../platform/Win32Window.h"
+#endif
+
 #if !defined(__linux__) || defined(ATLAS_HAS_X11)
 #include "../render/GLRenderer.h"
 #endif
@@ -39,25 +43,31 @@ void Engine::InitRender() {
         return;
     }
 
-#ifdef ATLAS_HAS_X11
-    auto window = std::make_unique<platform::X11Window>();
+#if defined(ATLAS_HAS_X11) || defined(ATLAS_HAS_WIN32)
+    {
+#if defined(ATLAS_HAS_X11)
+        auto window = std::make_unique<platform::X11Window>();
+#elif defined(ATLAS_HAS_WIN32)
+        auto window = std::make_unique<platform::Win32Window>();
+#endif
 
-    platform::PlatformWindowConfig winCfg;
-    switch (m_config.mode) {
-        case EngineMode::Editor: winCfg.title = "Atlas Editor"; break;
-        case EngineMode::Client: winCfg.title = "Atlas Client"; break;
-        default: winCfg.title = "Atlas Engine"; break;
+        platform::PlatformWindowConfig winCfg;
+        switch (m_config.mode) {
+            case EngineMode::Editor: winCfg.title = "Atlas Editor"; break;
+            case EngineMode::Client: winCfg.title = "Atlas Client"; break;
+            default: winCfg.title = "Atlas Engine"; break;
+        }
+        winCfg.width = m_config.windowWidth;
+        winCfg.height = m_config.windowHeight;
+        winCfg.resizable = true;
+
+        if (!window->Init(winCfg)) {
+            Logger::Error("Failed to create platform window");
+            return;
+        }
+
+        m_window = std::move(window);
     }
-    winCfg.width = m_config.windowWidth;
-    winCfg.height = m_config.windowHeight;
-    winCfg.resizable = true;
-
-    if (!window->Init(winCfg)) {
-        Logger::Error("Failed to create platform window");
-        return;
-    }
-
-    m_window = std::move(window);
 #else
     Logger::Error("No platform window implementation for this OS");
     return;

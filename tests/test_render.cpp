@@ -216,3 +216,32 @@ void test_platform_window_config() {
 
     std::cout << "[PASS] test_platform_window_config" << std::endl;
 }
+
+void test_platform_has_window_implementation() {
+    // At least one platform window implementation should be available
+    // on any supported build target (Linux with X11 or Windows).
+#if defined(ATLAS_HAS_X11) || defined(ATLAS_HAS_WIN32)
+    std::cout << "[PASS] test_platform_has_window_implementation" << std::endl;
+#else
+    std::cout << "[SKIP] test_platform_has_window_implementation (no platform window)" << std::endl;
+#endif
+}
+
+void test_engine_no_window_error_without_platform() {
+    // When running headless, the engine should not attempt to create a window
+    // and should not produce the "No platform window implementation" error
+    EngineConfig cfg;
+    cfg.mode = EngineMode::Editor;
+    cfg.headless = true;
+    cfg.maxTicks = 1;
+
+    Engine engine(cfg);
+    engine.InitCore();
+    engine.InitRender();
+
+    // In headless mode, window and renderer should be null regardless of platform
+    assert(engine.GetWindow() == nullptr);
+    assert(engine.GetRenderer() == nullptr);
+
+    std::cout << "[PASS] test_engine_no_window_error_without_platform" << std::endl;
+}

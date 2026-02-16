@@ -946,6 +946,8 @@ void test_engine_headless_no_window();
 void test_engine_server_no_window();
 void test_platform_window_event_type();
 void test_platform_window_config();
+void test_platform_has_window_implementation();
+void test_engine_no_window_error_without_platform();
 
 // Component Category
 void test_component_category_defaults();
@@ -1401,6 +1403,8 @@ int main() {
     test_engine_server_no_window();
     test_platform_window_event_type();
     test_platform_window_config();
+    test_platform_has_window_implementation();
+    test_engine_no_window_error_without_platform();
 
     // Noise
     std::cout << "\n--- Noise Generator ---" << std::endl;
