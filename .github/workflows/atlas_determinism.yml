@@ -31,7 +31,8 @@ jobs:
 
     - name: Golden Replay Verification
       run: |
-        if [ -d tests/replays ] && ls tests/replays/*.atlasreplay 1>/dev/null 2>&1; then
+        set -e
+        if [ -d tests/replays ] && compgen -G "tests/replays/*.atlasreplay" > /dev/null 2>&1; then
           for replay in tests/replays/*.atlasreplay; do
             base=$(basename "$replay" .atlasreplay)
             hashfile="tests/replays/${base}.hash"
