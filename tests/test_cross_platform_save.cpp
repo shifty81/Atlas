@@ -8,6 +8,11 @@
 
 using namespace atlas::sim;
 
+namespace {
+    std::string tmpPath(const std::string& filename) {
+        return (std::filesystem::temp_directory_path() / filename).string();
+    }
+}
 // ============================================================
 // Cross-Platform Save Compatibility Tests
 // ============================================================
@@ -92,7 +97,7 @@ void test_cross_platform_partial_header_size() {
 
 /// Verify that the magic number is written at the correct byte offset.
 void test_cross_platform_save_magic_offset() {
-    std::string path = "/tmp/atlas_xplat_magic.asav";
+    std::string path = tmpPath("atlas_xplat_magic.asav");
     SaveSystem saver;
     std::vector<uint8_t> data = {1, 2, 3};
     SaveResult res = saver.Save(path, 1, 60, 0, data);
@@ -110,8 +115,8 @@ void test_cross_platform_save_magic_offset() {
 
 /// Verify hash determinism: identical data always produces identical hashes.
 void test_cross_platform_save_hash_determinism() {
-    std::string path1 = "/tmp/atlas_xplat_hash1.asav";
-    std::string path2 = "/tmp/atlas_xplat_hash2.asav";
+    std::string path1 = tmpPath("atlas_xplat_hash1.asav");
+    std::string path2 = tmpPath("atlas_xplat_hash2.asav");
 
     std::vector<uint8_t> ecsData = {10, 20, 30, 40, 50, 60, 70, 80};
     std::vector<uint8_t> auxData = {100, 200, 255};
@@ -138,8 +143,8 @@ void test_cross_platform_save_hash_determinism() {
 /// Verify that the binary file is byte-exact: two saves of the same data
 /// produce identical files.
 void test_cross_platform_save_byte_exact() {
-    std::string path1 = "/tmp/atlas_xplat_byte1.asav";
-    std::string path2 = "/tmp/atlas_xplat_byte2.asav";
+    std::string path1 = tmpPath("atlas_xplat_byte1.asav");
+    std::string path2 = tmpPath("atlas_xplat_byte2.asav");
 
     std::vector<uint8_t> ecsData = {1, 2, 3, 4, 5};
     std::vector<uint8_t> auxData = {10, 20};
@@ -174,7 +179,7 @@ void test_cross_platform_save_byte_exact() {
 /// Verify that a save written with known raw bytes can be loaded correctly,
 /// simulating loading a file produced on a different platform.
 void test_cross_platform_save_raw_bytes_roundtrip() {
-    std::string path = "/tmp/atlas_xplat_raw.asav";
+    std::string path = tmpPath("atlas_xplat_raw.asav");
 
     // Construct a valid save file from raw bytes.
     std::vector<uint8_t> ecsData = {0xAA, 0xBB, 0xCC, 0xDD};
@@ -231,7 +236,7 @@ void test_cross_platform_save_raw_bytes_roundtrip() {
 
 /// Verify partial save cross-platform compatibility.
 void test_cross_platform_partial_save_roundtrip() {
-    std::string path = "/tmp/atlas_xplat_partial.aspw";
+    std::string path = tmpPath("atlas_xplat_partial.aspw");
 
     std::vector<ChunkSaveEntry> chunks;
     chunks.push_back({1, 2, 3, {0xAA, 0xBB}});
@@ -272,7 +277,7 @@ void test_cross_platform_partial_save_roundtrip() {
 
 /// Verify that large data payloads survive save/load without truncation.
 void test_cross_platform_save_large_payload() {
-    std::string path = "/tmp/atlas_xplat_large.asav";
+    std::string path = tmpPath("atlas_xplat_large.asav");
 
     // Create a non-trivial payload (64KB).
     std::vector<uint8_t> ecsData(65536);
