@@ -179,8 +179,8 @@ void Engine::ProcessWindowEvents() {
                 }
                 break;
             case platform::WindowEvent::Type::KeyDown: {
-                // Ctrl+` (grave accent) toggles diagnostics overlay
-                if (event.keyCode == '`' || event.keyCode == 0x60) {
+                // Backtick key toggles diagnostics overlay
+                if (event.keyCode == '`') {
                     ui::DiagnosticsOverlay::Toggle();
                 }
                 ui::UIEvent uiEvent;
