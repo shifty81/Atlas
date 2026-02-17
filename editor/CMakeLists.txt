@@ -24,6 +24,9 @@ add_executable(AtlasEditor
     panels/RuleGraphEditorPanel.cpp
     ui/LayoutPersistence.cpp
     tools/PlayInEditor.cpp
+    panels/QuestEditorPanel.cpp
+    panels/InventoryEditorPanel.cpp
+    ai/AIAggregator.cpp
 )
 
 target_link_libraries(AtlasEditor AtlasEngine)

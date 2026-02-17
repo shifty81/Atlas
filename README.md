@@ -276,7 +276,7 @@ These systems are implemented, tested, and functional:
 - **Replay recording** — record/playback with divergence detection
 - **ECS framework** — entity management with serialization and rollback support
 - **Networking** — lockstep and rollback foundations with client-server and P2P
-- **1100+ unit tests pass** — 1 known pre-existing issue: `test_replay_record_frames` (inputData size assertion in `test_replay_recorder.cpp:45`)
+- **1374 unit tests pass** — 1 known pre-existing issue: `test_replay_record_frames` (inputData size assertion in `test_replay_recorder.cpp:45`)
 - **CI determinism gate** — automated verification that simulation is bit-exact
 - **Play-In-Editor** — simulate, pause, step, possess entity, loopback, state restore
 - **Editor layout persistence** — save/restore panel arrangements to/from JSON

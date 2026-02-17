@@ -11,11 +11,11 @@
 ## Executive Summary
 
 Atlas is a deterministic, data-driven game engine built in C++20. The
-project is **approximately 85–90% complete** across its core systems.
-All 1335 tests pass. The engine compiles and runs on Linux with
+project is **approximately 90–95% complete** across its core systems.
+All 1374 tests pass. The engine compiles and runs on Linux with
 OpenGL and Vulkan rendering backends. The main remaining work is in
-editor rendering integration (wiring panel Draw() methods), a few
-stub systems (marketplace download, AI LLM backend), and polish items.
+Vulkan GPU submission, a few stub systems (marketplace download,
+AI LLM backend), and polish items.
 
 ---
 
@@ -145,7 +145,7 @@ stub systems (marketplace download, AI LLM backend), and polish items.
 - [x] Contributor rules (`ATLAS_CONTRIBUTOR_RULES.md`)
 
 ### Testing (`tests/`)
-- [x] 1335 tests across 130+ test files — all passing
+- [x] 1374 tests across 130+ test files — all passing
 - [x] Covers ECS, networking, replay, assets, UI, editor panels, graphs, etc.
 
 ---
@@ -200,11 +200,14 @@ commands via `UIDrawList`.
 - [x] AtlasAssistantPanel — prompt/suggestion UI framework
 - [x] AIDiffViewerPanel — hunk accept/reject workflow
 - [x] EditorAssistant — router for explain/suggest/mutate
+- [x] AIAggregator — multi-backend routing, best-response selection, type-prefixed prompts
 - [ ] AIBackend — virtual base class defined, no LLM implementation
 
 ### Vulkan Renderer (`engine/render/VulkanRenderer`)
 - [x] Initialization and viewport setup
-- [ ] Full draw call implementation (currently stub)
+- [x] Draw command recording (deferred command buffer with rect, text, icon, border, image)
+- [x] Frame lifecycle management (begin/end frame, command clear, frame counting)
+- [ ] Full GPU-side draw call submission (currently records commands but does not submit to Vulkan device)
 
 ### Font System (`engine/ui/FontBootstrap.cpp`)
 - [x] Fallback placeholder glyph generation
@@ -216,11 +219,8 @@ commands via `UIDrawList`.
 
 | Feature | Description | Priority |
 |---------|-------------|----------|
-| Quest/Story Editor Panel | Visual narrative authoring UI | Low |
-| Inventory Editor Panel | Item management UI | Low |
 | LLM Backend Integration | Wire AI assistant to local/remote LLM | Low |
 | Real Marketplace APIs | Download assets from itch.io/Unreal/Unity | Low |
-| Full Vulkan Draw Pipeline | Complete Vulkan rendering beyond init | Medium |
 | Real Font Shipping | Bundle Inter-Regular.ttf or similar | Low |
 | macOS Platform Window | Only Linux (X11) and Windows supported | Low |
 | Editor Permission Enforcement | Attach protocol tier enforcement | Low |
@@ -242,13 +242,13 @@ Assets             ✅ 100%   Registry, import, cook, validate, hot-reload
 World Generation   ✅ 100%   Terrain, voxel, galaxy, streaming
 AI Systems         ✅ 100%   Behavior, memory, faction, strategy
 UI Framework       ✅ 100%   DrawList, SceneGraph, Layout, Events, DSL
-Rendering          🔧  70%   OpenGL working; Vulkan stub
+Rendering          🔧  80%   OpenGL working; Vulkan records draw commands (GPU submission pending)
 Editor Logic       ✅ 100%   All panels have full business logic
 Editor Rendering   ✅ 100%   All panels produce draw commands via UIDrawList
 Production         ✅ 100%   Full packager pipeline
 CI/Enforcement     ✅ 100%   Determinism gate, contract bot
 Documentation      ✅  95%   43 docs; minor updates needed
-Testing            ✅ 100%   1335 tests, all passing
+Testing            ✅ 100%   1374 tests, all passing
 ```
 
 ---
@@ -261,7 +261,7 @@ Testing            ✅ 100%   1335 tests, all passing
 | AtlasServer | ✅ | ✅ | Headless, no graphics deps |
 | AtlasClient | ✅ | ✅ | Player runtime |
 | AtlasRuntime | ✅ | ✅ | Unified CLI runtime |
-| AtlasTests | ✅ | ✅ | 1315 tests passing |
+| AtlasTests | ✅ | ✅ | 1374 tests passing |
 | TileEditor | ✅ | ✅ | Standalone tile tool |
 
 ---
@@ -282,17 +282,16 @@ Testing            ✅ 100%   1335 tests, all passing
 | Production | ~20 | ✅ All pass |
 | World Gen | ~30 | ✅ All pass |
 | Tile Editor | ~40 | ✅ All pass |
-| **Total** | **1335** | **✅ All pass** |
+| **Total** | **1374** | **✅ All pass** |
 
 ---
 
 ## Recommended Next Steps (Priority Order)
 
-1. **Complete Vulkan renderer** — Beyond init stub
+1. **Complete Vulkan GPU submission** — Wire recorded draw commands to actual VkCommandBuffer
 2. **Ship real font** — Replace placeholder glyph generation
 3. **Integrate LLM backend** — Wire AI assistant to a model
-4. **Add Quest/Inventory editor panels** — For content authoring
-5. **Implement marketplace API downloads** — Currently local-only
+4. **Implement marketplace API downloads** — Currently local-only
 
 ---
 
@@ -300,6 +299,8 @@ Testing            ✅ 100%   1335 tests, all passing
 
 Atlas is architecturally mature and functionally near-complete. The core
 simulation, determinism enforcement, networking, replay, asset, and
-build systems are all production-ready. The primary remaining work is
-rendering integration for a handful of editor panels and polish items
-that do not affect core engine guarantees.
+build systems are all production-ready. The Vulkan renderer records
+draw commands but awaits GPU-side submission. The AI aggregator routes
+requests but requires a concrete LLM backend. All editor panels produce
+draw commands via UIDrawList. The primary remaining work is rendering
+GPU integration and polish items that do not affect core engine guarantees.
