@@ -1631,6 +1631,7 @@ void run_next_tasks_phase4_tests();
 void run_next_tasks_phase5_tests();
 void run_next_tasks_phase6_tests();
 void run_next_tasks_phase7_tests();
+void run_next_tasks_phase8_tests();
 void run_panel_draw_tests();
 
 int main() {
@@ -3442,6 +3443,9 @@ int main() {
 
     // Next Tasks Phase 7
     run_next_tasks_phase7_tests();
+
+    // Next Tasks Phase 8
+    run_next_tasks_phase8_tests();
 
     // Panel Draw + TileEditor Input Tests
     run_panel_draw_tests();

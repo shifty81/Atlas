@@ -39,6 +39,21 @@ enum class ConnectionState {
     Kicked
 };
 
+enum class ConnectionQuality {
+    Excellent,   // RTT < 30ms, loss < 1%
+    Good,        // RTT < 80ms, loss < 3%
+    Fair,        // RTT < 150ms, loss < 8%
+    Poor,        // RTT < 300ms, loss < 15%
+    Critical     // everything else
+};
+
+struct PacketLossSimConfig {
+    float lossPercent = 0.0f;       // 0.0 to 100.0
+    float latencyMs = 0.0f;         // additional latency
+    float jitterMs = 0.0f;          // jitter range
+    bool enabled = false;
+};
+
 struct ConnectionStats {
     uint64_t bytesSent = 0;
     uint64_t bytesReceived = 0;
@@ -110,6 +125,16 @@ public:
     /// Reset statistics.
     void ResetStats();
 
+    void SetPacketLossSimulation(const PacketLossSimConfig& config);
+    const PacketLossSimConfig& PacketLossSimulation() const;
+    bool ShouldDropPacket() const;
+
+    ConnectionQuality GetConnectionQuality() const;
+    std::string ConnectionQualityString() const;
+
+    float PacketLossPercent() const;
+    float AverageBandwidthBytesPerSec() const;
+
 private:
     void SetState(ConnectionState newState);
     void HandleTimeout();
@@ -125,6 +150,11 @@ private:
     uint32_t m_reconnectAttempts = 0;
     float m_bytesSentThisSecond = 0.0f;
     float m_secondAccumulator = 0.0f;
+
+    PacketLossSimConfig m_lossSimConfig;
+    mutable uint32_t m_lossCounter = 0;
+    float m_totalBytesTracked = 0.0f;
+    float m_totalTimeTracked = 0.0f;
 };
 
 }

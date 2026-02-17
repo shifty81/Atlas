@@ -166,6 +166,7 @@ add_executable(AtlasTests
     test_next_tasks_phase5.cpp
     test_next_tasks_phase6.cpp
     test_next_tasks_phase7.cpp
+    test_next_tasks_phase8.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
@@ -201,6 +202,7 @@ add_executable(AtlasTests
     ${CMAKE_SOURCE_DIR}/editor/panels/InventoryEditorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/ai/AIAggregator.cpp
     ${CMAKE_SOURCE_DIR}/editor/ai/TemplateAIBackend.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/MaterialEditorPanel.cpp
 )
 
 target_link_libraries(AtlasTests AtlasEngine AtlasGameplay EveOfflineModule Arena2DModule)

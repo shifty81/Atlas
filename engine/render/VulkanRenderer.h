@@ -58,6 +58,27 @@ struct VkGPUResource {
     bool mapped = false;
 };
 
+struct VkDescriptorSetLayoutDesc {
+    std::string name;
+    uint32_t bindingCount = 0;
+    uint32_t id = 0;
+};
+
+struct VkTextureDesc {
+    std::string name;
+    uint32_t width = 0;
+    uint32_t height = 0;
+    uint32_t mipLevels = 1;
+    uint32_t id = 0;
+};
+
+struct VkSamplerDesc {
+    std::string name;
+    bool linearFilter = true;
+    bool clampToEdge = true;
+    uint32_t id = 0;
+};
+
 class VulkanRenderer : public ui::UIRenderer {
 public:
     void BeginFrame() override;
@@ -104,6 +125,25 @@ public:
     bool MapBuffer(uint32_t bufferId);
     bool UnmapBuffer(uint32_t bufferId);
 
+    // Descriptor set management
+    uint32_t CreateDescriptorSetLayout(const VkDescriptorSetLayoutDesc& desc);
+    void BindDescriptorSet(uint32_t layoutId);
+    uint32_t BoundDescriptorSetId() const;
+    const VkDescriptorSetLayoutDesc* GetDescriptorSetLayout(uint32_t id) const;
+    uint32_t DescriptorSetLayoutCount() const;
+
+    // Texture management
+    uint32_t CreateTexture(const VkTextureDesc& desc);
+    bool DestroyTexture(uint32_t textureId);
+    const VkTextureDesc* GetTexture(uint32_t id) const;
+    uint32_t TextureCount() const;
+
+    // Sampler management
+    uint32_t CreateSampler(const VkSamplerDesc& desc);
+    bool DestroySampler(uint32_t samplerId);
+    const VkSamplerDesc* GetSampler(uint32_t id) const;
+    uint32_t SamplerCount() const;
+
     static constexpr uint32_t MAX_BUFFERED_FRAMES = 3;
 
 private:
@@ -126,6 +166,16 @@ private:
     uint32_t m_nextBufferId = 1;
     uint32_t m_nextPassId = 1;
     uint32_t m_nextPipelineId = 1;
+
+    std::vector<VkDescriptorSetLayoutDesc> m_descriptorSetLayouts;
+    uint32_t m_boundDescriptorSet = 0;
+    uint32_t m_nextDescriptorSetId = 1;
+
+    std::vector<VkTextureDesc> m_textures;
+    uint32_t m_nextTextureId = 1;
+
+    std::vector<VkSamplerDesc> m_samplers;
+    uint32_t m_nextSamplerId = 1;
 };
 
 } // namespace atlas::render
