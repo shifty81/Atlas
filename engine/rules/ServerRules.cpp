@@ -1,4 +1,5 @@
 #include "ServerRules.h"
+#include "../core/Logger.h"
 #include <sstream>
 
 namespace atlas::rules {
@@ -69,7 +70,10 @@ size_t ServerRules::LoadFromConfig(const std::string& configText) {
         std::string name = line.substr(0, eq);
         std::string valStr = line.substr(eq + 1);
         float multiplier = 1.0f;
-        try { multiplier = std::stof(valStr); } catch (...) { continue; }
+        try { multiplier = std::stof(valStr); } catch (...) {
+            Logger::Info("[ServerRules] LoadFromConfig: skipping malformed value '" + valStr + "' for rule '" + name + "'");
+            continue;
+        }
         RuleDescriptor desc;
         desc.name = name;
         desc.multiplier = multiplier;
@@ -99,7 +103,10 @@ size_t ServerRules::HotReloadFromConfig(const std::string& configText) {
         std::string name = line.substr(0, eq);
         std::string valStr = line.substr(eq + 1);
         float multiplier = 1.0f;
-        try { multiplier = std::stof(valStr); } catch (...) { continue; }
+        try { multiplier = std::stof(valStr); } catch (...) {
+            Logger::Info("[ServerRules] HotReloadFromConfig: skipping malformed value '" + valStr + "' for rule '" + name + "'");
+            continue;
+        }
 
         auto it = m_rules.find(name);
         if (it == m_rules.end()) continue;

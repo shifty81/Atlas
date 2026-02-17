@@ -286,6 +286,8 @@ void test_socket_http_request_count() {
     // GET to invalid host — will fail but should still increment count
     auto resp = client.Get("http://127.0.0.1:1/test");
     assert(client.TotalRequestCount() == 1);
+    assert(resp.IsError());
+    assert(!resp.errorMessage.empty());
 
     // Invalid URL should not increment (ParseURL fails before increment)
     auto resp2 = client.Get("https://secure.com");

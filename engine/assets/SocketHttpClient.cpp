@@ -148,35 +148,37 @@ HttpResponse SocketHttpClient::DoGet(
     }
 
     // Set connect and read timeouts
-    struct timeval tv;
-    tv.tv_sec = static_cast<long>(m_config.connectTimeoutMs / 1000);
-    tv.tv_usec = static_cast<long>((m_config.connectTimeoutMs % 1000) * 1000);
+    struct timeval tv{};
+    tv.tv_sec = static_cast<time_t>(m_config.connectTimeoutMs / 1000);
+    tv.tv_usec = static_cast<suseconds_t>((m_config.connectTimeoutMs % 1000) * 1000);
     setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
 
-    struct timeval rtv;
-    rtv.tv_sec = static_cast<long>(m_config.readTimeoutMs / 1000);
-    rtv.tv_usec = static_cast<long>((m_config.readTimeoutMs % 1000) * 1000);
+    struct timeval rtv{};
+    rtv.tv_sec = static_cast<time_t>(m_config.readTimeoutMs / 1000);
+    rtv.tv_usec = static_cast<suseconds_t>((m_config.readTimeoutMs % 1000) * 1000);
     setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &rtv, sizeof(rtv));
 
-    struct hostent* server = gethostbyname(host.c_str());
-    if (!server) {
+    // Resolve host using getaddrinfo (thread-safe, IPv4/IPv6 aware)
+    struct addrinfo hints{}, *result = nullptr;
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    std::string portStr = std::to_string(port);
+    int gai = getaddrinfo(host.c_str(), portStr.c_str(), &hints, &result);
+    if (gai != 0 || !result) {
         close(sockfd);
         resp.statusCode = 0;
         resp.errorMessage = "Failed to resolve host: " + host;
         return resp;
     }
 
-    struct sockaddr_in serv_addr{};
-    serv_addr.sin_family = AF_INET;
-    std::memcpy(&serv_addr.sin_addr.s_addr, server->h_addr, static_cast<size_t>(server->h_length));
-    serv_addr.sin_port = htons(port);
-
-    if (connect(sockfd, reinterpret_cast<struct sockaddr*>(&serv_addr), sizeof(serv_addr)) < 0) {
+    if (connect(sockfd, result->ai_addr, result->ai_addrlen) < 0) {
+        freeaddrinfo(result);
         close(sockfd);
         resp.statusCode = 0;
         resp.errorMessage = "Connection refused: " + host + ":" + std::to_string(port);
         return resp;
     }
+    freeaddrinfo(result);
 
     // Build HTTP request
     std::string request = "GET " + path + " HTTP/1.1\r\n";
@@ -203,7 +205,11 @@ HttpResponse SocketHttpClient::DoGet(
         ssize_t n = recv(sockfd, buf, sizeof(buf), 0);
         if (n <= 0) break;
         rawResponse.append(buf, static_cast<size_t>(n));
-        if (rawResponse.size() > m_config.maxResponseSizeBytes) break;
+        if (rawResponse.size() > m_config.maxResponseSizeBytes) {
+            atlas::Logger::Info("[SocketHttpClient] Response truncated at " +
+                                std::to_string(m_config.maxResponseSizeBytes) + " bytes");
+            break;
+        }
     }
     close(sockfd);
 
