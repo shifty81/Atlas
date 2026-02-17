@@ -1,6 +1,7 @@
 #include "MarketplaceImporter.h"
 #include "AssetImporter.h"
 #include "../sim/StateHasher.h"
+#include "../core/Logger.h"
 #include <filesystem>
 #include <fstream>
 #include <algorithm>
@@ -264,10 +265,10 @@ bool UnrealMarketplaceImporter::ConvertUAsset(
     try {
         std::filesystem::copy_file(inputPath, outputPath, 
                                    std::filesystem::copy_options::overwrite_existing);
+        Logger::Info("Successfully converted Unreal asset: " + inputPath);
         return true;
     } catch (const std::exception& e) {
-        // TODO: Add proper logging when Logger is available in this context
-        // For now, conversion failures will be reported through ImportResult
+        Logger::Error("Failed to convert Unreal asset '" + inputPath + "': " + e.what());
         return false;
     }
 }
@@ -358,10 +359,10 @@ bool UnityAssetStoreImporter::ConvertUnityPrefab(
     try {
         std::filesystem::copy_file(inputPath, outputPath,
                                    std::filesystem::copy_options::overwrite_existing);
+        Logger::Info("Successfully converted Unity prefab: " + inputPath);
         return true;
     } catch (const std::exception& e) {
-        // TODO: Add proper logging when Logger is available in this context
-        // For now, conversion failures will be reported through ImportResult
+        Logger::Error("Failed to convert Unity prefab '" + inputPath + "': " + e.what());
         return false;
     }
 }
