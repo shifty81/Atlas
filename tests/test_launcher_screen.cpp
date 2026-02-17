@@ -1,6 +1,8 @@
 #include "../editor/ui/LauncherScreen.h"
 #include <iostream>
 #include <cassert>
+#include <filesystem>
+#include <fstream>
 
 using namespace atlas::editor;
 
@@ -20,6 +22,37 @@ void test_launcher_scan_nonexistent() {
     launcher.ScanProjects("/nonexistent_directory_12345");
     assert(launcher.Projects().empty());
     std::cout << "[PASS] test_launcher_scan_nonexistent" << std::endl;
+}
+
+void test_launcher_scan_atlas_descriptors() {
+    const auto dirPath = std::filesystem::temp_directory_path() / "atlas_test_launcher_projects";
+    const std::string dir = dirPath.string();
+    std::filesystem::remove_all(dirPath);
+    struct CleanupGuard {
+        std::filesystem::path path;
+        ~CleanupGuard() { std::filesystem::remove_all(path); }
+    } cleanup{dirPath};
+    std::filesystem::create_directories(dir + "/alpha");
+    std::filesystem::create_directories(dir + "/beta");
+    std::filesystem::create_directories(dir + "/ignored");
+
+    std::ofstream(dir + "/alpha/alpha.atlas") << "{}";
+    std::ofstream(dir + "/beta/project.atlas") << "{}";
+    std::ofstream(dir + "/ignored/readme.txt") << "not a project";
+
+    LauncherScreen launcher;
+    launcher.ScanProjects(dir);
+    assert(launcher.Projects().size() == 2);
+
+    bool foundAlpha = false;
+    bool foundBeta = false;
+    for (const auto& project : launcher.Projects()) {
+        if (project.name == "alpha") foundAlpha = true;
+        if (project.name == "beta") foundBeta = true;
+    }
+    assert(foundAlpha && foundBeta);
+
+    std::cout << "[PASS] test_launcher_scan_atlas_descriptors" << std::endl;
 }
 
 void test_launcher_select_invalid() {

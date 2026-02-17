@@ -17,14 +17,20 @@ void LauncherScreen::ScanProjects(const std::string& projectsDir) {
     for (const auto& entry : std::filesystem::directory_iterator(projectsDir)) {
         if (!entry.is_directory()) continue;
 
-        auto projectFile = entry.path() / "project.atlas";
-        if (!std::filesystem::exists(projectFile)) continue;
+        bool hasProjectDescriptor = false;
+        for (const auto& file : std::filesystem::directory_iterator(entry.path())) {
+            if (file.is_regular_file() && file.path().extension() == ".atlas") {
+                hasProjectDescriptor = true;
+                break;
+            }
+        }
+        if (!hasProjectDescriptor) continue;
 
         ProjectEntry pe;
         pe.name = entry.path().filename().string();
         pe.path = entry.path().string();
         // engineVersion and lastOpened would be read from the
-        // project.atlas JSON file when the schema parser is wired up.
+        // .atlas JSON file when the schema parser is wired up.
         pe.engineVersion = "0.1.0";
         pe.lastOpened = "";
         m_projects.push_back(std::move(pe));

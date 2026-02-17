@@ -26,7 +26,7 @@ struct ProjectEntry {
 ///    └── Footer  (Open / New / Browse / Quit)
 class LauncherScreen {
 public:
-    /// Scan the given root directory for project.atlas files.
+    /// Scan the given root directory for project descriptors (*.atlas).
     void ScanProjects(const std::string& projectsDir);
 
     /// Returns the list of discovered projects.

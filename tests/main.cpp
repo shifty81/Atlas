@@ -1319,6 +1319,7 @@ void test_engine_phase_values();
 // Launcher Screen tests
 void test_launcher_initial_state();
 void test_launcher_scan_nonexistent();
+void test_launcher_scan_atlas_descriptors();
 void test_launcher_select_invalid();
 void test_launcher_confirm_no_selection();
 void test_launcher_request_new_project();
@@ -2898,6 +2899,7 @@ int main() {
     std::cout << "\n--- Launcher Screen ---" << std::endl;
     test_launcher_initial_state();
     test_launcher_scan_nonexistent();
+    test_launcher_scan_atlas_descriptors();
     test_launcher_select_invalid();
     test_launcher_confirm_no_selection();
     test_launcher_request_new_project();
