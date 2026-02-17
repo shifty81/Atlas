@@ -12,7 +12,7 @@
 
 Atlas is a deterministic, data-driven game engine built in C++20. The
 project is **approximately 95–98% complete** across its core systems.
-All 1458 tests pass. The engine compiles and runs on Linux with
+All 1483 tests pass. The engine compiles and runs on Linux with
 OpenGL and Vulkan rendering backends. The Vulkan renderer records
 and submits draw commands through a GPU command buffer pipeline with
 render pass, pipeline state, GPU resource management, descriptor set
@@ -53,10 +53,12 @@ Server rules support config-driven hot-reload with change tracking.
 - [x] State hasher (deterministic world hashing)
 - [x] Replay recorder (record/playback/verify)
 - [x] Replay divergence inspector
+- [x] Replay divergence minimizer (binary-search for smallest divergent window)
 - [x] FP drift detector
 - [x] Job tracer (execution order tracking)
 - [x] Save/load system (versioned `.asav` format)
 - [x] Desync reproducer
+- [x] Determinism crash report bundle (`.atlascrash` manifest with state + replay + metadata)
 - [x] TLA+ model checker integration (CI stub mode)
 
 ### Graph VM (`engine/graphvm/`)
@@ -77,6 +79,7 @@ Server rules support config-driven hot-reload with change tracking.
 - [x] Packet loss simulation (configurable loss%, latency, jitter)
 - [x] Connection quality diagnostics (Excellent/Good/Fair/Poor/Critical)
 - [x] Bandwidth tracking and statistics
+- [x] QoS packet scheduler (priority-based ordering, congestion detection)
 
 ### Asset System (`engine/assets/`)
 - [x] Asset registry (UUID/hash-addressed)
@@ -152,6 +155,7 @@ Server rules support config-driven hot-reload with change tracking.
 - [x] Contract bot (`atlas_contract_bot.yml`)
 - [x] Contract scanner (`tools/contract_scan.py`)
 - [x] Dependency verifier (`tools/verify_dependencies.sh`)
+- [x] CMake presets (`CMakePresets.json` — Debug/Release/Development/CI with layer enforcement)
 
 ### Documentation (`docs/`)
 - [x] 43 documentation files covering architecture, systems, and policies
@@ -160,7 +164,7 @@ Server rules support config-driven hot-reload with change tracking.
 - [x] Contributor rules (`ATLAS_CONTRIBUTOR_RULES.md`)
 
 ### Testing (`tests/`)
-- [x] 1458 tests across 130+ test files — all passing
+- [x] 1483 tests across 160+ test files — all passing
 - [x] Covers ECS, networking, replay, assets, UI, editor panels, graphs, etc.
 
 ---
@@ -259,7 +263,7 @@ Core Engine        ✅ 100%   Bootstrap, logging, contracts, determinism
 ECS                ✅ 100%   Entity lifecycle, serialization, rollback
 Graph VM           ✅ 100%   14 graph types, compile/execute/serialize
 Simulation         ✅ 100%   Tick, time, state, replay, save/load
-Networking         ✅  97%   Lockstep, rollback, P2P, packet loss sim, quality diagnostics
+Networking         ✅  98%   Lockstep, rollback, P2P, packet loss sim, quality diagnostics, QoS scheduling
 Assets             ✅ 100%   Registry, import, cook, validate, hot-reload, dependency tracking
 World Generation   ✅ 100%   Terrain, voxel, galaxy, streaming
 AI Systems         ✅ 100%   Behavior, memory, faction, strategy
@@ -270,7 +274,7 @@ Editor Rendering   ✅ 100%   All panels produce draw commands via UIDrawList
 Production         ✅ 100%   Full packager pipeline
 CI/Enforcement     ✅ 100%   Determinism gate, contract bot
 Documentation      ✅  95%   43 docs; minor updates needed
-Testing            ✅ 100%   1458 tests, all passing
+Testing            ✅ 100%   1483 tests, all passing
 ```
 
 ---
@@ -283,7 +287,7 @@ Testing            ✅ 100%   1458 tests, all passing
 | AtlasServer | ✅ | ✅ | Headless, no graphics deps |
 | AtlasClient | ✅ | ✅ | Player runtime |
 | AtlasRuntime | ✅ | ✅ | Unified CLI runtime |
-| AtlasTests | ✅ | ✅ | 1458 tests passing |
+| AtlasTests | ✅ | ✅ | 1483 tests passing |
 | TileEditor | ✅ | ✅ | Standalone tile tool |
 
 ---
@@ -294,8 +298,8 @@ Testing            ✅ 100%   1458 tests, all passing
 |------|-----------|--------|
 | Engine Core | ~50 | ✅ All pass |
 | ECS | ~40 | ✅ All pass |
-| Networking | ~67 | ✅ All pass |
-| Replay | ~30 | ✅ All pass |
+| Networking | ~75 | ✅ All pass |
+| Replay | ~37 | ✅ All pass |
 | Assets | ~57 | ✅ All pass |
 | UI System | ~80 | ✅ All pass |
 | Editor Panels | ~120 | ✅ All pass |
@@ -304,7 +308,7 @@ Testing            ✅ 100%   1458 tests, all passing
 | Production | ~20 | ✅ All pass |
 | World Gen | ~30 | ✅ All pass |
 | Tile Editor | ~40 | ✅ All pass |
-| **Total** | **1458** | **✅ All pass** |
+| **Total** | **1483** | **✅ All pass** |
 
 ---
 
@@ -330,6 +334,6 @@ circular dependency detection and topological build ordering. The AI
 assistant has an offline template backend and the marketplace system
 has both null and socket-based HTTP clients for remote downloads.
 The editor enforces permission tiers and server rules support
-hot-reload. All 1458 tests pass. The primary remaining work is
+hot-reload. All 1483 tests pass. The primary remaining work is
 Vulkan hardware device integration (real VkDevice/VkCommandBuffer)
 and shipping production font backends.

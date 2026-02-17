@@ -94,4 +94,83 @@ const std::vector<DesyncCapture>& DesyncReproducer::Captures() const {
     return m_captures;
 }
 
+void DesyncReproducer::SetEngineVersion(const std::string& version) {
+    m_engineVersion = version;
+}
+
+const std::string& DesyncReproducer::EngineVersion() const {
+    return m_engineVersion;
+}
+
+void DesyncReproducer::SetPlatformId(const std::string& platformId) {
+    m_platformId = platformId;
+}
+
+const std::string& DesyncReproducer::PlatformId() const {
+    return m_platformId;
+}
+
+DesyncReproducer::CrashReportBundle DesyncReproducer::BuildCrashBundle(
+        uint32_t tickRate, uint64_t seed) {
+    if (m_captures.empty()) {
+        CrashReportBundle bundle;
+        bundle.valid = false;
+        return bundle;
+    }
+    return BuildCrashBundleAt(m_captures.size() - 1, tickRate, seed);
+}
+
+DesyncReproducer::CrashReportBundle DesyncReproducer::BuildCrashBundleAt(
+        size_t index, uint32_t tickRate, uint64_t seed) {
+    CrashReportBundle bundle;
+    if (index >= m_captures.size()) {
+        bundle.valid = false;
+        return bundle;
+    }
+
+    const auto& capture = m_captures[index];
+    if (!capture.valid) {
+        bundle.valid = false;
+        return bundle;
+    }
+
+    bundle.capture = capture;
+    bundle.engineVersion = m_engineVersion;
+    bundle.platformId = m_platformId;
+    bundle.tickRate = tickRate;
+    bundle.seed = seed;
+
+    // Write a .atlascrash manifest
+    std::string manifestPath = m_outputDir + "/desync_tick_"
+                               + std::to_string(capture.tick) + ".atlascrash";
+    {
+        std::ofstream out(manifestPath);
+        if (!out.is_open()) {
+            bundle.valid = false;
+            return bundle;
+        }
+        out << "atlas_crash_bundle_v1" << std::endl;
+        out << "engine_version=" << m_engineVersion << std::endl;
+        out << "platform=" << m_platformId << std::endl;
+        out << "tick=" << capture.tick << std::endl;
+        out << "tick_rate=" << tickRate << std::endl;
+        out << "seed=" << seed << std::endl;
+        out << "local_hash=0x" << std::hex << capture.localHash << std::dec << std::endl;
+        out << "remote_hash=0x" << std::hex << capture.remoteHash << std::dec << std::endl;
+        out << "save=" << capture.savePath << std::endl;
+        out << "replay=" << capture.replayPath << std::endl;
+        out << "report=" << capture.reportPath << std::endl;
+        out << "repro=" << GenerateReproCommand(capture) << std::endl;
+    }
+
+    bundle.bundlePath = manifestPath;
+    bundle.valid = true;
+    m_bundles.push_back(bundle);
+    return bundle;
+}
+
+const std::vector<DesyncReproducer::CrashReportBundle>& DesyncReproducer::Bundles() const {
+    return m_bundles;
+}
+
 }  // namespace atlas::sim
