@@ -94,7 +94,7 @@ Compile-time guards and runtime assertions exist. Gaps remain:
 - [x] FP consistency enforcement (`-ffp-contract=off`, `/fp:strict` flags)
 - [x] Platform-dependent math detection in CI (scan for `__m128` outside render)
 
-### 1.5 AI Determinism Contract 🔧
+### 1.5 AI Determinism Contract ✅
 
 AI systems must produce bit-identical decisions given identical inputs.
 
@@ -110,20 +110,20 @@ AI systems must produce bit-identical decisions given identical inputs.
 These items connect the new foundational systems to the existing engine
 runtime and editor infrastructure.
 
-### 2.1 Engine Runtime Integration 🔧
+### 2.1 Engine Runtime Integration ✅
 
 - [x] Integrate `TimeModel` into `Engine` class (replace direct `TickScheduler` usage)
 - [x] Integrate `WorldState` snapshotting into `Engine::RunServer()` loop
 - [x] Integrate `SaveSystem` save/load into `Engine` lifecycle
 - [x] Pass `TimeContext` through ECS `Update()` instead of raw `float dt`
 
-### 2.2 Networking ↔ State Integration 🔧
+### 2.2 Networking ↔ State Integration ✅
 
 - [x] Use `WorldSnapshot` in lockstep sync instead of raw ECS serialization
 - [x] Snapshot-based rollback: restore from `WorldState` snapshot + replay
 - [x] Network save/load: server broadcasts save tick, clients verify hash
 
-### 2.3 Replay ↔ Save Integration 🔧
+### 2.3 Replay ↔ Save Integration ✅
 
 - [x] Verify hash ladder continuity across save/load boundaries
 - [x] Implement "replay from save" mode (load save → begin replay playback)
@@ -133,13 +133,13 @@ runtime and editor infrastructure.
 
 ## Priority 3 — Tooling & Debug Infrastructure
 
-### 3.1 State Hash Diff Visualizer 🔧
+### 3.1 State Hash Diff Visualizer ✅
 
 - [x] Editor panel showing per-component hash breakdown at any tick
 - [x] Side-by-side comparison of two hash ladders
 - [x] Highlight first divergence point with component-level detail
 
-### 3.2 Replay Divergence Inspector UI 🔧
+### 3.2 Replay Divergence Inspector UI ✅
 
 **Files:** `engine/sim/ReplayDivergenceInspector.h/cpp`,
           `editor/panels/ReplayTimelinePanel.h/cpp`
