@@ -7,6 +7,9 @@
 
 #if defined(_WIN32)
 #include <windows.h>
+#ifdef DrawText
+#undef DrawText
+#endif
 #else
 #include <dirent.h>
 #endif

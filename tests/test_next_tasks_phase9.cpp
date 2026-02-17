@@ -5,7 +5,12 @@
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
+#if defined(_WIN32)
+#include <process.h>
+#define getpid _getpid
+#else
 #include <unistd.h>
+#endif
 
 #include "../engine/sim/DesyncReproducer.h"
 #include "../engine/sim/ReplayDivergenceInspector.h"
