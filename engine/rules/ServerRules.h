@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <vector>
 #include <cstdint>
 
 namespace atlas::rules {
@@ -32,8 +33,29 @@ public:
 
     void Clear();
 
+    /// Load rules from a config string (key=value format, one per line)
+    size_t LoadFromConfig(const std::string& configText);
+
+    /// Export current rules to config string format
+    std::string ExportToConfig() const;
+
+    /// Apply a hot-reload update. Only rules marked hotReloadable will be updated.
+    /// Returns the number of rules actually updated.
+    size_t HotReloadFromConfig(const std::string& configText);
+
+    /// Returns true if any rules were modified since last call to AcknowledgeChanges()
+    bool HasPendingChanges() const;
+
+    /// Clear the pending changes flag
+    void AcknowledgeChanges();
+
+    /// Get list of rule names that were modified in the last hot-reload
+    std::vector<std::string> LastModifiedRules() const;
+
 private:
     std::unordered_map<std::string, RuleDescriptor> m_rules;
+    bool m_hasPendingChanges = false;
+    std::vector<std::string> m_lastModifiedRules;
 };
 
 }

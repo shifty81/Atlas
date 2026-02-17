@@ -1,6 +1,8 @@
 #pragma once
 #include <cstdint>
 #include <string>
+#include <vector>
+#include "../../engine/core/PermissionManager.h"
 
 namespace atlas::editor {
 
@@ -28,6 +30,18 @@ struct AttachConfig {
     std::string replayPath;  ///< File path for Replay mode
 };
 
+/// Operations that the editor can perform on an attached target.
+enum class EditorOperation : uint8_t {
+    ViewState,
+    InspectEntities,
+    ModifyState,
+    InjectInput,
+    StepSimulation,
+    RecordReplay,
+    EditAssets,
+    RunCI
+};
+
 /// Manages the editor's attachment to a target runtime process.
 /// The attach protocol allows the editor to observe and (with sufficient
 /// permissions) mutate the state of a live client, headless server, or
@@ -52,9 +66,23 @@ public:
     /// (or is in standalone mode, which is always "connected").
     bool IsConnected() const;
 
+    /// Set the permission tier for this editor session
+    void SetPermissionTier(atlas::PermissionTier tier);
+    atlas::PermissionTier GetPermissionTier() const;
+
+    /// Check if the current tier allows a specific editor operation
+    bool IsOperationAllowed(EditorOperation op) const;
+
+    /// Get list of allowed operations for the current tier
+    std::vector<EditorOperation> AllowedOperations() const;
+
+    /// Get a human-readable description of the current permissions
+    std::string PermissionDescription() const;
+
 private:
     AttachConfig m_config;
     AttachState  m_state = AttachState::Disconnected;
+    atlas::PermissionTier m_permissionTier = atlas::PermissionTier::Developer;
 };
 
 } // namespace atlas::editor

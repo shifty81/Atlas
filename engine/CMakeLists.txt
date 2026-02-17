@@ -20,6 +20,7 @@ add_library(AtlasEngine STATIC
     assets/MarketplaceImporter.cpp
     assets/AssetValidator.cpp
     assets/HttpClient.cpp
+    assets/SocketHttpClient.cpp
     net/NetContext.cpp
     net/NetHardening.cpp
     net/Replication.cpp

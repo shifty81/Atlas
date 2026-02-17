@@ -34,6 +34,30 @@ struct VkGPUCommandBuffer {
     uint64_t submitTimestamp = 0;
 };
 
+struct VkRenderPassDesc {
+    std::string name;
+    uint32_t colorAttachmentCount = 1;
+    bool hasDepth = false;
+    bool clear = true;
+};
+
+struct VkPipelineStateDesc {
+    std::string vertexShader;
+    std::string fragmentShader;
+    bool depthTest = true;
+    bool depthWrite = true;
+    bool blending = false;
+    uint32_t id = 0;
+};
+
+struct VkGPUResource {
+    enum class Type : uint8_t { VertexBuffer, IndexBuffer, UniformBuffer };
+    Type type = Type::VertexBuffer;
+    uint32_t id = 0;
+    size_t sizeBytes = 0;
+    bool mapped = false;
+};
+
 class VulkanRenderer : public ui::UIRenderer {
 public:
     void BeginFrame() override;
@@ -57,6 +81,29 @@ public:
     uint32_t SubmittedBufferCount() const;
     bool HasPendingCommands() const;
 
+    // Render pass management
+    uint32_t CreateRenderPass(const VkRenderPassDesc& desc);
+    void BeginRenderPass(uint32_t passId);
+    void EndRenderPass();
+    bool IsRenderPassActive() const;
+    const VkRenderPassDesc* GetRenderPass(uint32_t id) const;
+    uint32_t RenderPassCount() const;
+
+    // Pipeline state management
+    uint32_t CreatePipelineState(const VkPipelineStateDesc& desc);
+    void BindPipeline(uint32_t pipelineId);
+    uint32_t BoundPipelineId() const;
+    const VkPipelineStateDesc* GetPipelineState(uint32_t id) const;
+    uint32_t PipelineStateCount() const;
+
+    // GPU resource management
+    uint32_t CreateBuffer(VkGPUResource::Type type, size_t sizeBytes);
+    bool DestroyBuffer(uint32_t bufferId);
+    const VkGPUResource* GetBuffer(uint32_t id) const;
+    uint32_t BufferCount() const;
+    bool MapBuffer(uint32_t bufferId);
+    bool UnmapBuffer(uint32_t bufferId);
+
     static constexpr uint32_t MAX_BUFFERED_FRAMES = 3;
 
 private:
@@ -67,6 +114,18 @@ private:
     uint32_t m_frameCount = 0;
     std::vector<VkGPUCommandBuffer> m_submittedBuffers;
     uint64_t m_submitCounter = 0;
+
+    std::vector<VkRenderPassDesc> m_renderPasses;
+    uint32_t m_activeRenderPass = 0;
+    bool m_renderPassActive = false;
+
+    std::vector<VkPipelineStateDesc> m_pipelineStates;
+    uint32_t m_boundPipeline = 0;
+
+    std::vector<VkGPUResource> m_buffers;
+    uint32_t m_nextBufferId = 1;
+    uint32_t m_nextPassId = 1;
+    uint32_t m_nextPipelineId = 1;
 };
 
 } // namespace atlas::render

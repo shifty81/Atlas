@@ -120,4 +120,131 @@ bool VulkanRenderer::HasPendingCommands() const {
     return !m_drawCommands.empty();
 }
 
+// --- Render pass management ---
+
+uint32_t VulkanRenderer::CreateRenderPass(const VkRenderPassDesc& desc) {
+    VkRenderPassDesc pass = desc;
+    uint32_t id = m_nextPassId++;
+    m_renderPasses.push_back(pass);
+    Logger::Info("[VulkanRenderer] CreateRenderPass '" + desc.name + "' id=" + std::to_string(id));
+    return id;
+}
+
+void VulkanRenderer::BeginRenderPass(uint32_t passId) {
+    if (passId == 0 || passId >= m_nextPassId) return;
+    m_activeRenderPass = passId;
+    m_renderPassActive = true;
+    Logger::Info("[VulkanRenderer] BeginRenderPass id=" + std::to_string(passId));
+}
+
+void VulkanRenderer::EndRenderPass() {
+    if (!m_renderPassActive) return;
+    Logger::Info("[VulkanRenderer] EndRenderPass id=" + std::to_string(m_activeRenderPass));
+    m_activeRenderPass = 0;
+    m_renderPassActive = false;
+}
+
+bool VulkanRenderer::IsRenderPassActive() const {
+    return m_renderPassActive;
+}
+
+const VkRenderPassDesc* VulkanRenderer::GetRenderPass(uint32_t id) const {
+    if (id == 0 || id > m_renderPasses.size()) return nullptr;
+    return &m_renderPasses[id - 1];
+}
+
+uint32_t VulkanRenderer::RenderPassCount() const {
+    return static_cast<uint32_t>(m_renderPasses.size());
+}
+
+// --- Pipeline state management ---
+
+uint32_t VulkanRenderer::CreatePipelineState(const VkPipelineStateDesc& desc) {
+    VkPipelineStateDesc state = desc;
+    state.id = m_nextPipelineId++;
+    m_pipelineStates.push_back(state);
+    Logger::Info("[VulkanRenderer] CreatePipelineState id=" + std::to_string(state.id) +
+                 " vs=" + desc.vertexShader + " fs=" + desc.fragmentShader);
+    return state.id;
+}
+
+void VulkanRenderer::BindPipeline(uint32_t pipelineId) {
+    if (pipelineId == 0 || pipelineId >= m_nextPipelineId) return;
+    m_boundPipeline = pipelineId;
+    Logger::Info("[VulkanRenderer] BindPipeline id=" + std::to_string(pipelineId));
+}
+
+uint32_t VulkanRenderer::BoundPipelineId() const {
+    return m_boundPipeline;
+}
+
+const VkPipelineStateDesc* VulkanRenderer::GetPipelineState(uint32_t id) const {
+    if (id == 0 || id > m_pipelineStates.size()) return nullptr;
+    return &m_pipelineStates[id - 1];
+}
+
+uint32_t VulkanRenderer::PipelineStateCount() const {
+    return static_cast<uint32_t>(m_pipelineStates.size());
+}
+
+// --- GPU resource management ---
+
+uint32_t VulkanRenderer::CreateBuffer(VkGPUResource::Type type, size_t sizeBytes) {
+    VkGPUResource res;
+    res.type = type;
+    res.id = m_nextBufferId++;
+    res.sizeBytes = sizeBytes;
+    res.mapped = false;
+    m_buffers.push_back(res);
+    Logger::Info("[VulkanRenderer] CreateBuffer id=" + std::to_string(res.id) +
+                 " size=" + std::to_string(sizeBytes));
+    return res.id;
+}
+
+bool VulkanRenderer::DestroyBuffer(uint32_t bufferId) {
+    for (auto it = m_buffers.begin(); it != m_buffers.end(); ++it) {
+        if (it->id == bufferId) {
+            Logger::Info("[VulkanRenderer] DestroyBuffer id=" + std::to_string(bufferId));
+            m_buffers.erase(it);
+            return true;
+        }
+    }
+    return false;
+}
+
+const VkGPUResource* VulkanRenderer::GetBuffer(uint32_t id) const {
+    for (const auto& buf : m_buffers) {
+        if (buf.id == id) return &buf;
+    }
+    return nullptr;
+}
+
+uint32_t VulkanRenderer::BufferCount() const {
+    return static_cast<uint32_t>(m_buffers.size());
+}
+
+bool VulkanRenderer::MapBuffer(uint32_t bufferId) {
+    for (auto& buf : m_buffers) {
+        if (buf.id == bufferId) {
+            if (buf.mapped) return false;
+            buf.mapped = true;
+            Logger::Info("[VulkanRenderer] MapBuffer id=" + std::to_string(bufferId));
+            return true;
+        }
+    }
+    return false;
+}
+
+bool VulkanRenderer::UnmapBuffer(uint32_t bufferId) {
+    for (auto& buf : m_buffers) {
+        if (buf.id == bufferId) {
+            if (!buf.mapped) return false;
+            buf.mapped = false;
+            Logger::Info("[VulkanRenderer] UnmapBuffer id=" + std::to_string(bufferId));
+            return true;
+        }
+    }
+    return false;
+}
+
 } // namespace atlas::render
