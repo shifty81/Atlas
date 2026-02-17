@@ -19,6 +19,7 @@ public:
     EditorPanel* FindPanel(const std::string& name) const;
 
     DockNode& Root() { return m_root; }
+    const DockNode& Root() const { return m_root; }
     const std::vector<EditorPanel*>& Panels() const { return m_panels; }
 
 private:

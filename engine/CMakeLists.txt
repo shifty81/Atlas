@@ -20,6 +20,7 @@ add_library(AtlasEngine STATIC
     assets/MarketplaceImporter.cpp
     assets/AssetValidator.cpp
     net/NetContext.cpp
+    net/NetHardening.cpp
     net/Replication.cpp
     sim/TickScheduler.cpp
     world/CubeSphereLayout.cpp
@@ -99,6 +100,7 @@ add_library(AtlasEngine STATIC
     mod/ModLoader.cpp
     physics/PhysicsWorld.cpp
     story/StoryGraph.cpp
+    production/GamePackager.cpp
     production/AssetCooker.cpp
     production/BuildProfile.cpp
     production/PlatformTarget.cpp

@@ -41,6 +41,8 @@ The editor framework is in place with docking and functional panels. Draw() meth
 - [x] Graph editor panel (node enumeration, compile/preview, summary)
 - [x] Asset browser (registry scanning, filtering, sorting, selection)
 - [x] Editor assistant (asset graph suggestions, explanations, mutations)
+- [x] Editor layout persistence (save/restore panel arrangements to JSON)
+- [x] Play-In-Editor (simulate, pause, step, possess entity, loopback, state restore)
 
 ## Phase 3 — Networking 🔧
 
@@ -54,6 +56,7 @@ and are functional. Replication rules are implemented.
 - [x] Lockstep synchronization (ECS state serialization into snapshots)
 - [x] Rollback/replay (ECS state restore from snapshot, input frame replay)
 - [x] Replication rules (rule-based dirty tracking, delta collection/application)
+- [x] Production hardening (connection timeouts, reconnection, bandwidth throttling, heartbeat monitoring)
 
 ## Phase 4 — World Generation ✅
 
@@ -136,9 +139,10 @@ Multi-project architecture with schema validation and plugin support.
 
 ## Phase 6 — Production ✅
 
-Production tooling is functional with build profiles, mod loading, and platform targeting. The packager and asset cooker are UI scaffolding only.
+Production tooling is functional with build profiles, mod loading, and platform targeting. The packager is wired to the asset cooker with a full Validate → Cook → Bundle → Emit pipeline.
 
 - [x] Game packager panel (UI scaffolding for build targets and modes)
+- [x] Game packager pipeline (Validate → Cook → Bundle → Emit with progress callbacks)
 - [x] Asset cooker (source → binary cooking with header, batch processing, progress callbacks)
 - [x] Build profiles (Debug/Development/Release with optimization, symbols, assertions, compiler/linker flags, overrides)
 - [x] Mod loader (mod descriptors, registration, enable/disable, dependency validation, directory scanning)
@@ -241,9 +245,9 @@ Production-grade CI, build experience, and template repository support.
 | Gameplay | ✅ Complete | Camera, input, physics, audio, mechanics |
 | Interaction/Voice | ✅ Complete | Unified intent pipeline |
 | Project/Plugin | ✅ Complete | Multi-project, schema validation, plugins, game modules |
-| Editor Framework | 🔧 Functional | All panel logic works, rendering layer (Draw() methods) deferred pending UI backend |
-| Networking | 🔧 Functional | API, lockstep/rollback, replication work; needs production hardening |
-| Production Tools | 🔧 Functional | Build scripts work, asset cooker/packager are UI scaffolding |
+| Editor Framework | 🔧 Functional | All panel logic works, layout persistence added, PIE implemented, rendering layer (Draw() methods) deferred pending UI backend |
+| Networking | 🔧 Functional | API, lockstep/rollback, replication work; production hardening layer added (timeouts, reconnect, bandwidth, heartbeat) |
+| Production Tools | ✅ Complete | Game packager pipeline (Validate → Cook → Bundle → Emit), asset cooker, build profiles, platform targeting |
 | Polish | ✅ Complete | Undo/redo, visual diff, profiler, replay recorder, crash analysis |
 | Game Module System | ✅ Complete | IGameModule interface, ModuleLoader, AtlasGameplay library, EveOffline (shipped in-repo), SDK export |
 | GUI System & Editor Hardening | 🔧 Functional | DSL and layout solver work, self-hosting partial, Unreal-grade aesthetics pending |

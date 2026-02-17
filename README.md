@@ -41,15 +41,15 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
   Phase 1       Phase 2       Phase 3       Phase 4       Phase 5      Phase 5b      Phase 5c
  Core Engine     Editor      Networking    World Gen     Gameplay     Graph Sys     AI Systems
 ──────────────────────────────────────────────────────────────────────────────────────────────────
- ██████████    ███████░░░    ████████░░    ██████████    ██████████    ██████████    ██████████
-   100%           70%           85%          100%          100%          100%          100%
+ ██████████    ████████░░    █████████░    ██████████    ██████████    ██████████    ██████████
+   100%           80%           90%          100%          100%          100%          100%
   ✅ Done      🔧 Func      🔧 Func       ✅ Done       ✅ Done       ✅ Done       ✅ Done
 
   Phase 5d      Phase 5e      Phase 6       Phase 7       Phase 8       Phase 9       Phase 10
  Interaction   Proj/Plugin   Production     Polish       GUI Harden   Replay/Verify  Flow Graph
 ──────────────────────────────────────────────────────────────────────────────────────────────────
- ██████████    ██████████    ██████░░░░    ██████████    ███████░░░    █████████░    ██████████
-   100%          100%           60%          100%           75%           95%          100%
+ ██████████    ██████████    █████████░    ██████████    ████████░░    █████████░    ██████████
+   100%          100%           90%          100%           85%           95%          100%
   ✅ Done       ✅ Done      🔧 Func       ✅ Done       🔧 Func       ✅ Done       ✅ Done
 
   Phase 11      Phase 12
@@ -76,26 +76,28 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 </td>
 <td width="25%">
 
-**Phase 2 — Editor** 🔧 70%
+**Phase 2 — Editor** 🔧 80%
 
 - ✅ UI framework
 - ✅ Panel docking system
 - ✅ 14+ panels with logic
 - ✅ Console, inspector, graph editor
+- ✅ Layout persistence (save/restore)
+- ✅ Play-In-Editor (simulate, possess, loopback)
 - 📋 Rendering layer (Draw() are no-ops)
 - 📋 UI backend integration
 
 </td>
 <td width="25%">
 
-**Phase 3 — Networking** 🔧 85%
+**Phase 3 — Networking** 🔧 90%
 
 - ✅ NetContext API
 - ✅ Dedicated server loop
 - ✅ P2P support
 - ✅ Lockstep sync
 - ✅ Rollback/replay
-- 📋 Production hardening
+- ✅ Production hardening (timeouts, reconnect, bandwidth, heartbeat)
 
 </td>
 <td width="25%">
@@ -169,13 +171,13 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 </td>
 <td width="25%">
 
-**Phase 6 — Production** 🔧 60%
+**Phase 6 — Production** 🔧 90%
 
-- 📋 Game packager (UI scaffolded)
-- 📋 Asset cooker (build stubs)
+- ✅ Game packager (full pipeline: Validate → Cook → Bundle → Emit)
+- ✅ Asset cooker (source → binary cooking)
 - ✅ Build profiles
 - ✅ Mod loader
-- 📋 Platform targeting
+- ✅ Platform targeting
 
 </td>
 <td width="25%">
@@ -191,10 +193,12 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 </td>
 <td width="25%">
 
-**Phase 8 — GUI & Editor Hardening** 🔧 75%
+**Phase 8 — GUI & Editor Hardening** 🔧 85%
 
 - ✅ GUI DSL & layout solver
 - ✅ Panel framework
+- ✅ Layout persistence
+- ✅ Play-In-Editor
 - 🔧 Self-hosting (partial)
 - 📋 Full Unreal-grade aesthetics
 
@@ -272,8 +276,12 @@ These systems are implemented, tested, and functional:
 - **Replay recording** — record/playback with divergence detection
 - **ECS framework** — entity management with serialization and rollback support
 - **Networking** — lockstep and rollback foundations with client-server and P2P
-- **100+ unit tests pass** — 1 known pre-existing issue: `test_replay_record_frames` (inputData size assertion in `test_replay_recorder.cpp:45`)
+- **1100+ unit tests pass** — 1 known pre-existing issue: `test_replay_record_frames` (inputData size assertion in `test_replay_recorder.cpp:45`)
 - **CI determinism gate** — automated verification that simulation is bit-exact
+- **Play-In-Editor** — simulate, pause, step, possess entity, loopback, state restore
+- **Editor layout persistence** — save/restore panel arrangements to/from JSON
+- **Network hardening** — connection timeouts, reconnection, bandwidth throttling, heartbeat monitoring
+- **Game packager pipeline** — full Validate → Cook → Bundle → Emit workflow
 - **Undo/redo** — command-pattern history across editor operations
 - **Project system** — schema-validated `.atlas` project files with multi-project support
 - **World generation** — cube-sphere, voxel, terrain, galaxy, noise, and streaming
@@ -334,7 +342,7 @@ Atlas/
 │   ├── plugin/          # Plugin system (validation, registry)
 │   ├── mod/             # Mod asset registry and mod loader
 │   ├── module/          # Game module interface and dynamic loader
-│   ├── production/      # Asset cooker, build profiles, platform targeting
+│   ├── production/      # Asset cooker, game packager, build profiles, platform targeting
 │   └── rules/           # Server rules (live parameter tuning)
 │
 ├── modules/

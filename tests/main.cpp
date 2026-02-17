@@ -1339,6 +1339,55 @@ void test_null_text_renderer();
 void test_glyph_default();
 void test_font_atlas_default();
 
+// Game Packager Build tests
+void test_game_packager_validate_empty_source();
+void test_game_packager_validate_nonexistent_source();
+void test_game_packager_validate_valid();
+void test_game_packager_package_empty_dir();
+void test_game_packager_package_with_assets();
+void test_game_packager_progress_callback();
+void test_game_packager_last_report();
+void test_game_packager_validation_failed();
+
+// Layout Persistence tests
+void test_layout_persistence_serialize_empty();
+void test_layout_persistence_roundtrip();
+void test_layout_persistence_save_load_file();
+void test_layout_persistence_load_nonexistent();
+void test_layout_persistence_panel_closable();
+void test_layout_persistence_vertical_split();
+
+// Net Hardening tests
+void test_net_hardening_default_config();
+void test_net_hardening_configure();
+void test_net_hardening_connect_disconnect();
+void test_net_hardening_connection_timeout();
+void test_net_hardening_reconnect();
+void test_net_hardening_packet_received_connects();
+void test_net_hardening_bandwidth_limit();
+void test_net_hardening_bandwidth_unlimited();
+void test_net_hardening_packet_size_validation();
+void test_net_hardening_rtt_tracking();
+void test_net_hardening_heartbeat_timeout();
+void test_net_hardening_heartbeat_reset();
+void test_net_hardening_stats_tracking();
+void test_net_hardening_reset_stats();
+void test_net_hardening_state_callback();
+
+// Play-In-Editor tests
+void test_pie_initial_state();
+void test_pie_start_stop();
+void test_pie_pause_resume();
+void test_pie_step_tick();
+void test_pie_state_restore();
+void test_pie_possess_entity();
+void test_pie_possess_zero_fails();
+void test_pie_loopback();
+void test_pie_mode_callback();
+void test_pie_double_start_fails();
+void test_pie_stop_when_stopped();
+void test_pie_auto_possess();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -2819,6 +2868,59 @@ int main() {
     test_null_text_renderer();
     test_glyph_default();
     test_font_atlas_default();
+
+    // Game Packager Build Pipeline
+    std::cout << "\n--- Game Packager Build Pipeline ---" << std::endl;
+    test_game_packager_validate_empty_source();
+    test_game_packager_validate_nonexistent_source();
+    test_game_packager_validate_valid();
+    test_game_packager_package_empty_dir();
+    test_game_packager_package_with_assets();
+    test_game_packager_progress_callback();
+    test_game_packager_last_report();
+    test_game_packager_validation_failed();
+
+    // Layout Persistence
+    std::cout << "\n--- Layout Persistence ---" << std::endl;
+    test_layout_persistence_serialize_empty();
+    test_layout_persistence_roundtrip();
+    test_layout_persistence_save_load_file();
+    test_layout_persistence_load_nonexistent();
+    test_layout_persistence_panel_closable();
+    test_layout_persistence_vertical_split();
+
+    // Net Hardening
+    std::cout << "\n--- Net Hardening ---" << std::endl;
+    test_net_hardening_default_config();
+    test_net_hardening_configure();
+    test_net_hardening_connect_disconnect();
+    test_net_hardening_connection_timeout();
+    test_net_hardening_reconnect();
+    test_net_hardening_packet_received_connects();
+    test_net_hardening_bandwidth_limit();
+    test_net_hardening_bandwidth_unlimited();
+    test_net_hardening_packet_size_validation();
+    test_net_hardening_rtt_tracking();
+    test_net_hardening_heartbeat_timeout();
+    test_net_hardening_heartbeat_reset();
+    test_net_hardening_stats_tracking();
+    test_net_hardening_reset_stats();
+    test_net_hardening_state_callback();
+
+    // Play-In-Editor
+    std::cout << "\n--- Play-In-Editor ---" << std::endl;
+    test_pie_initial_state();
+    test_pie_start_stop();
+    test_pie_pause_resume();
+    test_pie_step_tick();
+    test_pie_state_restore();
+    test_pie_possess_entity();
+    test_pie_possess_zero_fails();
+    test_pie_loopback();
+    test_pie_mode_callback();
+    test_pie_double_start_fails();
+    test_pie_stop_when_stopped();
+    test_pie_auto_possess();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

@@ -1,5 +1,6 @@
 #pragma once
 #include "../ui/EditorPanel.h"
+#include "../../engine/production/GamePackager.h"
 #include <string>
 
 namespace atlas::editor {
@@ -22,6 +23,7 @@ struct PackageSettings {
     bool includeMods = false;
     bool stripEditorData = true;
     std::string outputPath = "./build/output";
+    std::string sourceDir = "assets";
 };
 
 class GamePackagerPanel : public EditorPanel {
@@ -34,8 +36,28 @@ public:
 
     std::string SettingsSummary() const;
 
+    /// Execute the full packaging pipeline using current settings.
+    production::PackageReport Build();
+
+    /// Get the last build report.
+    const production::PackageReport& LastReport() const { return m_lastReport; }
+
+    /// Whether a build is currently in progress.
+    bool IsBuilding() const { return m_building; }
+
+    /// Current build stage name (e.g., "Cook", "Bundle").
+    const std::string& CurrentStage() const { return m_currentStage; }
+
+    /// Current build progress (0.0 to 1.0).
+    float CurrentProgress() const { return m_currentProgress; }
+
 private:
     PackageSettings m_settings;
+    production::GamePackager m_packager;
+    production::PackageReport m_lastReport;
+    bool m_building = false;
+    std::string m_currentStage;
+    float m_currentProgress = 0.0f;
 };
 
 }

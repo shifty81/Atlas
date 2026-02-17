@@ -106,12 +106,12 @@ The `editor/main.cpp` entry point:
 
 | Feature | Description | Blocking? |
 |---------|-------------|-----------|
-| **Play-In-Editor** | Simulate, Possess Entity, Client-Server Loopback | Yes — core editor workflow |
+| **Play-In-Editor** | ✅ Implemented — Simulate, Pause, Step, Possess Entity, Client-Server Loopback, State Restore | Done |
 | **Material Graph Editor** | Visual material/shader authoring | No — can use text for now |
 | **Quest/Story Editor** | Visual narrative authoring UI | No |
 | **Inventory Editor** | Item management UI | No |
 | **Permission Enforcement** | Attach protocol tiers not enforced | Medium |
-| **Layout Persistence** | Save/restore editor panel arrangement | Medium |
+| **Layout Persistence** | ✅ Implemented — Save/restore panel arrangement to/from JSON | Done |
 | **Live Edit Rules** | Config hot-reload gating, schema rebuild | Low |
 
 ---
