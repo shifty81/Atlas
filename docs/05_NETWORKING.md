@@ -10,7 +10,8 @@
 | Loopback mode | ✅ Implemented | Local testing without network |
 | Lockstep sync | ✅ Implemented | ECS state serialized into snapshots |
 | Rollback/replay | ✅ Implemented | ECS state restore + input frame replay |
-| Replication rules | ⬜ Not started | No implementation |
+| Replication rules | ✅ Implemented | Rule-based dirty tracking, delta collection/application |
+| Production hardening | ✅ Implemented | Connection timeouts, reconnection, bandwidth throttling, heartbeat monitoring |
 
 ## Unified Networking Model
 
@@ -55,27 +56,6 @@ public:
     bool IsAuthority() const;
 };
 ```
-
-## Replication Rules
-
-### Authoritative State
-- ECS component state
-- Simulation ticks
-- Graph events
-
-### Client-Only State
-- Camera
-- UI
-- Prediction
-
-### Data Flow
-
-| Data     | Direction            |
-|----------|----------------------|
-| Input    | Client → Authority   |
-| State    | Authority → Clients  |
-| Events   | Authority → All      |
-| Assets   | Editor → Disk → Runtime |
 
 ## Lockstep + Rollback
 
@@ -136,9 +116,112 @@ hash to all clients via `NetContext::BroadcastSaveTick()`. Clients can
 verify their local state hash matches the server's, catching desyncs at
 save boundaries.
 
-## Replication Rules (Planned)
+## Replication Rules
 
-> **Note:** Replication rules are not yet implemented. The following describes
-> the intended design.
+Atlas uses a rule-based replication system (`engine/net/Replication.h`)
+to synchronize ECS component state between server and clients.
+
+### ReplicationManager
+
+```cpp
+enum class ReplicateFrequency { EveryTick, OnChange, Manual };
+enum class ReplicateDirection { ServerToClient, ClientToServer, Bidirectional };
+
+struct ReplicationRule {
+    uint32_t typeTag;
+    std::string componentName;
+    ReplicateFrequency frequency;  // default: OnChange
+    ReplicateDirection direction;  // default: ServerToClient
+    bool reliable;                 // default: true
+    uint8_t priority;              // 0–255, default: 128
+};
+```
+
+### Dirty Tracking
+
+Components are marked dirty via `MarkDirty(typeTag, entityID)`. The
+`OnChange` frequency mode only includes entities that have been marked
+dirty since the last collection. `EveryTick` rules always include all
+entities with that component.
+
+### Delta Format
+
+`CollectDelta(tick)` produces a compact binary payload:
+
+```
+[tick : 4 bytes]
+[ruleCount : 4 bytes]
+  for each rule:
+    [typeTag : 4 bytes]
+    [entityCount : 4 bytes]
+      for each entity:
+        [entityID : 4 bytes]
+        [dataSize : 4 bytes]
+        [componentData : dataSize bytes]
+```
+
+`ApplyDelta(data)` parses the payload and deserializes each component
+back into the local ECS world.
+
+### Data Flow
+
+| Data     | Direction            |
+|----------|----------------------|
+| Input    | Client → Authority   |
+| State    | Authority → Clients  |
+| Events   | Authority → All      |
+| Assets   | Editor → Disk → Runtime |
 
 ### Authoritative State
+- ECS component state
+- Simulation ticks
+- Graph events
+
+### Client-Only State
+- Camera
+- UI
+- Prediction
+
+## Production Hardening
+
+The `NetHardening` class (`engine/net/NetHardening.h`) provides resilience
+and monitoring on top of the core networking layer.
+
+### Configuration
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `connectionTimeoutMs` | 10 000 | Max time to establish connection |
+| `maxReconnectAttempts` | 5 | Retry limit before giving up |
+| `reconnectDelayMs` | 2 000 | Delay between reconnection attempts |
+| `maxBandwidthBytesPerSec` | 0 (unlimited) | Bandwidth throttle |
+| `maxPacketSize` | 1 400 | Maximum packet size in bytes |
+| `heartbeatIntervalMs` | 1 000 | Heartbeat send interval |
+| `heartbeatMissThreshold` | 5 | Missed heartbeats before timeout |
+
+### Connection State Machine
+
+```
+Disconnected → Connecting → Connected
+                    ↓              ↓
+              Reconnecting    TimedOut / Kicked
+                    ↓
+              Connecting (retry)
+```
+
+- `Connect()` transitions to Connecting and starts timeout timer
+- `Update(deltaTimeMs)` drives the state machine each frame
+- Receiving any packet while Connecting auto-transitions to Connected
+- Heartbeat misses beyond threshold trigger timeout handling
+- Reconnection attempts increment a counter; exceeding the limit
+  transitions to TimedOut
+
+### Telemetry
+
+`ConnectionStats` tracks:
+- Bytes sent / received
+- Packets sent / received / dropped
+- Average RTT (exponential moving average: 90% old + 10% new)
+- Peak RTT
+- Reconnection count
+- Current bandwidth usage (resets per second)

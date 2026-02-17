@@ -178,12 +178,12 @@ hardening to match implementation reality:
 
 | Document | Status | Action |
 |----------|--------|--------|
-| `05_NETWORKING.md` | 🔧 Exists | Add lockstep frame semantics, rollback window details |
-| `07_GAMEPLAY_MECHANICS.md` | 🔧 Exists | Add simulation-first rules, forbidden APIs list |
-| `03_ASSET_SYSTEM.md` | 🔧 Exists | Add AssetCooker pipeline, binary format details |
-| `06_WORLD_GENERATION.md` | 🔧 Exists | Add WorldGraph node types, streaming protocol |
-| `BUILDING.md` | 🔧 Exists | Add platform-specific troubleshooting |
-| `ARCHITECTURE.md` | 🔧 Exists | Add module dependency diagram |
+| `05_NETWORKING.md` | ✅ Updated | Replication rules, lockstep frame semantics, rollback window, production hardening |
+| `07_GAMEPLAY_MECHANICS.md` | ✅ Updated | Simulation-first rules, forbidden APIs list |
+| `03_ASSET_SYSTEM.md` | ✅ Updated | Import pipeline, binary format, validation, category registry |
+| `06_WORLD_GENERATION.md` | ✅ Updated | WorldGraph node types, value types, streaming protocol |
+| `BUILDING.md` | ✅ Updated | Platform-specific troubleshooting (Linux, macOS, Windows) |
+| `ARCHITECTURE.md` | ✅ Updated | Module dependency diagram |
 
 ### 4.2 New Documentation Needed
 

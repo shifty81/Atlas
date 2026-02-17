@@ -311,3 +311,64 @@ if building manually with CMake, create it before running an Atlas executable:
 ```bash
 mkdir -p logs
 ```
+
+### Platform-Specific Notes
+
+#### Linux (Ubuntu / Debian)
+
+- **Minimum GCC version:** GCC 13+ is recommended for full C++20 support.
+  ```bash
+  sudo apt update
+  sudo apt install g++-13 cmake
+  export CXX=g++-13
+  ```
+- **Ninja (optional):** The build script auto-detects Ninja if installed. Ninja
+  provides faster incremental builds than Make.
+  ```bash
+  sudo apt install ninja-build
+  ```
+
+#### macOS
+
+- **Xcode Command Line Tools** are required:
+  ```bash
+  xcode-select --install
+  ```
+- **Homebrew CMake** is recommended over the Xcode-bundled version:
+  ```bash
+  brew install cmake
+  ```
+- **Apple Silicon (M1/M2/M3):** Builds natively as ARM64. No Rosetta required.
+  If you see `arch` warnings, ensure you are using native Homebrew
+  (`/opt/homebrew/bin/cmake`), not the x86 variant.
+- **`std::filesystem` errors on older macOS:** Ensure deployment target is
+  macOS 10.15+ (`-DCMAKE_OSX_DEPLOYMENT_TARGET=10.15`).
+
+#### Windows
+
+- **Visual Studio 2022** with the "Desktop development with C++" workload is
+  the easiest path. Open a Developer Command Prompt and run:
+  ```cmd
+  cmake -G "Visual Studio 17 2022" -S . -B build
+  cmake --build build --config Release
+  ```
+- **WSL / MSYS2:** Follow the Linux instructions inside the WSL or MSYS2
+  environment. The build scripts are Bash-based and are not tested with
+  PowerShell.
+- **`build.sh` not recognized:** On native Windows without WSL, use CMake
+  directly instead of the Bash build script.
+
+### Incremental Rebuilds
+
+After the initial build, only changed source files are recompiled:
+
+```bash
+# Rebuild only modified files (fast)
+./build.sh
+
+# Force clean rebuild (slow, use when switching branches or build types)
+./build.sh --clean
+```
+
+If you see stale build artifacts after switching between `Debug` and `Release`,
+run a clean build to ensure the CMake cache is regenerated.

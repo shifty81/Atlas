@@ -54,21 +54,41 @@ struct CubeSphereCoord {
 Worlds are streamed in chunks. You never load the whole planet.
 The `WorldStreamer` class manages chunk lifecycle:
 
-- **Loading**: Chunks requested based on viewer proximity
-- **Loaded**: Chunk data resident in memory
-- **Cached**: Chunk data saved to disk, freed from memory
-- **Unloaded**: No data in memory or pending
+### Chunk States
+
+| State | Description |
+|-------|-------------|
+| `Unloaded` | No data in memory or on disk |
+| `Loading` | Load request queued, awaiting data |
+| `Loaded` | Chunk data resident in memory |
+| `Cached` | Data saved to disk, freed from memory |
+
+### Streaming Protocol
 
 ```cpp
 WorldStreamer streamer(layout, "cache/world");
 streamer.Update(viewerPos, lod, loadRadius, unloadRadius);
 ```
 
+The `Update()` method continuously manages chunks based on viewer position:
+
+1. Chunks within `loadRadius` are requested via `RequestLoad()`
+2. `SetChunkData()` marks a chunk as Loaded once generation completes
+3. Chunks beyond `unloadRadius` are unloaded via `UnloadChunk()`
+4. Unloaded chunks are optionally cached to disk for fast reload
+
 ### Disk Cache
 
-The streamer supports transparent disk caching. When a chunk is unloaded, its data is
-written to a binary file. When the chunk is needed again, it is loaded from disk instead
-of regenerated.
+The streamer supports transparent disk caching:
+- `SaveChunkToCache(chunkID)` — writes chunk data to the cache directory
+- `LoadChunkFromCache(chunkID)` — restores chunk from disk instead of regenerating
+- Cache directory is configurable per-streamer instance
+
+### Query API
+
+- `GetChunkState(chunkID)` — returns current chunk state
+- `GetLoadedChunks()` — returns all in-memory chunks
+- `LoadedCount()` / `CachedCount()` — telemetry counters
 
 ### Generation Flow
 
@@ -135,3 +155,52 @@ Game types define how worlds are generated, structured, streamed, and simulated:
   }
 }
 ```
+
+## WorldGraph — DAG-Based Generation
+
+The `WorldGraph` (`engine/world/WorldGraph.h`) provides a DAG-based
+generation pipeline where each node transforms typed data.
+
+### Value Types
+
+| Type | Description |
+|------|-------------|
+| `Float` | Scalar value |
+| `Int` | Integer value |
+| `Vec2` | 2D vector |
+| `Vec3` | 3D vector |
+| `Bool` | Boolean flag |
+| `Seed` | RNG seed |
+| `HeightField` | 2D height data grid |
+| `DensityField` | 3D density volume |
+| `Mask` | Binary region mask |
+
+### Node Model
+
+Each node is a subclass of `WorldNode` with typed input/output ports:
+
+```cpp
+class WorldNode {
+public:
+    virtual const char* GetName() const = 0;
+    virtual const char* GetCategory() const = 0;
+    virtual std::vector<WorldPort> Inputs() const = 0;
+    virtual std::vector<WorldPort> Outputs() const = 0;
+    virtual void Evaluate(const WorldContext& ctx,
+                          const std::vector<WorldValue>& inputs,
+                          std::vector<WorldValue>& outputs) const = 0;
+};
+```
+
+### Execution Context
+
+Each evaluation receives a `WorldContext` with:
+- World seed
+- Current LOD level
+- Chunk coordinates (X, Y, Z)
+
+### Compilation & Execution
+
+1. `Compile()` — topological sort with cycle detection
+2. `Execute(ctx)` — runs nodes in sorted order, passing outputs
+   to downstream inputs via `(nodeID << 32 | port)` keys

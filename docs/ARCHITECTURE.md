@@ -413,3 +413,64 @@ Individual targets can be disabled when only a subset is needed (e.g. CI engine-
 All engine modules have corresponding test files in `tests/`.
 Tests use `assert()` with `[PASS]` output and are registered in `main.cpp`.
 Run with: `cd build && ctest` or `./tests/AtlasTests`
+
+## Module Dependency Diagram
+
+The following diagram shows the dependency relationships between major
+Atlas modules. Arrows point from dependent to dependency.
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                     Game Projects                       │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │  EveOffline   │  │   Arena2D    │  │   (Custom)   │  │
+│  │  Module       │  │   Module     │  │   Modules    │  │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘  │
+└─────────┼──────────────────┼──────────────────┼─────────┘
+          │                  │                  │
+          ▼                  ▼                  ▼
+    ┌─────────────────────────────────────────────────┐
+    │              AtlasGameplay Library              │
+    │  (FactionSystem, CombatFramework, EconomySystem)│
+    └──────────────────────┬──────────────────────────┘
+                           │
+                           ▼
+    ┌─────────────────────────────────────────────────┐
+    │                  AtlasEngine                    │
+    │                                                 │
+    │  ┌──────┐  ┌──────┐  ┌──────┐  ┌───────────┐  │
+    │  │ Core │  │ ECS  │  │ Net  │  │ GraphVM   │  │
+    │  └──┬───┘  └──┬───┘  └──┬───┘  └─────┬─────┘  │
+    │     │         │         │             │         │
+    │  ┌──▼─────────▼─────────▼─────────────▼──────┐  │
+    │  │           Simulation Layer                │  │
+    │  │  (TickScheduler, TimeModel, WorldState,   │  │
+    │  │   StateHasher, SaveSystem, ReplayRecorder)│  │
+    │  └─────────────────┬─────────────────────────┘  │
+    │                    │                             │
+    │  ┌─────────────────▼─────────────────────────┐  │
+    │  │           Content Systems                 │  │
+    │  │  World · AI · Assets · Audio · Physics    │  │
+    │  │  Animation · Character · Weapon · Story   │  │
+    │  │  Conversation · Flow · UI · Camera        │  │
+    │  └───────────────────────────────────────────┘  │
+    └─────────────────────────────────────────────────┘
+                           │
+          ┌────────────────┼────────────────┐
+          ▼                ▼                ▼
+    ┌──────────┐    ┌──────────┐    ┌──────────┐
+    │  Editor  │    │  Client  │    │  Server  │
+    │ (panels, │    │ (player  │    │(headless │
+    │  tools,  │    │  runtime)│    │ runtime) │
+    │  assist) │    └──────────┘    └──────────┘
+    └──────────┘
+```
+
+### Key Dependency Rules
+
+- **Engine** depends on nothing external; C++ standard library only
+- **AtlasGameplay** depends on **AtlasEngine**
+- **Game modules** depend on **AtlasGameplay** and **AtlasEngine**
+- **Editor, Client, Server** each link against **AtlasEngine**
+- **Simulation code** cannot include rendering headers (enforced by include firewall)
+- **Tests** link against **AtlasEngine**, **AtlasGameplay**, and all game modules
