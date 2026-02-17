@@ -29,17 +29,19 @@ static std::string ParseProjectArg(int argc, char** argv) {
 }
 
 int main(int argc, char** argv) {
-    atlas::core::Logger::Info("AtlasTileEditor starting");
+    atlas::Logger::Info("AtlasTileEditor starting");
 
     std::string projectPath = ParseProjectArg(argc, argv);
     if (projectPath.empty()) {
-        atlas::core::Logger::Warn("No --project specified, using current directory");
+        atlas::Logger::Warn("No --project specified, using current directory");
         projectPath = ".";
     }
 
     // Initialise engine core (renderer, assets, UI)
-    atlas::core::Engine engine;
-    engine.Init(atlas::core::EngineMode::Editor);
+    atlas::EngineConfig cfg;
+    cfg.mode = atlas::EngineMode::Editor;
+    atlas::Engine engine(cfg);
+    engine.InitCore();
 
     // Register tile editor module
     atlas::editor::TileEditorModule tileEditor;
@@ -52,7 +54,7 @@ int main(int argc, char** argv) {
     atlas::editor::TilePalettePanel palette;
     atlas::editor::RuleGraphEditorPanel ruleGraph;
 
-    atlas::core::Logger::Info("AtlasTileEditor ready — project: %s", projectPath.c_str());
+    atlas::Logger::Info("AtlasTileEditor ready — project: " + projectPath);
 
     // Main loop would go here once the rendering backend is wired up.
     // For now the module and panels are initialised and can be
@@ -61,6 +63,6 @@ int main(int argc, char** argv) {
     tileEditor.OnUnregister();
     engine.Shutdown();
 
-    atlas::core::Logger::Info("AtlasTileEditor shut down");
+    atlas::Logger::Info("AtlasTileEditor shut down");
     return 0;
 }

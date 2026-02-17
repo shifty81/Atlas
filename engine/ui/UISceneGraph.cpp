@@ -5,9 +5,14 @@ namespace atlas::ui {
 
 // ---- UISceneNode ----
 
+uint32_t UISceneNode::NextGlobalId() {
+    static uint32_t s_nextId = 1;
+    return s_nextId++;
+}
+
 void UISceneNode::AddChild(std::unique_ptr<UISceneNode> child) {
     if (!child) return;
-    child->id = m_nextChildId++;
+    child->id = NextGlobalId();
     m_children.push_back(std::move(child));
 }
 
