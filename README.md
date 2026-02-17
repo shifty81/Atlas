@@ -519,6 +519,29 @@ See the [docs/](docs/) directory for detailed documentation:
 | [Architecture Reference](docs/ARCHITECTURE.md) | Detailed module-by-module reference |
 | [Naming Conventions](docs/ATLAS_NAMING_CONVENTIONS.md) | Code style and naming rules |
 | [Simulation Philosophy](docs/ATLAS_SIMULATION_PHILOSOPHY.md) | Determinism and simulation design |
+| [Next Implementation Tasks](docs/NEXT_IMPLEMENTATION_TASKS.md) | Remaining tasks and priority order |
+
+## Development Tools
+
+Atlas includes several powerful development and debugging tools:
+
+| Tool | Purpose |
+|------|---------|
+| **Replay Minimizer** (`tools/replay_minimizer.py`) | Automatically reduces failing replays to minimal reproduction cases using binary search. Essential for debugging determinism issues. |
+| **Contract Scanner** (`tools/contract_scan.py`) | Scans simulation code for forbidden APIs that violate the Atlas Core Contract (wall-clock time, non-deterministic RNG, etc.). |
+| **CMake Contract Enforcement** (`cmake/AtlasContractEnforcement.cmake`) | Enforces architectural layer dependencies at build time. Prevents core/ from depending on higher layers, ensures simulation isolation. |
+
+Example usage:
+```bash
+# Minimize a failing replay
+python tools/replay_minimizer.py \
+    --replay tests/replays/failing.atlasreplay \
+    --test-command "./build/tests/AtlasTests --replay {replay}" \
+    --output tests/replays/minimal.atlasreplay
+
+# Scan for contract violations
+python tools/contract_scan.py --path engine
+```
 
 ## License
 
