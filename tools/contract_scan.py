@@ -162,12 +162,17 @@ def main():
     # Scan the ENTIRE codebase for banned third-party UI libraries.
     # This is not limited to simulation directories — ImGui and similar
     # libraries are banned everywhere (engine, editor, client, server, tools).
-    # Skip the contract directory itself — it references banned library
-    # names in compile-time guards that *reject* those libraries.
+    # Skip core/contract/ — it references banned library names in
+    # compile-time guards that *reject* those libraries.
+    contract_dir = root / "core" / "contract"
     for filepath in root.rglob("*"):
         if filepath.suffix in SOURCE_EXTENSIONS:
-            if "contract" in filepath.parts:
-                continue
+            try:
+                if filepath.is_relative_to(contract_dir):
+                    continue
+            except (TypeError, ValueError):
+                if str(filepath).startswith(str(contract_dir)):
+                    continue
             all_violations.extend(scan_file_banned_libraries(filepath))
 
     if all_violations:
