@@ -1522,6 +1522,17 @@ void test_asset_diff_commit_clear();
 void test_asset_diff_commit_summary();
 void test_asset_diff_commit_update_tracked();
 
+// Cross-Platform Save Compatibility
+void test_cross_platform_save_header_size();
+void test_cross_platform_partial_header_size();
+void test_cross_platform_save_magic_offset();
+void test_cross_platform_save_hash_determinism();
+void test_cross_platform_save_byte_exact();
+void test_cross_platform_save_raw_bytes_roundtrip();
+void test_cross_platform_partial_save_roundtrip();
+void test_cross_platform_save_large_payload();
+void test_cross_platform_hash_combine_deterministic();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -3201,6 +3212,18 @@ int main() {
     test_asset_diff_commit_clear();
     test_asset_diff_commit_summary();
     test_asset_diff_commit_update_tracked();
+
+    // Cross-Platform Save Compatibility
+    std::cout << "\n--- Cross-Platform Save Compatibility ---" << std::endl;
+    test_cross_platform_save_header_size();
+    test_cross_platform_partial_header_size();
+    test_cross_platform_save_magic_offset();
+    test_cross_platform_save_hash_determinism();
+    test_cross_platform_save_byte_exact();
+    test_cross_platform_save_raw_bytes_roundtrip();
+    test_cross_platform_partial_save_roundtrip();
+    test_cross_platform_save_large_payload();
+    test_cross_platform_hash_combine_deterministic();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

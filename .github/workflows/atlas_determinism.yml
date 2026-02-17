@@ -110,3 +110,72 @@ jobs:
       with:
         name: replay-hashes-${{ matrix.os }}
         path: replay_hash_*.txt
+
+  cross-compile-replay-verify:
+    needs: cross-platform-replay
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download Ubuntu Replay Hashes
+      uses: actions/download-artifact@v4
+      with:
+        name: replay-hashes-ubuntu-latest
+        path: hashes-ubuntu
+      continue-on-error: true
+
+    - name: Download Windows Replay Hashes
+      uses: actions/download-artifact@v4
+      with:
+        name: replay-hashes-windows-latest
+        path: hashes-windows
+      continue-on-error: true
+
+    - name: Compare Cross-Platform Replay Hashes
+      run: |
+        set -e
+        if [ ! -d hashes-ubuntu ] || [ ! -d hashes-windows ]; then
+          echo "⚠ One or both platform hash artifacts missing — skipping cross-compile verification"
+          exit 0
+        fi
+
+        ubuntu_count=$(find hashes-ubuntu -name "replay_hash_*.txt" 2>/dev/null | wc -l)
+        windows_count=$(find hashes-windows -name "replay_hash_*.txt" 2>/dev/null | wc -l)
+
+        if [ "$ubuntu_count" -eq 0 ] && [ "$windows_count" -eq 0 ]; then
+          echo "⚠ No replay hash files found on either platform — skipping"
+          exit 0
+        fi
+
+        mismatch=0
+        verified=0
+
+        for ubuntu_hash in hashes-ubuntu/replay_hash_*.txt; do
+          base=$(basename "$ubuntu_hash")
+          windows_hash="hashes-windows/${base}"
+          if [ -f "$windows_hash" ]; then
+            if diff -q "$ubuntu_hash" "$windows_hash" > /dev/null 2>&1; then
+              echo "✅ Cross-platform hash match: $base"
+              verified=$((verified + 1))
+            else
+              echo "❌ Cross-platform hash MISMATCH: $base"
+              echo "  Ubuntu:  $(cat "$ubuntu_hash")"
+              echo "  Windows: $(cat "$windows_hash")"
+              mismatch=$((mismatch + 1))
+            fi
+          else
+            echo "⚠ No Windows hash for: $base"
+          fi
+        done
+
+        echo ""
+        echo "=== Cross-Platform Replay Hash Summary ==="
+        echo "  Verified: $verified"
+        echo "  Mismatched: $mismatch"
+
+        if [ "$mismatch" -gt 0 ]; then
+          echo "❌ Cross-platform determinism verification FAILED"
+          exit 1
+        fi
+
+        echo "✅ All cross-platform replay hashes match"

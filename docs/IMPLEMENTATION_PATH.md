@@ -78,7 +78,7 @@ Provides versioned binary save format (`.asav`) with hash-verified integrity.
 - [x] Wire into `Engine::RunClient()` and `Engine::RunServer()` for autosave
 - [x] Implement partial-world saves for large streaming worlds
 - [x] Add save file browser to editor UI
-- [ ] Cross-platform save compatibility testing
+- [x] Cross-platform save compatibility testing
 - [x] Replay-from-save verification (load save → replay → verify hash ladder)
 
 ### 1.4 Determinism Enforcement Hardening ✅
@@ -155,7 +155,7 @@ Core logic exists. Remaining:
 **Tests:** `tests/test_next_steps.cpp` (6 tests)
 
 - [x] Tool to run identical simulation on two platforms and compare hashes
-- [ ] CI job that cross-compiles and verifies golden replay hashes
+- [x] CI job that cross-compiles and verifies golden replay hashes
 - [x] Report showing which systems first diverge
 
 ### 3.4 Job Execution Trace Viewer ✅

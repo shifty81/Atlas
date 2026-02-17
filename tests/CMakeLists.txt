@@ -152,6 +152,7 @@ add_executable(AtlasTests
     test_prefab_editor.cpp
     test_truth_ui_panel.cpp
     test_asset_diff_commit.cpp
+    test_cross_platform_save.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
