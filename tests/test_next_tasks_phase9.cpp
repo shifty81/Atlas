@@ -105,7 +105,7 @@ void test_crash_bundle_engine_version() {
 }
 
 void test_crash_bundle_from_capture() {
-    std::string tmpDir = "/tmp/atlas_crash_test_" + std::to_string(::getpid());
+    std::string tmpDir = (std::filesystem::temp_directory_path() / ("atlas_crash_test_" + std::to_string(::getpid()))).string();
     std::filesystem::create_directories(tmpDir);
 
     atlas::sim::DesyncReproducer reproducer;
@@ -146,7 +146,7 @@ void test_crash_bundle_from_capture() {
 }
 
 void test_crash_bundle_at_index() {
-    std::string tmpDir = "/tmp/atlas_crash_idx_" + std::to_string(::getpid());
+    std::string tmpDir = (std::filesystem::temp_directory_path() / ("atlas_crash_idx_" + std::to_string(::getpid()))).string();
     std::filesystem::create_directories(tmpDir);
 
     atlas::sim::DesyncReproducer reproducer;
@@ -178,7 +178,7 @@ void test_crash_bundle_at_index() {
 }
 
 void test_crash_bundle_contains_repro_command() {
-    std::string tmpDir = "/tmp/atlas_crash_repro_" + std::to_string(::getpid());
+    std::string tmpDir = (std::filesystem::temp_directory_path() / ("atlas_crash_repro_" + std::to_string(::getpid()))).string();
     std::filesystem::create_directories(tmpDir);
 
     atlas::sim::DesyncReproducer reproducer;
