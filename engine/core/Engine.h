@@ -12,6 +12,7 @@
 #include "../ui/UIEventRouter.h"
 #include "../platform/PlatformWindow.h"
 #include "../render/RenderAPI.h"
+#include "../render/EditorViewportFramebuffer.h"
 
 namespace atlas::ui { class UIRenderer; }
 
@@ -101,6 +102,7 @@ public:
 
     platform::PlatformWindow* GetWindow() { return m_window.get(); }
     ui::UIRenderer* GetRenderer() { return m_renderer.get(); }
+    render::EditorViewportFramebuffer* GetViewportFramebuffer() { return m_viewportFB.get(); }
 
     int32_t MouseX() const { return m_mouseX; }
     int32_t MouseY() const { return m_mouseY; }
@@ -127,6 +129,7 @@ private:
     ui::UIEventRouter m_eventRouter;
     std::unique_ptr<platform::PlatformWindow> m_window;
     std::unique_ptr<ui::UIRenderer> m_renderer;
+    std::unique_ptr<render::EditorViewportFramebuffer> m_viewportFB;
     std::vector<std::string> m_systemOrder;
     int32_t m_mouseX = 0;
     int32_t m_mouseY = 0;

@@ -950,6 +950,15 @@ void test_platform_window_config();
 void test_platform_has_window_implementation();
 void test_engine_no_window_error_without_platform();
 
+// Viewport Framebuffer
+void test_null_viewport_framebuffer_defaults();
+void test_null_viewport_framebuffer_sized();
+void test_null_viewport_framebuffer_resize();
+void test_null_viewport_framebuffer_bind_unbind();
+void test_engine_editor_has_viewport_framebuffer();
+void test_engine_client_no_viewport_framebuffer();
+void test_engine_server_no_viewport_framebuffer();
+
 // Component Category
 void test_component_category_defaults();
 void test_component_category_simulated();
@@ -1767,6 +1776,16 @@ int main() {
     test_platform_window_config();
     test_platform_has_window_implementation();
     test_engine_no_window_error_without_platform();
+
+    // Viewport Framebuffer
+    std::cout << "\n--- Viewport Framebuffer ---" << std::endl;
+    test_null_viewport_framebuffer_defaults();
+    test_null_viewport_framebuffer_sized();
+    test_null_viewport_framebuffer_resize();
+    test_null_viewport_framebuffer_bind_unbind();
+    test_engine_editor_has_viewport_framebuffer();
+    test_engine_client_no_viewport_framebuffer();
+    test_engine_server_no_viewport_framebuffer();
 
     // Noise
     std::cout << "\n--- Noise Generator ---" << std::endl;

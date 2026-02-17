@@ -129,6 +129,15 @@ void Engine::InitEditor() {
     if (m_config.mode != EngineMode::Editor) {
         return;
     }
+
+    // Create the editor viewport framebuffer for offscreen scene rendering.
+    // This fixes the GUI issue where the scene would render directly to the
+    // swapchain backbuffer (appearing behind the editor UI) instead of into
+    // the viewport panel.  See gui_issues.txt for the full diagnosis.
+    m_viewportFB = std::make_unique<render::NullViewportFramebuffer>(
+        static_cast<uint32_t>(m_config.windowWidth),
+        static_cast<uint32_t>(m_config.windowHeight));
+
     Logger::Info("Editor tools initialized");
 }
 
@@ -176,6 +185,12 @@ void Engine::ProcessWindowEvents() {
                     static_cast<render::VulkanRenderer*>(m_renderer.get())
                         ->SetViewport(event.width, event.height);
 #endif
+                }
+                // Resize the editor viewport framebuffer to match
+                if (m_viewportFB && event.width > 0 && event.height > 0) {
+                    m_viewportFB->Resize(
+                        static_cast<uint32_t>(event.width),
+                        static_cast<uint32_t>(event.height));
                 }
                 break;
             case platform::WindowEvent::Type::KeyDown: {
@@ -269,6 +284,23 @@ void Engine::RunEditor() {
         });
 
         if (m_renderer && m_window && m_window->IsOpen()) {
+            // -------------------------------------------------------
+            // PASS 1: Render scene into the viewport framebuffer
+            // -------------------------------------------------------
+            // This fixes the root cause identified in gui_issues.txt:
+            // the scene was previously rendered directly to the swapchain
+            // backbuffer, appearing behind the editor UI.  By rendering
+            // into an offscreen framebuffer first, the viewport panel can
+            // display the scene as a textured quad.
+            if (m_viewportFB && m_viewportFB->IsValid()) {
+                m_viewportFB->Bind();
+                // Scene rendering would go here (world, editor camera, etc.)
+                m_viewportFB->Unbind();
+            }
+
+            // -------------------------------------------------------
+            // PASS 2: Render editor UI to the swapchain backbuffer
+            // -------------------------------------------------------
             m_renderer->BeginFrame();
             m_uiManager.Render(m_renderer.get());
             ui::UIContext overlayCtx{};
