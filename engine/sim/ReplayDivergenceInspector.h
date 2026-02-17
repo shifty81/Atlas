@@ -104,6 +104,29 @@ public:
     /// Clear all stored reports.
     void ClearHistory();
 
+    // --- Replay Minimizer ---
+
+    /// Result of a replay minimization.
+    struct MinimizedResult {
+        int64_t  firstDivergentTick = -1;   ///< First tick that causes divergence
+        int64_t  lastMatchingTick   = -1;   ///< Last tick that was still matching
+        uint32_t windowSize         = 0;    ///< Number of ticks in the divergent window
+        uint32_t iterationsUsed     = 0;    ///< Binary-search iterations performed
+        bool     minimized          = false; ///< True if minimization succeeded
+    };
+
+    /// Binary-search the replay frame stream to find the smallest window
+    /// around the first divergence point.  Compares frames from `a` and `b`
+    /// and returns a MinimizedResult identifying the exact divergent tick.
+    static MinimizedResult MinimizeDivergence(
+        const std::vector<ReplayFrame>& a,
+        const std::vector<ReplayFrame>& b);
+
+    /// Minimize using pre-computed StateHasher ladders.
+    static MinimizedResult MinimizeDivergenceFromHashers(
+        const StateHasher& local,
+        const StateHasher& remote);
+
 private:
     DivergenceReport              m_lastReport{};
     std::vector<DivergenceReport> m_reportsHistory;

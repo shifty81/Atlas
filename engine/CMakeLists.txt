@@ -23,6 +23,7 @@ add_library(AtlasEngine STATIC
     assets/SocketHttpClient.cpp
     net/NetContext.cpp
     net/NetHardening.cpp
+    net/QoSScheduler.cpp
     net/Replication.cpp
     sim/TickScheduler.cpp
     world/CubeSphereLayout.cpp
