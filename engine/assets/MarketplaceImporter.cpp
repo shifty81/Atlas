@@ -93,6 +93,12 @@ size_t MarketplaceImportRegistry::ImporterCount() const {
     return m_importers.size();
 }
 
+void MarketplaceImportRegistry::SetHttpClient(IHttpClient* client) {
+    for (auto& imp : m_importers) {
+        imp->SetHttpClient(client);
+    }
+}
+
 // ---------------------------------------------------------------------------
 // ItchIOImporter
 // ---------------------------------------------------------------------------
@@ -109,29 +115,56 @@ MarketplaceFetchResult ItchIOImporter::FetchAsset(
     result.metadata.marketplace = MarketplaceType::ItchIO;
     result.metadata.id = assetId;
     
-    // NOTE: In a real implementation, this would use itch.io's API
-    // to download the asset. For now, this is a placeholder that
-    // assumes the asset is already downloaded locally.
-    
     std::string cacheDir = GetDownloadCacheDir(options);
     std::filesystem::create_directories(cacheDir);
     
     std::string localPath = cacheDir + "/" + assetId;
     
     // Check if asset exists locally in cache
-    if (!FileExists(localPath)) {
-        result.errorMessage = "Asset not found in cache (marketplace download not yet implemented): " + assetId;
+    if (FileExists(localPath)) {
+        if (!ValidateItchAsset(localPath)) {
+            result.errorMessage = "Asset validation failed for: " + assetId;
+            return result;
+        }
+        result.success = true;
+        result.localPath = localPath;
+        result.metadata.name = assetId;
         return result;
     }
     
-    if (!ValidateItchAsset(localPath)) {
-        result.errorMessage = "Asset validation failed for: " + assetId;
+    // Attempt API download if HTTP client is available
+    if (m_httpClient) {
+        std::string metadataUrl = "https://api.itch.io/games/" + assetId;
+        
+        std::vector<std::pair<std::string, std::string>> headers;
+        if (!options.apiKey.empty()) {
+            headers.push_back({"Authorization", "Bearer " + options.apiKey});
+        }
+        
+        Logger::Info("Fetching itch.io asset metadata: " + metadataUrl);
+        HttpResponse metaResp = m_httpClient->Get(metadataUrl, headers);
+        
+        if (metaResp.IsError()) {
+            result.errorMessage = "Failed to fetch itch.io metadata for '" + assetId + "': " + metaResp.errorMessage;
+            return result;
+        }
+        
+        Logger::Info("Downloading itch.io asset to: " + localPath);
+        HttpResponse dlResp = m_httpClient->DownloadFile(metadataUrl + "/download", localPath, headers);
+        
+        if (dlResp.IsError()) {
+            result.errorMessage = "Failed to download itch.io asset '" + assetId + "': " + dlResp.errorMessage;
+            return result;
+        }
+        
+        Logger::Info("Successfully downloaded itch.io asset: " + assetId);
+        result.success = true;
+        result.localPath = localPath;
+        result.metadata.name = assetId;
         return result;
     }
     
-    result.success = true;
-    result.localPath = localPath;
-    result.metadata.name = assetId;
+    result.errorMessage = "Asset not found in cache (no HTTP client configured): " + assetId;
     return result;
 }
 
@@ -168,6 +201,10 @@ bool ItchIOImporter::IsAvailable() const {
     return true;
 }
 
+void ItchIOImporter::SetHttpClient(IHttpClient* client) {
+    m_httpClient = client;
+}
+
 bool ItchIOImporter::ValidateItchAsset(const std::string& path) const {
     // Basic validation: check if file exists and has recognized extension
     if (!FileExists(path)) {
@@ -195,22 +232,44 @@ MarketplaceFetchResult UnrealMarketplaceImporter::FetchAsset(
     result.metadata.marketplace = MarketplaceType::UnrealEngine;
     result.metadata.id = assetId;
     
-    // NOTE: In a real implementation, this would use Epic Games Store API
-    // to download the asset. For now, this is a placeholder.
-    
     std::string cacheDir = GetDownloadCacheDir(options);
     std::filesystem::create_directories(cacheDir);
     
     std::string localPath = cacheDir + "/" + assetId + ".uasset";
     
-    if (!FileExists(localPath)) {
-        result.errorMessage = "Unreal asset not found in cache (marketplace download not yet implemented): " + assetId;
+    // Check if asset exists locally in cache
+    if (FileExists(localPath)) {
+        result.success = true;
+        result.localPath = localPath;
+        result.metadata.name = assetId;
         return result;
     }
     
-    result.success = true;
-    result.localPath = localPath;
-    result.metadata.name = assetId;
+    // Attempt API download if HTTP client is available
+    if (m_httpClient) {
+        std::string apiUrl = "https://www.unrealengine.com/marketplace/api/assets/" + assetId;
+        
+        std::vector<std::pair<std::string, std::string>> headers;
+        if (!options.apiKey.empty()) {
+            headers.push_back({"Authorization", "Bearer " + options.apiKey});
+        }
+        
+        Logger::Info("Fetching Unreal Marketplace asset: " + apiUrl);
+        HttpResponse dlResp = m_httpClient->DownloadFile(apiUrl, localPath, headers);
+        
+        if (dlResp.IsError()) {
+            result.errorMessage = "Failed to download Unreal asset '" + assetId + "': " + dlResp.errorMessage;
+            return result;
+        }
+        
+        Logger::Info("Successfully downloaded Unreal asset: " + assetId);
+        result.success = true;
+        result.localPath = localPath;
+        result.metadata.name = assetId;
+        return result;
+    }
+    
+    result.errorMessage = "Unreal asset not found in cache (no HTTP client configured): " + assetId;
     return result;
 }
 
@@ -247,6 +306,10 @@ ImportResult UnrealMarketplaceImporter::ImportAsset(
 bool UnrealMarketplaceImporter::IsAvailable() const {
     // Would check for Epic Games Store API credentials
     return false;  // Not available without API integration
+}
+
+void UnrealMarketplaceImporter::SetHttpClient(IHttpClient* client) {
+    m_httpClient = client;
 }
 
 bool UnrealMarketplaceImporter::ConvertUAsset(
@@ -289,22 +352,44 @@ MarketplaceFetchResult UnityAssetStoreImporter::FetchAsset(
     result.metadata.marketplace = MarketplaceType::UnityAssetStore;
     result.metadata.id = assetId;
     
-    // NOTE: In a real implementation, this would use Unity Asset Store API
-    // to download the asset. For now, this is a placeholder.
-    
     std::string cacheDir = GetDownloadCacheDir(options);
     std::filesystem::create_directories(cacheDir);
     
     std::string localPath = cacheDir + "/" + assetId + ".prefab";
     
-    if (!FileExists(localPath)) {
-        result.errorMessage = "Unity asset not found in cache (marketplace download not yet implemented): " + assetId;
+    // Check if asset exists locally in cache
+    if (FileExists(localPath)) {
+        result.success = true;
+        result.localPath = localPath;
+        result.metadata.name = assetId;
         return result;
     }
     
-    result.success = true;
-    result.localPath = localPath;
-    result.metadata.name = assetId;
+    // Attempt API download if HTTP client is available
+    if (m_httpClient) {
+        std::string apiUrl = "https://assetstore.unity.com/api/content/" + assetId;
+        
+        std::vector<std::pair<std::string, std::string>> headers;
+        if (!options.apiKey.empty()) {
+            headers.push_back({"Authorization", "Bearer " + options.apiKey});
+        }
+        
+        Logger::Info("Fetching Unity Asset Store asset: " + apiUrl);
+        HttpResponse dlResp = m_httpClient->DownloadFile(apiUrl, localPath, headers);
+        
+        if (dlResp.IsError()) {
+            result.errorMessage = "Failed to download Unity asset '" + assetId + "': " + dlResp.errorMessage;
+            return result;
+        }
+        
+        Logger::Info("Successfully downloaded Unity asset: " + assetId);
+        result.success = true;
+        result.localPath = localPath;
+        result.metadata.name = assetId;
+        return result;
+    }
+    
+    result.errorMessage = "Unity asset not found in cache (no HTTP client configured): " + assetId;
     return result;
 }
 
@@ -341,6 +426,10 @@ ImportResult UnityAssetStoreImporter::ImportAsset(
 bool UnityAssetStoreImporter::IsAvailable() const {
     // Would check for Unity Asset Store API credentials
     return false;  // Not available without API integration
+}
+
+void UnityAssetStoreImporter::SetHttpClient(IHttpClient* client) {
+    m_httpClient = client;
 }
 
 bool UnityAssetStoreImporter::ConvertUnityPrefab(
