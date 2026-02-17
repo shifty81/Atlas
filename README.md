@@ -55,8 +55,8 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
   Phase 11      Phase 12
  AtlasAI/GUI   CI & Build
 ──────────────────────────
- ███████░░░    ████████░░
-    70%           80%
+ ████████░░    ████████░░
+    80%           80%
   🔧 Func      🔧 Func
 ```
 
@@ -227,10 +227,11 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 </td>
 <td width="25%">
 
-**Phase 11 — AtlasAI & Game GUI** 🔧 70%
+**Phase 11 — AtlasAI & Game GUI** 🔧 80%
 
 - ✅ AI assistant framework
 - ✅ Web aggregation design
+- ✅ Template AI backend (offline)
 - 📋 LLM backend integration
 - 🔧 Game GUI widget DSL
 
@@ -276,7 +277,7 @@ These systems are implemented, tested, and functional:
 - **Replay recording** — record/playback with divergence detection
 - **ECS framework** — entity management with serialization and rollback support
 - **Networking** — lockstep and rollback foundations with client-server and P2P
-- **1374 unit tests pass** — 1 known pre-existing issue: `test_replay_record_frames` (inputData size assertion in `test_replay_recorder.cpp:45`)
+- **1401 unit tests pass** — comprehensive coverage across all engine systems
 - **CI determinism gate** — automated verification that simulation is bit-exact
 - **Play-In-Editor** — simulate, pause, step, possess entity, loopback, state restore
 - **Editor layout persistence** — save/restore panel arrangements to/from JSON

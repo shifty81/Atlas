@@ -36,11 +36,19 @@ public:
     /// Returns the DPI scale that was used during initialisation.
     float GetDPIScale() const;
 
+    /// Returns the name of the loaded font ("builtin-fallback" if using fallback)
+    const std::string& GetFontName() const;
+
+    /// Returns true if using the built-in fallback font
+    bool IsUsingFallback() const;
+
 private:
     FontHandle m_defaultFont = kInvalidFont;
     float m_baseFontSize = 18.0f;
     float m_dpiScale = 1.0f;
     bool m_ready = false;
+    std::string m_fontName;
+    bool m_usingFallback = false;
 };
 
 } // namespace atlas::ui

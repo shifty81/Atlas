@@ -13,6 +13,7 @@
 // See: docs/03_ASSET_SYSTEM.md
 
 #include "AssetImporter.h"
+#include "HttpClient.h"
 #include <string>
 #include <vector>
 #include <memory>
@@ -72,6 +73,9 @@ public:
     
     /// Check if the marketplace is accessible (API key valid, etc.)
     virtual bool IsAvailable() const = 0;
+    
+    /// Set the HTTP client for API downloads
+    virtual void SetHttpClient(IHttpClient* client) = 0;
 };
 
 /// itch.io marketplace importer
@@ -86,9 +90,11 @@ public:
         const MarketplaceFetchResult& fetchResult,
         const MarketplaceImportOptions& options) override;
     bool IsAvailable() const override;
+    void SetHttpClient(IHttpClient* client) override;
     
 private:
     bool ValidateItchAsset(const std::string& path) const;
+    IHttpClient* m_httpClient = nullptr;
 };
 
 /// Unreal Engine Marketplace importer
@@ -103,11 +109,13 @@ public:
         const MarketplaceFetchResult& fetchResult,
         const MarketplaceImportOptions& options) override;
     bool IsAvailable() const override;
+    void SetHttpClient(IHttpClient* client) override;
     
 private:
     /// Convert Unreal .uasset to intermediate format
     bool ConvertUAsset(const std::string& inputPath, 
                        const std::string& outputPath) const;
+    IHttpClient* m_httpClient = nullptr;
 };
 
 /// Unity Asset Store importer
@@ -122,11 +130,13 @@ public:
         const MarketplaceFetchResult& fetchResult,
         const MarketplaceImportOptions& options) override;
     bool IsAvailable() const override;
+    void SetHttpClient(IHttpClient* client) override;
     
 private:
     /// Convert Unity .prefab to intermediate format
     bool ConvertUnityPrefab(const std::string& inputPath,
                             const std::string& outputPath) const;
+    IHttpClient* m_httpClient = nullptr;
 };
 
 /// Central registry for marketplace importers
@@ -143,6 +153,9 @@ public:
     
     std::vector<MarketplaceType> AvailableMarketplaces() const;
     size_t ImporterCount() const;
+    
+    /// Set the HTTP client on all registered importers
+    void SetHttpClient(IHttpClient* client);
     
 private:
     std::vector<std::unique_ptr<IMarketplaceImporter>> m_importers;

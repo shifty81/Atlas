@@ -1629,6 +1629,7 @@ void test_rule_graph_editor_draw_debug();
 void test_rule_graph_editor_draw_with_selection();
 void run_next_tasks_phase4_tests();
 void run_next_tasks_phase5_tests();
+void run_next_tasks_phase6_tests();
 void run_panel_draw_tests();
 
 int main() {
@@ -3434,6 +3435,9 @@ int main() {
 
     // Next Tasks Phase 5
     run_next_tasks_phase5_tests();
+
+    // Next Tasks Phase 6
+    run_next_tasks_phase6_tests();
 
     // Panel Draw + TileEditor Input Tests
     run_panel_draw_tests();

@@ -1,9 +1,115 @@
 #include "FontBootstrap.h"
 #include "../core/Logger.h"
+#include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <vector>
 
 namespace atlas::ui {
+
+/// Read a big-endian uint16 from a byte buffer.
+static uint16_t ReadU16BE(const uint8_t* p) {
+    return static_cast<uint16_t>((p[0] << 8) | p[1]);
+}
+
+/// Read a big-endian uint32 from a byte buffer.
+static uint32_t ReadU32BE(const uint8_t* p) {
+    return (static_cast<uint32_t>(p[0]) << 24) |
+           (static_cast<uint32_t>(p[1]) << 16) |
+           (static_cast<uint32_t>(p[2]) << 8)  |
+            static_cast<uint32_t>(p[3]);
+}
+
+/// Parse a TTF/OTF file header and extract the font family name (nameID 1).
+/// Returns the font name string, or empty string on failure.
+static std::string ParseTTFHeader(const std::string& path) {
+    std::ifstream file(path, std::ios::binary);
+    if (!file.is_open()) return {};
+
+    // Read the offset table (12 bytes).
+    uint8_t header[12];
+    if (!file.read(reinterpret_cast<char*>(header), 12)) return {};
+
+    uint32_t sfVersion = ReadU32BE(header);
+    // 0x00010000 = TrueType, 0x4F54544F ('OTTO') = OpenType/CFF
+    if (sfVersion != 0x00010000 && sfVersion != 0x4F54544F) return {};
+
+    uint16_t numTables = ReadU16BE(header + 4);
+
+    // Read the table directory entries (16 bytes each).
+    constexpr size_t kTableEntrySize = 16;
+    std::vector<uint8_t> tableDir(numTables * kTableEntrySize);
+    if (!file.read(reinterpret_cast<char*>(tableDir.data()),
+                   static_cast<std::streamsize>(tableDir.size())))
+        return {};
+
+    // Locate the 'name' table.
+    uint32_t nameOffset = 0;
+    uint32_t nameLength = 0;
+    for (uint16_t i = 0; i < numTables; ++i) {
+        const uint8_t* entry = tableDir.data() + i * kTableEntrySize;
+        if (std::memcmp(entry, "name", 4) == 0) {
+            nameOffset = ReadU32BE(entry + 8);
+            nameLength = ReadU32BE(entry + 12);
+            break;
+        }
+    }
+    if (nameOffset == 0 || nameLength == 0) return {};
+
+    // Read the name table.
+    std::vector<uint8_t> nameTable(nameLength);
+    file.seekg(nameOffset);
+    if (!file.read(reinterpret_cast<char*>(nameTable.data()),
+                   static_cast<std::streamsize>(nameLength)))
+        return {};
+
+    // Name table header: format (2), count (2), stringOffset (2).
+    if (nameLength < 6) return {};
+    uint16_t nameCount    = ReadU16BE(nameTable.data() + 2);
+    uint16_t stringOffset = ReadU16BE(nameTable.data() + 4);
+
+    // Each name record is 12 bytes, starting at offset 6.
+    for (uint16_t i = 0; i < nameCount; ++i) {
+        size_t recOff = 6 + static_cast<size_t>(i) * 12;
+        if (recOff + 12 > nameLength) break;
+
+        const uint8_t* rec = nameTable.data() + recOff;
+        uint16_t platformID = ReadU16BE(rec + 0);
+        uint16_t encodingID = ReadU16BE(rec + 2);
+        uint16_t nameID     = ReadU16BE(rec + 6);
+        uint16_t strLength  = ReadU16BE(rec + 8);
+        uint16_t strOffset  = ReadU16BE(rec + 10);
+
+        if (nameID != 1) continue; // We want font family name
+
+        size_t absOff = static_cast<size_t>(stringOffset) + static_cast<size_t>(strOffset);
+        if (absOff < stringOffset || absOff < strOffset) continue; // overflow check
+        if (strLength > nameLength || absOff > nameLength - strLength) continue;
+
+        const uint8_t* strData = nameTable.data() + absOff;
+
+        // Platform 1 (Macintosh), encoding 0 (Roman) — single-byte ASCII.
+        if (platformID == 1 && encodingID == 0) {
+            return std::string(reinterpret_cast<const char*>(strData), strLength);
+        }
+
+        // Platform 3 (Windows), encoding 1 (Unicode BMP) — UTF-16BE.
+        if (platformID == 3 && encodingID == 1 && strLength >= 2) {
+            std::string result;
+            result.reserve(strLength / 2);
+            for (uint16_t j = 0; j + 1 < strLength; j += 2) {
+                uint16_t ch = ReadU16BE(strData + j);
+                if (ch < 128)
+                    result.push_back(static_cast<char>(ch));
+                else
+                    result.push_back('?');
+            }
+            return result;
+        }
+    }
+
+    return {};
+}
 
 /// Generate a minimal built-in font atlas so the editor can render
 /// placeholder glyphs when the real Inter-Regular.ttf is not yet shipped.
@@ -64,21 +170,31 @@ bool FontBootstrap::Init(const std::string& assetRoot, float dpiScale) {
         // Use the built-in fallback so the editor can render placeholder text.
         m_defaultFont = 1; // reserved handle for fallback font
         m_ready = true;
+        m_fontName = "builtin-fallback";
+        m_usingFallback = true;
 
-        Logger::Info("Font system initialized with built-in fallback (asset root: "
+        Logger::Info("Font system initialized with built-in fallback '" + m_fontName
+                     + "' (asset root: "
                      + assetRoot + ", DPI scale: "
                      + std::to_string(m_dpiScale) + ")");
         return true;
     }
 
-    // Placeholder: actual font atlas creation will be implemented
-    // when the TextRenderer backend is wired up.  For now we
-    // record the intent and log success so that the init chain
-    // can be validated.
+    // Validate the TTF and extract font metadata.
+    std::string parsedName = ParseTTFHeader(fontPath);
+    if (!parsedName.empty()) {
+        m_fontName = parsedName;
+    } else {
+        Logger::Warn("Could not parse TTF header; assuming Inter-Regular");
+        m_fontName = "Inter-Regular";
+    }
+    m_usingFallback = false;
+
     m_defaultFont = 1; // reserved handle for the default font
     m_ready = true;
 
-    Logger::Info("Font system initialized (asset root: " + assetRoot +
+    Logger::Info("Font system initialized with '" + m_fontName
+                 + "' (asset root: " + assetRoot +
                  ", DPI scale: " + std::to_string(m_dpiScale) + ")");
     return true;
 }
@@ -108,6 +224,14 @@ float FontBootstrap::GetBaseFontSize() const {
 
 float FontBootstrap::GetDPIScale() const {
     return m_dpiScale;
+}
+
+const std::string& FontBootstrap::GetFontName() const {
+    return m_fontName;
+}
+
+bool FontBootstrap::IsUsingFallback() const {
+    return m_usingFallback;
 }
 
 } // namespace atlas::ui

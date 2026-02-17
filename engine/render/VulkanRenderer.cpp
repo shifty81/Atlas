@@ -15,6 +15,9 @@ void VulkanRenderer::BeginFrame() {
 }
 
 void VulkanRenderer::EndFrame() {
+    if (!m_drawCommands.empty()) {
+        SubmitCommandBuffer();
+    }
     m_frameActive = false;
     ++m_frameCount;
     Logger::Info("[VulkanRenderer] EndFrame — " + std::to_string(m_drawCommands.size()) + " commands recorded");
@@ -78,6 +81,43 @@ bool VulkanRenderer::IsFrameActive() const {
 
 uint32_t VulkanRenderer::FrameCount() const {
     return m_frameCount;
+}
+
+void VulkanRenderer::SubmitCommandBuffer() {
+    VkGPUCommandBuffer buffer;
+    buffer.frameIndex = m_frameCount;
+    buffer.commands = m_drawCommands;
+    buffer.submitted = true;
+    buffer.submitTimestamp = m_submitCounter++;
+
+    uint64_t ts = buffer.submitTimestamp;
+    size_t cmdCount = buffer.commands.size();
+
+    if (m_submittedBuffers.size() >= MAX_BUFFERED_FRAMES) {
+        m_submittedBuffers.erase(m_submittedBuffers.begin());
+    }
+    m_submittedBuffers.push_back(std::move(buffer));
+
+    Logger::Info("[VulkanRenderer] SubmitCommandBuffer — frame " +
+                 std::to_string(m_frameCount) + ", " +
+                 std::to_string(cmdCount) + " commands, timestamp " +
+                 std::to_string(ts));
+}
+
+const VkGPUCommandBuffer& VulkanRenderer::LastSubmittedBuffer() const {
+    static const VkGPUCommandBuffer empty{};
+    if (m_submittedBuffers.empty()) {
+        return empty;
+    }
+    return m_submittedBuffers.back();
+}
+
+uint32_t VulkanRenderer::SubmittedBufferCount() const {
+    return static_cast<uint32_t>(m_submitCounter);
+}
+
+bool VulkanRenderer::HasPendingCommands() const {
+    return !m_drawCommands.empty();
 }
 
 } // namespace atlas::render
