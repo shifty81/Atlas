@@ -70,6 +70,11 @@ add_library(AtlasEngine STATIC
     ui/GameGUIAsset.cpp
     ui/WidgetDSL.cpp
     ui/GameGUIBinding.cpp
+    ui/FontBootstrap.cpp
+    ui/DiagnosticsOverlay.cpp
+    ui/TextRenderer.cpp
+    ui/UIEventRouter.cpp
+    ui/UIDrawList.cpp
     flow/GameFlowGraph.cpp
     flow/GameFlowNodes.cpp
     flow/FlowGraphIR.cpp

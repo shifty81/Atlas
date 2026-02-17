@@ -1,9 +1,13 @@
 #include "core/Engine.h"
+#include "core/EnginePhase.h"
 #include "ui/UIScreenGraph.h"
 #include "ui/GUIDSLParser.h"
 #include "ui/DefaultEditorLayout.h"
 #include "ui/EditorAttachProtocol.h"
 #include "ui/EditorTheme.h"
+#include "ui/FontBootstrap.h"
+#include "ui/DiagnosticsOverlay.h"
+#include "ui/LauncherScreen.h"
 #include <iostream>
 
 /// Names of panels that are non-closable (always present in the dock tree).
@@ -108,6 +112,10 @@ int main() {
     engine.InitNetworking();
     engine.InitEditor();
 
+    // --- Font bootstrap (must run after renderer init) ---
+    atlas::ui::FontBootstrap fontBootstrap;
+    fontBootstrap.Init(cfg.assetRoot);
+
     // Set up default attach mode (standalone)
     atlas::editor::EditorAttachProtocol attach;
     attach.Init();
@@ -115,9 +123,18 @@ int main() {
     attachCfg.mode = atlas::editor::AttachMode::Standalone;
     attach.Connect(attachCfg);
 
+    // --- Launcher screen: scan for projects ---
+    atlas::editor::LauncherScreen launcher;
+    launcher.ScanProjects("projects");
+
     BuildEditorUI(engine.GetUIManager().GetScreen());
 
+    // Enable diagnostics overlay by default in editor
+    atlas::ui::DiagnosticsOverlay::SetEnabled(true);
+
     engine.Run();
+
+    fontBootstrap.Shutdown();
 
     return 0;
 }

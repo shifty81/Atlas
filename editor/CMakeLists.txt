@@ -16,6 +16,8 @@ add_executable(AtlasEditor
     panels/CIDashboardPanel.cpp
     tools/GamePackagerPanel.cpp
     tools/VisualDiff.cpp
+    tools/TileEditorModule.cpp
+    ui/LauncherScreen.cpp
     assistant/EditorAssistant.cpp
     assistant/AssetGraphAssistant.cpp
 )

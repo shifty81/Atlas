@@ -1273,6 +1273,69 @@ void test_cert_generate_report();
 void test_cert_export_json();
 void test_cert_clear();
 
+// Font Bootstrap tests
+void test_font_bootstrap_initial_state();
+void test_font_bootstrap_init_missing_font();
+void test_font_bootstrap_shutdown();
+void test_font_bootstrap_rebuild_noop();
+
+// Diagnostics Overlay tests
+void test_diagnostics_overlay_default_off();
+void test_diagnostics_overlay_toggle();
+void test_diagnostics_overlay_set_enabled();
+void test_diagnostics_overlay_render_null_renderer();
+void test_diagnostics_overlay_render_when_disabled();
+void test_diagnostics_overlay_render_when_enabled();
+
+// UI Event Router tests
+void test_event_router_empty();
+void test_event_router_register_dispatch();
+void test_event_router_miss();
+void test_event_router_z_order();
+void test_event_router_unregister();
+void test_event_router_hover_tracking();
+void test_event_router_clear();
+
+// UI Draw List tests
+void test_draw_list_empty();
+void test_draw_list_draw_rect();
+void test_draw_list_draw_text();
+void test_draw_list_draw_icon();
+void test_draw_list_draw_border();
+void test_draw_list_draw_image();
+void test_draw_list_multiple_commands();
+void test_draw_list_clear();
+void test_draw_list_flush();
+void test_draw_list_flush_null_renderer();
+
+// Engine Phase tests
+void test_engine_phase_to_string();
+void test_engine_phase_values();
+
+// Launcher Screen tests
+void test_launcher_initial_state();
+void test_launcher_scan_nonexistent();
+void test_launcher_select_invalid();
+void test_launcher_confirm_no_selection();
+void test_launcher_request_new_project();
+void test_launcher_request_quit();
+
+// Tile Editor tests
+void test_tile_editor_name();
+void test_tile_editor_register();
+void test_tile_editor_modes();
+void test_tile_editor_paint();
+void test_tile_editor_erase();
+void test_tile_editor_paint_no_tile_selected();
+void test_tile_editor_active_layer();
+void test_tile_editor_unregister();
+void test_tile_editor_grid_coord_hash();
+
+// Text Renderer tests
+void test_null_text_renderer();
+void test_glyph_default();
+void test_font_atlas_default();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -2679,6 +2742,77 @@ int main() {
     test_cert_generate_report();
     test_cert_export_json();
     test_cert_clear();
+
+    // Font Bootstrap
+    std::cout << "\n--- Font Bootstrap ---" << std::endl;
+    test_font_bootstrap_initial_state();
+    test_font_bootstrap_init_missing_font();
+    test_font_bootstrap_shutdown();
+    test_font_bootstrap_rebuild_noop();
+
+    // Diagnostics Overlay
+    std::cout << "\n--- Diagnostics Overlay ---" << std::endl;
+    test_diagnostics_overlay_default_off();
+    test_diagnostics_overlay_toggle();
+    test_diagnostics_overlay_set_enabled();
+    test_diagnostics_overlay_render_null_renderer();
+    test_diagnostics_overlay_render_when_disabled();
+    test_diagnostics_overlay_render_when_enabled();
+
+    // UI Event Router
+    std::cout << "\n--- UI Event Router ---" << std::endl;
+    test_event_router_empty();
+    test_event_router_register_dispatch();
+    test_event_router_miss();
+    test_event_router_z_order();
+    test_event_router_unregister();
+    test_event_router_hover_tracking();
+    test_event_router_clear();
+
+    // UI Draw List
+    std::cout << "\n--- UI Draw List ---" << std::endl;
+    test_draw_list_empty();
+    test_draw_list_draw_rect();
+    test_draw_list_draw_text();
+    test_draw_list_draw_icon();
+    test_draw_list_draw_border();
+    test_draw_list_draw_image();
+    test_draw_list_multiple_commands();
+    test_draw_list_clear();
+    test_draw_list_flush();
+    test_draw_list_flush_null_renderer();
+
+    // Engine Phase
+    std::cout << "\n--- Engine Phase ---" << std::endl;
+    test_engine_phase_to_string();
+    test_engine_phase_values();
+
+    // Launcher Screen
+    std::cout << "\n--- Launcher Screen ---" << std::endl;
+    test_launcher_initial_state();
+    test_launcher_scan_nonexistent();
+    test_launcher_select_invalid();
+    test_launcher_confirm_no_selection();
+    test_launcher_request_new_project();
+    test_launcher_request_quit();
+
+    // Tile Editor
+    std::cout << "\n--- Tile Editor ---" << std::endl;
+    test_tile_editor_name();
+    test_tile_editor_register();
+    test_tile_editor_modes();
+    test_tile_editor_paint();
+    test_tile_editor_erase();
+    test_tile_editor_paint_no_tile_selected();
+    test_tile_editor_active_layer();
+    test_tile_editor_unregister();
+    test_tile_editor_grid_coord_hash();
+
+    // Text Renderer
+    std::cout << "\n--- Text Renderer ---" << std::endl;
+    test_null_text_renderer();
+    test_glyph_default();
+    test_font_atlas_default();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

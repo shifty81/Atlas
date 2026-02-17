@@ -256,6 +256,228 @@ can be loaded without recompilation when the engine is updated. The ABI covers:
 | `engine/ui/UIGraph.h/.cpp` | Node-graph evaluation model (DAG of UINodes) |
 | `engine/ui/UINodes.h/.cpp` | Built-in widget nodes (Panel, Button, Text, List) |
 | `engine/ui/UIScreenGraph.h/.cpp` | Flat widget registry with parent–child tracking |
+| `engine/ui/UIRenderer.h/.cpp` | Abstract rendering interface (DrawRect, DrawText, etc.) |
+| `engine/ui/FontBootstrap.h/.cpp` | Font system initialisation after renderer init |
+| `engine/ui/DiagnosticsOverlay.h/.cpp` | Toggleable FPS / viewport / DPI / mouse overlay |
+| `engine/ui/TextRenderer.h/.cpp` | Backend-agnostic text rendering interface |
+| `engine/ui/UIEventRouter.h/.cpp` | Input event routing with z-order dispatch and focus |
+| `engine/ui/UIDrawList.h/.cpp` | Deferred draw command buffer for deterministic rendering |
+| `engine/ui/UILayoutSolver.h/.cpp` | Constraint-based layout solver |
+| `engine/ui/UICommandBus.h/.cpp` | Thread-safe semantic event bus |
+| `engine/ui/HUDOverlay.h/.cpp` | In-game HUD with warnings and time controls |
+| `engine/core/EnginePhase.h` | Engine lifecycle state machine (Boot → Launcher → Editor) |
 | `editor/ui/EditorPanel.h` | Base class for editor panels |
 | `editor/ui/EditorLayout.h/.cpp` | Dock-tree layout manager |
 | `editor/ui/DockNode.h` | Binary split tree node for docking |
+| `editor/ui/LauncherScreen.h/.cpp` | Unreal-style project browser / launcher |
+| `editor/tools/IEditorToolModule.h` | Abstract interface for editor tool modules |
+| `editor/tools/TileEditorModule.h/.cpp` | Gold-standard tile editor tool module |
+
+## Font System
+
+The engine uses a custom font pipeline — **no ImGui dependency**.
+
+### Font Bootstrap
+
+`FontBootstrap` (`engine/ui/FontBootstrap.h`) initialises the default UI font
+**after** the renderer is ready. Call order is critical:
+
+```
+Renderer::Init()
+UIContext::Init()
+FontBootstrap::Init(assetRoot, dpiScale)
+FontBootstrap::RebuildFontAtlas()   // on renderer reset
+```
+
+Without correct font initialisation, text renders as squares (missing glyph
+rectangles). The bootstrap searches for `<assetRoot>/fonts/Inter-Regular.ttf`
+and falls back gracefully if the file is absent.
+
+### Text Rendering Interface
+
+`TextRenderer` (`engine/ui/TextRenderer.h`) is a backend-agnostic abstract
+interface. Concrete implementations for DX11, Vulkan, and OpenGL will derive
+from it. A `NullTextRenderer` is provided for headless / server mode.
+
+Key operations:
+
+| Method | Purpose |
+|--------|---------|
+| `LoadFontAtlas(jsonPath)` | Load an offline-generated font atlas |
+| `DrawText(font, text, x, y, color)` | Render text at a position |
+| `MeasureText(font, text)` | Measure pixel width without drawing |
+| `RebuildFontTexture(handle)` | Rebuild after renderer reset |
+
+### Font Atlas Pipeline (Offline)
+
+Font atlases are generated offline to avoid runtime TTF parsing:
+
+1. `tools/font_atlas_gen` bakes a TTF into `Inter-Regular.png` + `Inter-Regular.json`.
+2. Atlas is RGBA8, one texture per font size, deterministic glyph layout.
+3. Runtime loads the JSON for metrics and the PNG as a GPU texture.
+
+## Diagnostics Overlay
+
+A toggleable overlay (`engine/ui/DiagnosticsOverlay.h`) renders live statistics
+in both the editor and client. It is enabled by default in the editor and can
+be toggled at runtime.
+
+### Displayed Metrics
+
+- FPS / frame time
+- Viewport resolution
+- DPI scale
+- Mouse position
+- Current tick
+
+### Integration
+
+```cpp
+// In main loop — after all other UI, before EndFrame()
+if (Input::IsKeyDown(Key::LeftControl) && Input::WasKeyPressed(Key::Grave))
+    DiagnosticsOverlay::Toggle();
+
+DiagnosticsOverlay::Render(renderer, uiCtx, dpiScale, mouseX, mouseY);
+```
+
+## UI Event Routing
+
+`UIEventRouter` (`engine/ui/UIEventRouter.h`) routes platform input events to
+the correct UI target. It replaces the previous direct dispatch that skipped
+the UI layer entirely.
+
+### Dispatch Rules
+
+1. Targets are sorted by **z-order** (descending) before dispatch.
+2. The **first target that consumes** the event wins.
+3. `MouseDown` sets the **active capture** target; subsequent events go to it
+   until `MouseUp`.
+4. `MouseMove` updates **hover tracking**.
+5. Editor UI consumes before game UI — preventing accidental game input.
+
+### Focus Model
+
+```cpp
+struct UIFocusState {
+    UIEventTarget* hovered;   // under cursor
+    UIEventTarget* active;    // mouse capture
+    UIEventTarget* keyboard;  // keyboard focus
+};
+```
+
+## UI Draw Command Buffer
+
+`UIDrawList` (`engine/ui/UIDrawList.h`) buffers draw commands during the UI
+update pass and replays them through the renderer in one batch. This:
+
+- Decouples UI logic from the graphics API
+- Enables deterministic rendering (same commands → same output)
+- Makes UI frames inspectable and replayable
+- Supports debug UI visualization
+
+## Engine Lifecycle
+
+`EnginePhase` (`engine/core/EnginePhase.h`) defines the engine lifecycle as an
+explicit state machine:
+
+```
+Boot → Launcher → ProjectLoad → Editor / Client / Server → Shutdown
+```
+
+Systems can query the current phase to assert correct initialisation order and
+adapt behaviour (e.g. the UI switches between launcher and editor layouts).
+
+## Launcher Screen
+
+`LauncherScreen` (`editor/ui/LauncherScreen.h`) implements an Unreal-style
+project browser displayed before the editor opens:
+
+- Scans a projects directory for `project.atlas` files
+- Displays project name, path, engine version, last-opened date
+- Supports Open, Create New, Browse, and Quit actions
+- Launches the editor with the selected project path
+
+### Launcher UI Tree
+
+```
+Root
+ ├── Header  (logo, engine version)
+ ├── ProjectList
+ │    ├── ProjectCard …
+ └── Footer  (Open / New / Browse / Quit)
+```
+
+## Editor Tool Module System
+
+`IEditorToolModule` (`editor/tools/IEditorToolModule.h`) is the abstract
+interface every editor tool must implement. This is the most important editor
+architecture interface — if a tool cannot be expressed through it, the
+interface must be extended, not bypassed.
+
+### Interface
+
+```cpp
+class IEditorToolModule {
+    virtual std::string Name() const = 0;
+    virtual void OnRegister() = 0;
+    virtual void OnUnregister() = 0;
+    virtual void RegisterPanels() = 0;
+    virtual void RegisterMenus() = 0;
+    virtual void RegisterModes() = 0;
+    virtual bool HandleInput(uint32_t keyCode, bool pressed) = 0;
+    virtual void Update(float deltaTime) = 0;
+    virtual void Render() = 0;
+};
+```
+
+### Tile Editor (Gold Standard)
+
+`TileEditorModule` (`editor/tools/TileEditorModule.h`) is the reference
+implementation that touches all tool concerns: UI, data, undo, serialisation,
+and standalone builds.
+
+Features: paint, erase, multi-layer, grid coordinates, per-instance overrides.
+
+Editor modes: Paint, Erase, Select, LayerEdit, RuleEdit.
+
+### Standalone Tool Builds
+
+Any tool module can compile as a standalone executable using the same code:
+
+```cpp
+int main() {
+    EngineCore::Init();
+    EditorContext ctx;
+    ctx.LoadModule("TileEditor");
+    UI::Run();
+}
+```
+
+Build profiles control which modules are included:
+
+```json
+{
+  "Editor": ["AllTools"],
+  "TileEditor": ["Core", "TileEdit", "UI"],
+  "Animator": ["Core", "Animation", "UI"]
+}
+```
+
+## Project Capability System
+
+Projects declare enabled capabilities in `project.atlas`:
+
+```json
+{
+  "capabilities": [
+    "Rendering2D", "Rendering3D", "Physics3D",
+    "UI", "Networking", "AI"
+  ]
+}
+```
+
+This determines:
+- Which systems are compiled and loaded
+- Which editor tools are available
+- Which blueprint nodes are exposed
+- Build profile contents

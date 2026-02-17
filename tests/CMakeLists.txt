@@ -129,6 +129,14 @@ add_executable(AtlasTests
     test_game_mechanics_ui.cpp
     test_determinism_versioning.cpp
     test_certified_build.cpp
+    test_font_bootstrap.cpp
+    test_diagnostics_overlay.cpp
+    test_event_router.cpp
+    test_draw_list.cpp
+    test_engine_phase.cpp
+    test_launcher_screen.cpp
+    test_tile_editor.cpp
+    test_text_renderer.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
@@ -151,6 +159,8 @@ add_executable(AtlasTests
     ${CMAKE_SOURCE_DIR}/editor/panels/AIDiffViewerPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/GameMechanicsUIPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/ui/EditorLayout.cpp
+    ${CMAKE_SOURCE_DIR}/editor/ui/LauncherScreen.cpp
+    ${CMAKE_SOURCE_DIR}/editor/tools/TileEditorModule.cpp
 )
 
 target_link_libraries(AtlasTests AtlasEngine AtlasGameplay EveOfflineModule Arena2DModule)
