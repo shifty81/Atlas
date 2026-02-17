@@ -338,7 +338,7 @@ mkdir -p logs
   ```bash
   brew install cmake
   ```
-- **Apple Silicon (M1/M2/M3):** Builds natively as ARM64. No Rosetta required.
+- **Apple Silicon (M-series):** Builds natively as ARM64. No Rosetta required.
   If you see `arch` warnings, ensure you are using native Homebrew
   (`/opt/homebrew/bin/cmake`), not the x86 variant.
 - **`std::filesystem` errors on older macOS:** Ensure deployment target is

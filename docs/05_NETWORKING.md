@@ -191,12 +191,12 @@ and monitoring on top of the core networking layer.
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `connectionTimeoutMs` | 10 000 | Max time to establish connection |
+| `connectionTimeoutMs` | 10000 | Max time to establish connection |
 | `maxReconnectAttempts` | 5 | Retry limit before giving up |
-| `reconnectDelayMs` | 2 000 | Delay between reconnection attempts |
+| `reconnectDelayMs` | 2000 | Delay between reconnection attempts |
 | `maxBandwidthBytesPerSec` | 0 (unlimited) | Bandwidth throttle |
-| `maxPacketSize` | 1 400 | Maximum packet size in bytes |
-| `heartbeatIntervalMs` | 1 000 | Heartbeat send interval |
+| `maxPacketSize` | 1400 | Maximum packet size in bytes |
+| `heartbeatIntervalMs` | 1000 | Heartbeat send interval |
 | `heartbeatMissThreshold` | 5 | Missed heartbeats before timeout |
 
 ### Connection State Machine
