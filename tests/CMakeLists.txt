@@ -161,6 +161,7 @@ add_executable(AtlasTests
     test_tile_chunk_builder.cpp
     test_tile_palette_panel.cpp
     test_rule_graph_editor.cpp
+    test_next_tasks_phase4.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
