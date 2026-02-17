@@ -131,6 +131,9 @@ add_library(AtlasEngine STATIC
     sim/DesyncReproducer.cpp
     sim/TLCModelChecker.cpp
     sim/DeterminismVersioning.cpp
+    sim/WorldStateSerializer.cpp
+    sim/ReplayVersioning.cpp
+    assets/AssetCategoryRegistry.cpp
     assets/ServerAssetValidator.cpp
 )
 

@@ -143,6 +143,9 @@ add_executable(AtlasTests
     test_net_hardening.cpp
     test_play_in_editor.cpp
     test_engine_input_routing.cpp
+    test_world_state_serializer.cpp
+    test_asset_category_registry.cpp
+    test_replay_versioning.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp

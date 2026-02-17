@@ -1394,6 +1394,50 @@ void test_engine_mouse_tracking_defaults();
 void test_engine_event_router_register();
 void test_diagnostics_overlay_toggle_state();
 
+// World State Serializer
+void test_serializer_default_version();
+void test_serializer_set_version();
+void test_serializer_serialize_roundtrip();
+void test_serializer_serialize_empty();
+void test_serializer_hash_mismatch();
+void test_serializer_version_too_old();
+void test_serializer_version_too_new();
+void test_serializer_migration();
+void test_serializer_can_migrate();
+void test_serializer_migration_path();
+void test_serializer_migration_failure();
+void test_serializer_schema_version_comparison();
+
+// Asset Category Registry
+void test_category_registry_empty();
+void test_category_registry_register();
+void test_category_registry_replace();
+void test_category_registry_unregister();
+void test_category_registry_by_content();
+void test_category_registry_by_system();
+void test_category_registry_content_for();
+void test_category_registry_system_for();
+void test_category_registry_defaults();
+void test_category_registry_clear();
+void test_category_registry_unregistered_defaults();
+
+// Replay Versioning
+void test_replay_version_defaults();
+void test_replay_version_set_versions();
+void test_replay_version_register();
+void test_replay_version_replace();
+void test_replay_version_compatibility_current();
+void test_replay_version_compatibility_too_new();
+void test_replay_version_compatibility_too_old();
+void test_replay_version_compatibility_upgradeable();
+void test_replay_version_compatibility_unknown();
+void test_replay_version_migration_path();
+void test_replay_version_can_migrate();
+void test_replay_version_deprecated();
+void test_replay_version_all_versions();
+void test_replay_version_migration_execution();
+void test_replay_version_clear();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -2934,6 +2978,53 @@ int main() {
     test_engine_mouse_tracking_defaults();
     test_engine_event_router_register();
     test_diagnostics_overlay_toggle_state();
+
+    // World State Serializer
+    std::cout << "\n--- World State Serializer ---" << std::endl;
+    test_serializer_default_version();
+    test_serializer_set_version();
+    test_serializer_serialize_roundtrip();
+    test_serializer_serialize_empty();
+    test_serializer_hash_mismatch();
+    test_serializer_version_too_old();
+    test_serializer_version_too_new();
+    test_serializer_migration();
+    test_serializer_can_migrate();
+    test_serializer_migration_path();
+    test_serializer_migration_failure();
+    test_serializer_schema_version_comparison();
+
+    // Asset Category Registry
+    std::cout << "\n--- Asset Category Registry ---" << std::endl;
+    test_category_registry_empty();
+    test_category_registry_register();
+    test_category_registry_replace();
+    test_category_registry_unregister();
+    test_category_registry_by_content();
+    test_category_registry_by_system();
+    test_category_registry_content_for();
+    test_category_registry_system_for();
+    test_category_registry_defaults();
+    test_category_registry_clear();
+    test_category_registry_unregistered_defaults();
+
+    // Replay Versioning
+    std::cout << "\n--- Replay Versioning ---" << std::endl;
+    test_replay_version_defaults();
+    test_replay_version_set_versions();
+    test_replay_version_register();
+    test_replay_version_replace();
+    test_replay_version_compatibility_current();
+    test_replay_version_compatibility_too_new();
+    test_replay_version_compatibility_too_old();
+    test_replay_version_compatibility_upgradeable();
+    test_replay_version_compatibility_unknown();
+    test_replay_version_migration_path();
+    test_replay_version_can_migrate();
+    test_replay_version_deprecated();
+    test_replay_version_all_versions();
+    test_replay_version_migration_execution();
+    test_replay_version_clear();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
