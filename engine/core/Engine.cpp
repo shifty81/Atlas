@@ -438,14 +438,16 @@ bool Engine::ReplayFromSave(const std::string& savePath, const std::string& repl
     m_scheduler.SetTickRate(m_config.tickRate);
     m_scheduler.SetFramePacing(false);
 
+    uint64_t appliedFrames = 0;
     for (const auto& frame : replay.Frames()) {
         if (frame.tick <= saveTick) continue;  // Skip frames before/at save point
 
         m_timeModel.AdvanceTick();
         m_world.Update(m_timeModel.Context().sim.fixedDeltaTime);
+        ++appliedFrames;
     }
 
-    return true;
+    return appliedFrames > 0;
 }
 
 bool Engine::VerifySaveLoadDeterminism(const std::string& tmpPath, uint32_t extraTicks) {

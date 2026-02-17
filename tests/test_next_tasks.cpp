@@ -570,6 +570,63 @@ void test_engine_replay_from_save_bad_replay() {
     std::cout << "[PASS] test_engine_replay_from_save_bad_replay" << std::endl;
 }
 
+void test_engine_replay_from_save_no_frames_after_save_point() {
+    const std::string savePath = "/tmp/atlas_rfs_save3.asav";
+    const std::string replayPath = "/tmp/atlas_rfs_replay3.rply";
+    std::remove(savePath.c_str());
+    std::remove(replayPath.c_str());
+
+    // Create a valid save at tick 10.
+    {
+        EngineConfig cfg;
+        cfg.mode = EngineMode::Server;
+        cfg.tickRate = 60;
+        cfg.maxTicks = 10;
+
+        Engine engine(cfg);
+        engine.InitCore();
+        engine.InitECS();
+        engine.InitNetworking();
+        engine.GetScheduler().SetFramePacing(false);
+        engine.Run();
+
+        auto ecsData = engine.GetWorld().Serialize();
+        engine.GetSaveSystem().Save(savePath,
+            engine.GetTimeModel().Context().sim.tick,
+            cfg.tickRate, 0, ecsData);
+    }
+
+    // Replay only contains frames before save tick.
+    {
+        constexpr uint32_t replaySeed = 7;
+        ReplayRecorder recorder;
+        recorder.StartRecording(60, replaySeed);
+        for (uint32_t t = 1; t <= 5; ++t) {
+            recorder.RecordFrame(t, {static_cast<uint8_t>(t)});
+        }
+        recorder.StopRecording();
+        assert(recorder.SaveReplay(replayPath));
+    }
+
+    {
+        EngineConfig cfg;
+        cfg.mode = EngineMode::Server;
+        cfg.tickRate = 60;
+
+        Engine engine(cfg);
+        engine.InitCore();
+        engine.InitECS();
+        engine.InitNetworking();
+
+        bool success = engine.ReplayFromSave(savePath, replayPath);
+        assert(!success);
+    }
+
+    std::remove(savePath.c_str());
+    std::remove(replayPath.c_str());
+    std::cout << "[PASS] test_engine_replay_from_save_no_frames_after_save_point" << std::endl;
+}
+
 // --- StateHashDiffPanel per-component breakdown ---
 
 void test_state_hash_diff_panel_component_breakdown() {

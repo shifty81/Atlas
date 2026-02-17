@@ -859,6 +859,7 @@ void test_hash_ladder_save_load_continuity();
 void test_engine_replay_from_save();
 void test_engine_replay_from_save_bad_save();
 void test_engine_replay_from_save_bad_replay();
+void test_engine_replay_from_save_no_frames_after_save_point();
 void test_state_hash_diff_panel_component_breakdown();
 void test_state_hash_diff_panel_no_component_divergence();
 
@@ -2407,6 +2408,7 @@ int main() {
     test_engine_replay_from_save();
     test_engine_replay_from_save_bad_save();
     test_engine_replay_from_save_bad_replay();
+    test_engine_replay_from_save_no_frames_after_save_point();
     test_state_hash_diff_panel_component_breakdown();
     test_state_hash_diff_panel_no_component_divergence();
 
