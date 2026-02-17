@@ -1533,6 +1533,36 @@ void test_cross_platform_partial_save_roundtrip();
 void test_cross_platform_save_large_payload();
 void test_cross_platform_hash_combine_deterministic();
 
+// UIScrollState
+void test_scroll_state_defaults();
+void test_scroll_state_content_smaller_than_viewport();
+void test_scroll_state_scrollable();
+void test_scroll_state_scroll_down();
+void test_scroll_state_scroll_up();
+void test_scroll_state_clamp_top();
+void test_scroll_state_clamp_bottom();
+void test_scroll_state_scroll_to_top();
+void test_scroll_state_scroll_to_bottom();
+void test_scroll_state_viewport_resize_clamps();
+
+// UIManager Viewport/DPI/Input/Font
+void test_ui_manager_viewport_defaults();
+void test_ui_manager_set_viewport_size();
+void test_ui_manager_dpi_scale();
+void test_ui_manager_event_router_access();
+void test_ui_manager_dispatch_event();
+void test_ui_manager_dispatch_not_initialized();
+void test_ui_manager_font_bootstrap_access();
+void test_ui_manager_shutdown_resets_viewport();
+
+// Truth UI Panel Draw Commands
+void test_truth_ui_draw_produces_commands();
+void test_truth_ui_draw_no_pie_shows_message();
+void test_truth_ui_draw_with_pie();
+void test_truth_ui_draw_no_divergence();
+void test_truth_ui_draw_clears_between_frames();
+void test_truth_ui_draw_has_header();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -3224,6 +3254,39 @@ int main() {
     test_cross_platform_partial_save_roundtrip();
     test_cross_platform_save_large_payload();
     test_cross_platform_hash_combine_deterministic();
+
+    // UIScrollState
+    std::cout << "\n--- UIScrollState ---" << std::endl;
+    test_scroll_state_defaults();
+    test_scroll_state_content_smaller_than_viewport();
+    test_scroll_state_scrollable();
+    test_scroll_state_scroll_down();
+    test_scroll_state_scroll_up();
+    test_scroll_state_clamp_top();
+    test_scroll_state_clamp_bottom();
+    test_scroll_state_scroll_to_top();
+    test_scroll_state_scroll_to_bottom();
+    test_scroll_state_viewport_resize_clamps();
+
+    // UIManager Viewport/DPI/Input/Font
+    std::cout << "\n--- UIManager Viewport/DPI/Input/Font ---" << std::endl;
+    test_ui_manager_viewport_defaults();
+    test_ui_manager_set_viewport_size();
+    test_ui_manager_dpi_scale();
+    test_ui_manager_event_router_access();
+    test_ui_manager_dispatch_event();
+    test_ui_manager_dispatch_not_initialized();
+    test_ui_manager_font_bootstrap_access();
+    test_ui_manager_shutdown_resets_viewport();
+
+    // Truth UI Panel Draw Commands
+    std::cout << "\n--- Truth UI Panel Draw Commands ---" << std::endl;
+    test_truth_ui_draw_produces_commands();
+    test_truth_ui_draw_no_pie_shows_message();
+    test_truth_ui_draw_with_pie();
+    test_truth_ui_draw_no_divergence();
+    test_truth_ui_draw_clears_between_frames();
+    test_truth_ui_draw_has_header();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

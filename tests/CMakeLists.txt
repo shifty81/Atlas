@@ -153,6 +153,9 @@ add_executable(AtlasTests
     test_truth_ui_panel.cpp
     test_asset_diff_commit.cpp
     test_cross_platform_save.cpp
+    test_scroll_state.cpp
+    test_ui_manager_viewport.cpp
+    test_truth_ui_draw.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
