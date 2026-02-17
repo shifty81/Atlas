@@ -247,4 +247,98 @@ bool VulkanRenderer::UnmapBuffer(uint32_t bufferId) {
     return false;
 }
 
+// --- Descriptor set management ---
+
+uint32_t VulkanRenderer::CreateDescriptorSetLayout(const VkDescriptorSetLayoutDesc& desc) {
+    VkDescriptorSetLayoutDesc layout = desc;
+    layout.id = m_nextDescriptorSetId++;
+    m_descriptorSetLayouts.push_back(layout);
+    Logger::Info("[VulkanRenderer] CreateDescriptorSetLayout '" + desc.name + "' id=" + std::to_string(layout.id));
+    return layout.id;
+}
+
+void VulkanRenderer::BindDescriptorSet(uint32_t layoutId) {
+    if (layoutId == 0 || layoutId >= m_nextDescriptorSetId) return;
+    m_boundDescriptorSet = layoutId;
+    Logger::Info("[VulkanRenderer] BindDescriptorSet id=" + std::to_string(layoutId));
+}
+
+uint32_t VulkanRenderer::BoundDescriptorSetId() const {
+    return m_boundDescriptorSet;
+}
+
+const VkDescriptorSetLayoutDesc* VulkanRenderer::GetDescriptorSetLayout(uint32_t id) const {
+    if (id == 0 || id >= m_nextDescriptorSetId) return nullptr;
+    return &m_descriptorSetLayouts[id - 1];
+}
+
+uint32_t VulkanRenderer::DescriptorSetLayoutCount() const {
+    return static_cast<uint32_t>(m_descriptorSetLayouts.size());
+}
+
+// --- Texture management ---
+
+uint32_t VulkanRenderer::CreateTexture(const VkTextureDesc& desc) {
+    VkTextureDesc tex = desc;
+    tex.id = m_nextTextureId++;
+    m_textures.push_back(tex);
+    Logger::Info("[VulkanRenderer] CreateTexture '" + desc.name + "' id=" + std::to_string(tex.id) +
+                 " " + std::to_string(desc.width) + "x" + std::to_string(desc.height));
+    return tex.id;
+}
+
+bool VulkanRenderer::DestroyTexture(uint32_t textureId) {
+    for (auto it = m_textures.begin(); it != m_textures.end(); ++it) {
+        if (it->id == textureId) {
+            Logger::Info("[VulkanRenderer] DestroyTexture id=" + std::to_string(textureId));
+            m_textures.erase(it);
+            return true;
+        }
+    }
+    return false;
+}
+
+const VkTextureDesc* VulkanRenderer::GetTexture(uint32_t id) const {
+    for (const auto& tex : m_textures) {
+        if (tex.id == id) return &tex;
+    }
+    return nullptr;
+}
+
+uint32_t VulkanRenderer::TextureCount() const {
+    return static_cast<uint32_t>(m_textures.size());
+}
+
+// --- Sampler management ---
+
+uint32_t VulkanRenderer::CreateSampler(const VkSamplerDesc& desc) {
+    VkSamplerDesc sampler = desc;
+    sampler.id = m_nextSamplerId++;
+    m_samplers.push_back(sampler);
+    Logger::Info("[VulkanRenderer] CreateSampler '" + desc.name + "' id=" + std::to_string(sampler.id));
+    return sampler.id;
+}
+
+bool VulkanRenderer::DestroySampler(uint32_t samplerId) {
+    for (auto it = m_samplers.begin(); it != m_samplers.end(); ++it) {
+        if (it->id == samplerId) {
+            Logger::Info("[VulkanRenderer] DestroySampler id=" + std::to_string(samplerId));
+            m_samplers.erase(it);
+            return true;
+        }
+    }
+    return false;
+}
+
+const VkSamplerDesc* VulkanRenderer::GetSampler(uint32_t id) const {
+    for (const auto& s : m_samplers) {
+        if (s.id == id) return &s;
+    }
+    return nullptr;
+}
+
+uint32_t VulkanRenderer::SamplerCount() const {
+    return static_cast<uint32_t>(m_samplers.size());
+}
+
 } // namespace atlas::render

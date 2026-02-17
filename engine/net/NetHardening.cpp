@@ -12,6 +12,7 @@ const NetHardeningConfig& NetHardening::Config() const {
 
 void NetHardening::Update(float deltaTimeMs) {
     m_secondAccumulator += deltaTimeMs;
+    m_totalTimeTracked += deltaTimeMs;
     if (m_secondAccumulator >= 1000.0f) {
         m_secondAccumulator -= 1000.0f;
         m_bytesSentThisSecond = 0.0f;
@@ -62,6 +63,7 @@ void NetHardening::Disconnect() {
 void NetHardening::RecordBytesSent(uint32_t bytes) {
     m_stats.bytesSent += bytes;
     m_bytesSentThisSecond += static_cast<float>(bytes);
+    m_totalBytesTracked += static_cast<float>(bytes);
 }
 
 void NetHardening::RecordBytesReceived(uint32_t bytes) {
@@ -159,6 +161,55 @@ void NetHardening::AttemptReconnect() {
         m_timeSinceConnectStart = 0.0f;
         SetState(ConnectionState::Connecting);
     }
+}
+
+void NetHardening::SetPacketLossSimulation(const PacketLossSimConfig& config) {
+    m_lossSimConfig = config;
+}
+
+const PacketLossSimConfig& NetHardening::PacketLossSimulation() const {
+    return m_lossSimConfig;
+}
+
+bool NetHardening::ShouldDropPacket() const {
+    if (!m_lossSimConfig.enabled || m_lossSimConfig.lossPercent <= 0.0f) return false;
+    uint32_t threshold = static_cast<uint32_t>(m_lossSimConfig.lossPercent);
+    uint32_t val = m_lossCounter % 100;
+    m_lossCounter++;
+    return val < threshold;
+}
+
+ConnectionQuality NetHardening::GetConnectionQuality() const {
+    float rtt = m_stats.averageRttMs;
+    float loss = PacketLossPercent();
+
+    if (rtt < 30.0f && loss < 1.0f) return ConnectionQuality::Excellent;
+    if (rtt < 80.0f && loss < 3.0f) return ConnectionQuality::Good;
+    if (rtt < 150.0f && loss < 8.0f) return ConnectionQuality::Fair;
+    if (rtt < 300.0f && loss < 15.0f) return ConnectionQuality::Poor;
+    return ConnectionQuality::Critical;
+}
+
+std::string NetHardening::ConnectionQualityString() const {
+    switch (GetConnectionQuality()) {
+        case ConnectionQuality::Excellent: return "Excellent";
+        case ConnectionQuality::Good: return "Good";
+        case ConnectionQuality::Fair: return "Fair";
+        case ConnectionQuality::Poor: return "Poor";
+        case ConnectionQuality::Critical: return "Critical";
+    }
+    return "Unknown";
+}
+
+float NetHardening::PacketLossPercent() const {
+    uint32_t total = m_stats.packetsSent + m_stats.packetsReceived;
+    if (total == 0) return 0.0f;
+    return (static_cast<float>(m_stats.packetsDropped) / static_cast<float>(total)) * 100.0f;
+}
+
+float NetHardening::AverageBandwidthBytesPerSec() const {
+    if (m_totalTimeTracked <= 0.0f) return 0.0f;
+    return m_totalBytesTracked / (m_totalTimeTracked / 1000.0f);
 }
 
 }

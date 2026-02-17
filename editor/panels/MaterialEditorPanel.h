@@ -1,6 +1,7 @@
 #pragma once
 #include "../ui/EditorPanel.h"
 #include "../../engine/procedural/ProceduralMaterialGraph.h"
+#include "../../engine/ui/UIDrawList.h"
 #include <string>
 #include <vector>
 #include <sstream>
@@ -16,13 +17,7 @@ struct MaterialParameter {
 class MaterialEditorPanel : public EditorPanel {
 public:
     const char* Name() const override { return "Material Editor"; }
-    void Draw() override {
-        // Material summary header
-        if (!m_loaded) return;
-        // Display material dimensions, parameter list, and preview toggle.
-        // When a parameter is selected, show its type and value editor.
-        // Mark dirty state for unsaved changes.
-    }
+    void Draw() override;
 
     void LoadMaterial(const procedural::MaterialData& material) {
         m_material = material;
@@ -98,6 +93,21 @@ public:
         return oss.str();
     }
 
+    void SetShaderPath(const std::string& path) { m_shaderPath = path; }
+    std::string ShaderPath() const { return m_shaderPath; }
+
+    std::vector<std::string> ParameterNames() const {
+        std::vector<std::string> names;
+        for (const auto& p : m_parameters) {
+            names.push_back(p.name);
+        }
+        return names;
+    }
+
+    size_t ParameterCount() const { return m_parameters.size(); }
+
+    const atlas::ui::UIDrawList& GetDrawList() const { return m_drawList; }
+
 private:
     procedural::MaterialData m_material;
     bool m_loaded = false;
@@ -105,6 +115,8 @@ private:
     int m_selectedParam = -1;
     bool m_dirty = false;
     bool m_previewMode = false;
+    std::string m_shaderPath;
+    atlas::ui::UIDrawList m_drawList;
 };
 
 } // namespace atlas::editor
