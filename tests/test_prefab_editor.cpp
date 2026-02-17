@@ -87,6 +87,40 @@ void test_prefab_editor_remove_parent_removes_children() {
     std::cout << "[PASS] test_prefab_editor_remove_parent_removes_children" << std::endl;
 }
 
+void test_prefab_editor_remove_grandchildren() {
+    PrefabEditorPanel panel;
+
+    uint32_t root = panel.AddEntity("Root");
+    uint32_t child = panel.AddEntity("Child");
+    uint32_t grandchild = panel.AddEntity("Grandchild");
+    panel.SetParent(child, root);
+    panel.SetParent(grandchild, child);
+
+    assert(panel.EntityCount() == 3);
+
+    panel.RemoveEntity(root);
+    assert(panel.EntityCount() == 0);
+    assert(panel.GetEntity(grandchild) == nullptr);
+
+    std::cout << "[PASS] test_prefab_editor_remove_grandchildren" << std::endl;
+}
+
+void test_prefab_editor_remove_clears_selected_child() {
+    PrefabEditorPanel panel;
+
+    uint32_t parent = panel.AddEntity("Ship");
+    uint32_t child = panel.AddEntity("Turret");
+    panel.SetParent(child, parent);
+
+    panel.SelectEntity(child);
+    assert(panel.SelectedEntity() == child);
+
+    panel.RemoveEntity(parent);
+    assert(panel.SelectedEntity() == 0);
+
+    std::cout << "[PASS] test_prefab_editor_remove_clears_selected_child" << std::endl;
+}
+
 void test_prefab_editor_add_component() {
     PrefabEditorPanel panel;
     uint32_t id = panel.AddEntity("Player");

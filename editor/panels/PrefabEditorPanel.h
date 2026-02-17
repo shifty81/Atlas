@@ -43,16 +43,19 @@ public:
     }
 
     void RemoveEntity(uint32_t id) {
-        // Also remove children
+        // Recursively collect all descendants
         std::vector<uint32_t> toRemove;
         toRemove.push_back(id);
-        for (const auto& [eid, e] : m_entities) {
-            if (e.parent == id) toRemove.push_back(eid);
+        for (size_t i = 0; i < toRemove.size(); ++i) {
+            uint32_t current = toRemove[i];
+            for (const auto& [eid, e] : m_entities) {
+                if (e.parent == current) toRemove.push_back(eid);
+            }
         }
         for (uint32_t rid : toRemove) {
+            if (m_selectedEntity == rid) m_selectedEntity = 0;
             m_entities.erase(rid);
         }
-        if (m_selectedEntity == id) m_selectedEntity = 0;
         m_dirty = true;
     }
 

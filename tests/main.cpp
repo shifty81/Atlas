@@ -1493,6 +1493,8 @@ void test_prefab_editor_add_entity();
 void test_prefab_editor_remove_entity();
 void test_prefab_editor_parent_child();
 void test_prefab_editor_remove_parent_removes_children();
+void test_prefab_editor_remove_grandchildren();
+void test_prefab_editor_remove_clears_selected_child();
 void test_prefab_editor_add_component();
 void test_prefab_editor_remove_component();
 void test_prefab_editor_select_entity();
@@ -3148,6 +3150,8 @@ int main() {
     test_prefab_editor_remove_entity();
     test_prefab_editor_parent_child();
     test_prefab_editor_remove_parent_removes_children();
+    test_prefab_editor_remove_grandchildren();
+    test_prefab_editor_remove_clears_selected_child();
     test_prefab_editor_add_component();
     test_prefab_editor_remove_component();
     test_prefab_editor_select_entity();
