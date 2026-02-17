@@ -30,6 +30,16 @@ static std::string GetDownloadCacheDir(const MarketplaceImportOptions& options) 
     return std::filesystem::temp_directory_path().string() + "/atlas_marketplace_cache";
 }
 
+/// Validate that an asset ID does not contain path traversal sequences.
+static bool IsValidAssetId(const std::string& assetId) {
+    if (assetId.empty()) return false;
+    if (assetId.find("..") != std::string::npos) return false;
+    if (assetId.find('/') != std::string::npos) return false;
+    if (assetId.find('\\') != std::string::npos) return false;
+    if (assetId[0] == '.') return false;
+    return true;
+}
+
 // ---------------------------------------------------------------------------
 // MarketplaceImportRegistry
 // ---------------------------------------------------------------------------
@@ -114,6 +124,11 @@ MarketplaceFetchResult ItchIOImporter::FetchAsset(
     MarketplaceFetchResult result;
     result.metadata.marketplace = MarketplaceType::ItchIO;
     result.metadata.id = assetId;
+    
+    if (!IsValidAssetId(assetId)) {
+        result.errorMessage = "Invalid asset ID (contains path traversal characters): " + assetId;
+        return result;
+    }
     
     std::string cacheDir = GetDownloadCacheDir(options);
     std::filesystem::create_directories(cacheDir);
@@ -231,6 +246,11 @@ MarketplaceFetchResult UnrealMarketplaceImporter::FetchAsset(
     MarketplaceFetchResult result;
     result.metadata.marketplace = MarketplaceType::UnrealEngine;
     result.metadata.id = assetId;
+    
+    if (!IsValidAssetId(assetId)) {
+        result.errorMessage = "Invalid asset ID (contains path traversal characters): " + assetId;
+        return result;
+    }
     
     std::string cacheDir = GetDownloadCacheDir(options);
     std::filesystem::create_directories(cacheDir);
@@ -351,6 +371,11 @@ MarketplaceFetchResult UnityAssetStoreImporter::FetchAsset(
     MarketplaceFetchResult result;
     result.metadata.marketplace = MarketplaceType::UnityAssetStore;
     result.metadata.id = assetId;
+    
+    if (!IsValidAssetId(assetId)) {
+        result.errorMessage = "Invalid asset ID (contains path traversal characters): " + assetId;
+        return result;
+    }
     
     std::string cacheDir = GetDownloadCacheDir(options);
     std::filesystem::create_directories(cacheDir);

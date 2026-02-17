@@ -277,7 +277,7 @@ These systems are implemented, tested, and functional:
 - **Replay recording** — record/playback with divergence detection
 - **ECS framework** — entity management with serialization and rollback support
 - **Networking** — lockstep and rollback foundations with client-server and P2P
-- **1400 unit tests pass** — comprehensive coverage across all engine systems
+- **1401 unit tests pass** — comprehensive coverage across all engine systems
 - **CI determinism gate** — automated verification that simulation is bit-exact
 - **Play-In-Editor** — simulate, pause, step, possess entity, loopback, state restore
 - **Editor layout persistence** — save/restore panel arrangements to/from JSON

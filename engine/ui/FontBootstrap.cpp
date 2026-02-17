@@ -82,8 +82,9 @@ static std::string ParseTTFHeader(const std::string& path) {
 
         if (nameID != 1) continue; // We want font family name
 
-        size_t absOff = static_cast<size_t>(stringOffset) + strOffset;
-        if (absOff + strLength > nameLength) continue;
+        size_t absOff = static_cast<size_t>(stringOffset) + static_cast<size_t>(strOffset);
+        if (absOff < stringOffset || absOff < strOffset) continue; // overflow check
+        if (strLength > nameLength || absOff > nameLength - strLength) continue;
 
         const uint8_t* strData = nameTable.data() + absOff;
 

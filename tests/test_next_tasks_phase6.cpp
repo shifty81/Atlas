@@ -507,6 +507,28 @@ void test_marketplace_no_http_client_error() {
     std::cout << "[PASS] test_marketplace_no_http_client_error" << std::endl;
 }
 
+void test_marketplace_path_traversal_rejected() {
+    atlas::asset::ItchIOImporter importer;
+    atlas::asset::MarketplaceImportOptions opts;
+    opts.downloadCache = "/tmp/atlas_test_traversal_phase6";
+
+    // Path traversal attempts must be rejected
+    auto r1 = importer.FetchAsset("../../etc/passwd", opts);
+    assert(!r1.success);
+    assert(r1.errorMessage.find("path traversal") != std::string::npos);
+
+    auto r2 = importer.FetchAsset("assets/../secret", opts);
+    assert(!r2.success);
+
+    auto r3 = importer.FetchAsset("sub/dir/file.png", opts);
+    assert(!r3.success);
+
+    auto r4 = importer.FetchAsset(".hidden", opts);
+    assert(!r4.success);
+
+    std::cout << "[PASS] test_marketplace_path_traversal_rejected" << std::endl;
+}
+
 // ============================================================
 // Runner function — called from main.cpp
 // ============================================================
@@ -545,4 +567,5 @@ void run_next_tasks_phase6_tests() {
     test_marketplace_set_http_client();
     test_marketplace_registry_set_http_client();
     test_marketplace_no_http_client_error();
+    test_marketplace_path_traversal_rejected();
 }

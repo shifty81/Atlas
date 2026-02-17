@@ -12,7 +12,7 @@
 
 Atlas is a deterministic, data-driven game engine built in C++20. The
 project is **approximately 93–97% complete** across its core systems.
-All 1400 tests pass. The engine compiles and runs on Linux with
+All 1401 tests pass. The engine compiles and runs on Linux with
 OpenGL and Vulkan rendering backends. The Vulkan renderer now records
 and submits draw commands through a GPU command buffer pipeline. The
 AI assistant has an offline template backend. The marketplace system
@@ -146,7 +146,7 @@ has an HTTP client interface for remote API downloads.
 - [x] Contributor rules (`ATLAS_CONTRIBUTOR_RULES.md`)
 
 ### Testing (`tests/`)
-- [x] 1400 tests across 130+ test files — all passing
+- [x] 1401 tests across 130+ test files — all passing
 - [x] Covers ECS, networking, replay, assets, UI, editor panels, graphs, etc.
 
 ---
@@ -287,7 +287,7 @@ Testing            ✅ 100%   1374 tests, all passing
 | Production | ~20 | ✅ All pass |
 | World Gen | ~30 | ✅ All pass |
 | Tile Editor | ~40 | ✅ All pass |
-| **Total** | **1400** | **✅ All pass** |
+| **Total** | **1401** | **✅ All pass** |
 
 ---
 
@@ -308,6 +308,6 @@ build systems are all production-ready. The Vulkan renderer records
 draw commands and submits them through a triple-buffered GPU command
 buffer pipeline, ready for hardware device integration. The AI
 assistant has an offline template backend and the marketplace system
-has an HTTP client interface for remote downloads. All 1400 tests
+has an HTTP client interface for remote downloads. All 1401 tests
 pass. The primary remaining work is Vulkan hardware device integration
 and shipping font/HTTP production backends.
