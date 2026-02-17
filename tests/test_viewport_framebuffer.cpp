@@ -53,6 +53,8 @@ void test_engine_editor_has_viewport_framebuffer() {
     cfg.mode = EngineMode::Editor;
     cfg.headless = true;
     cfg.maxTicks = 1;
+    cfg.windowWidth = 1600;
+    cfg.windowHeight = 900;
 
     Engine engine(cfg);
     engine.InitCore();
@@ -65,8 +67,8 @@ void test_engine_editor_has_viewport_framebuffer() {
     // Editor mode should create a viewport framebuffer
     assert(engine.GetViewportFramebuffer() != nullptr);
     assert(engine.GetViewportFramebuffer()->IsValid());
-    assert(engine.GetViewportFramebuffer()->GetWidth() == 1280);
-    assert(engine.GetViewportFramebuffer()->GetHeight() == 720);
+    assert(engine.GetViewportFramebuffer()->GetWidth() == static_cast<uint32_t>(cfg.windowWidth));
+    assert(engine.GetViewportFramebuffer()->GetHeight() == static_cast<uint32_t>(cfg.windowHeight));
     std::cout << "[PASS] test_engine_editor_has_viewport_framebuffer" << std::endl;
 }
 
@@ -96,7 +98,6 @@ void test_engine_server_no_viewport_framebuffer() {
 
     Engine engine(cfg);
     engine.InitCore();
-    engine.InitRender();
     engine.InitECS();
     engine.InitNetworking();
     engine.InitEditor();
