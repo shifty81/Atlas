@@ -1289,7 +1289,8 @@ void test_cert_clear_clears_steps();
 
 // Font Bootstrap tests
 void test_font_bootstrap_initial_state();
-void test_font_bootstrap_init_missing_font();
+void test_font_bootstrap_init_missing_font_generates_fallback();
+void test_font_bootstrap_init_unwritable_root();
 void test_font_bootstrap_shutdown();
 void test_font_bootstrap_rebuild_noop();
 
@@ -2946,7 +2947,8 @@ int main() {
     // Font Bootstrap
     std::cout << "\n--- Font Bootstrap ---" << std::endl;
     test_font_bootstrap_initial_state();
-    test_font_bootstrap_init_missing_font();
+    test_font_bootstrap_init_missing_font_generates_fallback();
+    test_font_bootstrap_init_unwritable_root();
     test_font_bootstrap_shutdown();
     test_font_bootstrap_rebuild_noop();
 

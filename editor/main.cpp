@@ -9,6 +9,7 @@
 #include "ui/FontBootstrap.h"
 #include "ui/DiagnosticsOverlay.h"
 #include "ui/LauncherScreen.h"
+#include <filesystem>
 #include <iostream>
 
 /// Names of panels that are non-closable (always present in the dock tree).
@@ -83,6 +84,45 @@ static void ApplyDSLNode(atlas::ui::UIScreen& screen,
         break;
     }
     }
+}
+
+/// Resolve the projects directory by searching up from the current working
+/// directory for a parent that contains both CMakeLists.txt and a projects/
+/// subdirectory.  Falls back to "projects" if no such parent is found.
+static std::string ResolveProjectsDir() {
+    std::error_code ec;
+    auto cwd = std::filesystem::current_path(ec);
+    if (ec) return "projects";
+
+    // Walk up from cwd looking for the repo root.
+    for (auto dir = cwd; dir.has_parent_path(); dir = dir.parent_path()) {
+        if (std::filesystem::exists(dir / "CMakeLists.txt", ec) &&
+            std::filesystem::is_directory(dir / "projects", ec)) {
+            return (dir / "projects").string();
+        }
+        if (dir == dir.parent_path()) break; // reached filesystem root
+    }
+
+    return "projects"; // fallback to relative path
+}
+
+/// Resolve the asset root directory similarly — look for an assets/ directory
+/// next to CMakeLists.txt, and create it if it doesn't exist.
+static std::string ResolveAssetRoot() {
+    std::error_code ec;
+    auto cwd = std::filesystem::current_path(ec);
+    if (ec) return "assets";
+
+    for (auto dir = cwd; dir.has_parent_path(); dir = dir.parent_path()) {
+        if (std::filesystem::exists(dir / "CMakeLists.txt", ec)) {
+            auto assetDir = dir / "assets";
+            std::filesystem::create_directories(assetDir, ec);
+            return assetDir.string();
+        }
+        if (dir == dir.parent_path()) break;
+    }
+
+    return "assets";
 }
 
 static void BuildEditorUI(atlas::ui::UIScreen& screen) {
@@ -184,8 +224,9 @@ int main() {
     engine.InitEditor();
 
     // --- Font bootstrap (must run after renderer init) ---
+    std::string assetRoot = ResolveAssetRoot();
     atlas::ui::FontBootstrap fontBootstrap;
-    fontBootstrap.Init(cfg.assetRoot);
+    fontBootstrap.Init(assetRoot);
 
     // Set up default attach mode (standalone)
     atlas::editor::EditorAttachProtocol attach;
@@ -195,8 +236,9 @@ int main() {
     attach.Connect(attachCfg);
 
     // --- Launcher screen: scan for projects ---
+    std::string projectsDir = ResolveProjectsDir();
     atlas::editor::LauncherScreen launcher;
-    launcher.ScanProjects("projects");
+    launcher.ScanProjects(projectsDir);
 
     if (launcher.IsQuitRequested()) {
         fontBootstrap.Shutdown();
