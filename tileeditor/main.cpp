@@ -19,19 +19,26 @@
 #include <cstring>
 #include <string>
 
-static std::string ParseProjectArg(int argc, char** argv) {
+static std::string ParseStringArg(int argc, char** argv, const char* flag) {
     for (int i = 1; i < argc; ++i) {
-        if (std::strcmp(argv[i], "--project") == 0 && i + 1 < argc) {
+        if (std::strcmp(argv[i], flag) == 0 && i + 1 < argc) {
             return argv[i + 1];
         }
     }
     return {};
 }
 
+static bool HasFlag(int argc, char** argv, const char* flag) {
+    for (int i = 1; i < argc; ++i) {
+        if (std::strcmp(argv[i], flag) == 0) return true;
+    }
+    return false;
+}
+
 int main(int argc, char** argv) {
     atlas::Logger::Info("AtlasTileEditor starting");
 
-    std::string projectPath = ParseProjectArg(argc, argv);
+    std::string projectPath = ParseStringArg(argc, argv, "--project");
     if (projectPath.empty()) {
         atlas::Logger::Warn("No --project specified, using current directory");
         projectPath = ".";
@@ -40,6 +47,9 @@ int main(int argc, char** argv) {
     // Initialise engine core (renderer, assets, UI)
     atlas::EngineConfig cfg;
     cfg.mode = atlas::EngineMode::Editor;
+    if (HasFlag(argc, argv, "--headless")) {
+        cfg.headless = true;
+    }
     atlas::Engine engine(cfg);
     engine.InitCore();
 
@@ -56,9 +66,15 @@ int main(int argc, char** argv) {
 
     atlas::Logger::Info("AtlasTileEditor ready — project: " + projectPath);
 
-    // Main loop would go here once the rendering backend is wired up.
-    // For now the module and panels are initialised and can be
-    // exercised through tests and headless mode.
+    // Initialise rendering and UI so the tile editor loop can display
+    // panels via the standard Engine infrastructure.
+    engine.InitRender();
+    engine.InitUI();
+    engine.InitECS();
+
+    // Run the main loop through the engine (handles window events,
+    // tick scheduling, rendering, and the diagnostics overlay).
+    engine.Run();
 
     tileEditor.OnUnregister();
     engine.Shutdown();

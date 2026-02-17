@@ -26,7 +26,7 @@
     "ci": {
         "goldenReplayGate": true,
         "contractBotEnabled": true,
-        "crossPlatformVerification": false
+        "crossPlatformVerification": true
     },
     "forbiddenAPIs": [
         "std::chrono (in simulation)",
