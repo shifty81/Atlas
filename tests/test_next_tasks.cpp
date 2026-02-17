@@ -598,8 +598,9 @@ void test_engine_replay_from_save_no_frames_after_save_point() {
 
     // Replay only contains frames before save tick.
     {
+        constexpr uint32_t replaySeed = 7;
         ReplayRecorder recorder;
-        recorder.StartRecording(60, 7);
+        recorder.StartRecording(60, replaySeed);
         for (uint32_t t = 1; t <= 5; ++t) {
             recorder.RecordFrame(t, {static_cast<uint8_t>(t)});
         }
