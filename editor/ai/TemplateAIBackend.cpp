@@ -192,7 +192,7 @@ std::string TemplateAIBackend::ExpandVariables(
 float TemplateAIBackend::ComputeMatchScore(
     const std::string& prompt,
     const std::string& pattern) const {
-    // Tokenise the pattern into words
+    // Tokenize the pattern into words
     std::vector<std::string> patternWords;
     {
         std::istringstream stream(pattern);

@@ -65,14 +65,15 @@ void test_vulkan_no_submit_empty_frame() {
 void test_vulkan_triple_buffering() {
     atlas::render::VulkanRenderer renderer;
 
-    // Submit 4 frames, should keep only last 3 (MAX_BUFFERED_FRAMES)
+    // Submit 4 frames; SubmittedBufferCount tracks total submissions,
+    // while the internal ring buffer keeps only the last MAX_BUFFERED_FRAMES
     for (uint32_t i = 0; i < 4; ++i) {
         renderer.BeginFrame();
         renderer.DrawRect({0, 0, 10, 10}, {255, 255, 255, 255});
         renderer.EndFrame();
     }
 
-    assert(renderer.SubmittedBufferCount() == 4);
+    assert(renderer.SubmittedBufferCount() == 4); // total submissions
     assert(renderer.FrameCount() == 4);
 
     // Last submitted buffer should be from frame 3

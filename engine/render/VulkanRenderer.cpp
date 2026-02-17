@@ -90,6 +90,9 @@ void VulkanRenderer::SubmitCommandBuffer() {
     buffer.submitted = true;
     buffer.submitTimestamp = m_submitCounter++;
 
+    uint64_t ts = buffer.submitTimestamp;
+    size_t cmdCount = buffer.commands.size();
+
     if (m_submittedBuffers.size() >= MAX_BUFFERED_FRAMES) {
         m_submittedBuffers.erase(m_submittedBuffers.begin());
     }
@@ -97,8 +100,8 @@ void VulkanRenderer::SubmitCommandBuffer() {
 
     Logger::Info("[VulkanRenderer] SubmitCommandBuffer — frame " +
                  std::to_string(m_frameCount) + ", " +
-                 std::to_string(m_drawCommands.size()) + " commands, timestamp " +
-                 std::to_string(buffer.submitTimestamp));
+                 std::to_string(cmdCount) + " commands, timestamp " +
+                 std::to_string(ts));
 }
 
 const VkGPUCommandBuffer& VulkanRenderer::LastSubmittedBuffer() const {
