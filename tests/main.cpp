@@ -1461,6 +1461,46 @@ void test_replay_version_all_versions();
 void test_replay_version_migration_execution();
 void test_replay_version_clear();
 
+// Mesh Viewer Panel tests
+void test_mesh_viewer_name();
+void test_mesh_viewer_no_mesh();
+void test_mesh_viewer_load_mesh();
+void test_mesh_viewer_bounds();
+void test_mesh_viewer_view_modes();
+void test_mesh_viewer_show_normals();
+void test_mesh_viewer_show_grid();
+void test_mesh_viewer_select_vertex();
+void test_mesh_viewer_summary();
+void test_mesh_viewer_clear();
+
+// Material Editor Panel tests
+void test_material_editor_name();
+void test_material_editor_no_material();
+void test_material_editor_load_material();
+void test_material_editor_add_parameter();
+void test_material_editor_remove_parameter();
+void test_material_editor_get_parameter();
+void test_material_editor_set_parameter();
+void test_material_editor_select_parameter();
+void test_material_editor_preview_mode();
+void test_material_editor_summary();
+void test_material_editor_clear();
+
+// Prefab Editor Panel tests
+void test_prefab_editor_name();
+void test_prefab_editor_empty();
+void test_prefab_editor_add_entity();
+void test_prefab_editor_remove_entity();
+void test_prefab_editor_parent_child();
+void test_prefab_editor_remove_parent_removes_children();
+void test_prefab_editor_remove_grandchildren();
+void test_prefab_editor_remove_clears_selected_child();
+void test_prefab_editor_add_component();
+void test_prefab_editor_remove_component();
+void test_prefab_editor_select_entity();
+void test_prefab_editor_summary();
+void test_prefab_editor_clear();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -3074,6 +3114,49 @@ int main() {
     test_replay_version_all_versions();
     test_replay_version_migration_execution();
     test_replay_version_clear();
+
+    // Mesh Viewer Panel
+    std::cout << "\n--- Mesh Viewer Panel ---" << std::endl;
+    test_mesh_viewer_name();
+    test_mesh_viewer_no_mesh();
+    test_mesh_viewer_load_mesh();
+    test_mesh_viewer_bounds();
+    test_mesh_viewer_view_modes();
+    test_mesh_viewer_show_normals();
+    test_mesh_viewer_show_grid();
+    test_mesh_viewer_select_vertex();
+    test_mesh_viewer_summary();
+    test_mesh_viewer_clear();
+
+    // Material Editor Panel
+    std::cout << "\n--- Material Editor Panel ---" << std::endl;
+    test_material_editor_name();
+    test_material_editor_no_material();
+    test_material_editor_load_material();
+    test_material_editor_add_parameter();
+    test_material_editor_remove_parameter();
+    test_material_editor_get_parameter();
+    test_material_editor_set_parameter();
+    test_material_editor_select_parameter();
+    test_material_editor_preview_mode();
+    test_material_editor_summary();
+    test_material_editor_clear();
+
+    // Prefab Editor Panel
+    std::cout << "\n--- Prefab Editor Panel ---" << std::endl;
+    test_prefab_editor_name();
+    test_prefab_editor_empty();
+    test_prefab_editor_add_entity();
+    test_prefab_editor_remove_entity();
+    test_prefab_editor_parent_child();
+    test_prefab_editor_remove_parent_removes_children();
+    test_prefab_editor_remove_grandchildren();
+    test_prefab_editor_remove_clears_selected_child();
+    test_prefab_editor_add_component();
+    test_prefab_editor_remove_component();
+    test_prefab_editor_select_entity();
+    test_prefab_editor_summary();
+    test_prefab_editor_clear();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

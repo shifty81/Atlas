@@ -39,6 +39,9 @@ terminal).
 | **State Hash Diff** | Hash comparison, component breakdown, divergence detail | ✅ Full |
 | **Save File Browser** | Directory scanning, file metadata, selection | ✅ Full |
 | **Proof Viewer** | TLA+ syntax highlighting, tokenizer | ✅ Full |
+| **Mesh Viewer** | Mesh loading, view modes, vertex selection, bounds | ✅ Full |
+| **Material Editor** | Material parameters, preview mode, dirty tracking | ✅ Full |
+| **Prefab Editor** | Entity hierarchy, components, drag-and-drop composition | ✅ Full |
 
 ### Infrastructure
 
@@ -110,7 +113,9 @@ The `editor/main.cpp` entry point:
 | Feature | Description | Blocking? |
 |---------|-------------|-----------|
 | **Play-In-Editor** | ✅ Implemented — Simulate, Pause, Step, Possess Entity, Client-Server Loopback, State Restore | Done |
-| **Material Graph Editor** | Visual material/shader authoring | No — can use text for now |
+| **Mesh Viewer** | ✅ Implemented — 3D preview with wireframe toggle, normals, vertex selection | Done |
+| **Material Editor** | ✅ Implemented — Shader parameter editing, preview mode, dirty tracking | Done |
+| **Prefab Editor** | ✅ Implemented — Entity hierarchy, component composition, parent-child relationships | Done |
 | **Quest/Story Editor** | Visual narrative authoring UI | No |
 | **Inventory Editor** | Item management UI | No |
 | **Permission Enforcement** | Attach protocol tiers not enforced | Medium |
@@ -158,3 +163,6 @@ All editor panel logic is covered by the existing test suite:
 - `test_game_mechanics_ui.cpp` — Elements, preview, export/import
 - `test_engine_input_routing.cpp` — UIEventRouter wiring, mouse tracking, overlay toggle
 - `test_next_tasks_phase3.cpp` — Launcher descriptor parsing, CertifiedBuild steps, DSL layout verification
+- `test_mesh_viewer.cpp` — Mesh loading, view modes, vertex selection, bounds
+- `test_material_editor.cpp` — Material parameters, preview mode, dirty tracking
+- `test_prefab_editor.cpp` — Entity hierarchy, components, parent-child relationships

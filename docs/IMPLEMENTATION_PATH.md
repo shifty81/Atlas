@@ -215,11 +215,16 @@ hardening to match implementation reality:
 - [x] Asset version migration system (schema v1 → v2 auto-upgrade)
 - [x] Asset dependency graph visualization in editor
 
-### 5.3 Asset Editor Panels ❌
+### 5.3 Asset Editor Panels ✅
 
-- [ ] Mesh viewer panel (3D preview with wireframe toggle)
-- [ ] Material editor panel (shader parameter editing)
-- [ ] Prefab editor panel (drag-and-drop entity composition)
+**Files:** `editor/panels/MeshViewerPanel.h`, `editor/panels/MaterialEditorPanel.h`,
+          `editor/panels/PrefabEditorPanel.h`
+**Tests:** `tests/test_mesh_viewer.cpp` (10 tests), `tests/test_material_editor.cpp` (11 tests),
+           `tests/test_prefab_editor.cpp` (11 tests)
+
+- [x] Mesh viewer panel (3D preview with wireframe toggle)
+- [x] Material editor panel (shader parameter editing)
+- [x] Prefab editor panel (drag-and-drop entity composition)
 
 ---
 
@@ -227,32 +232,32 @@ hardening to match implementation reality:
 
 These are planned for future phases and do not block engine lockdown.
 
-### 6.1 Flow Graph Runtime ❌
+### 6.1 Flow Graph Runtime ✅
 
-- [ ] Flow Graph IR file format and schema
-- [ ] Flow Graph VM (deterministic node execution)
-- [ ] Flow Graph debugger (breakpoints, value inspection)
-- [ ] Flow Graph → C++ codegen for release builds
+- [x] Flow Graph IR file format and schema
+- [x] Flow Graph VM (deterministic node execution)
+- [x] Flow Graph debugger (breakpoints, value inspection)
+- [x] Flow Graph → C++ codegen for release builds
 
-### 6.2 Procedural Modeling ❌
+### 6.2 Procedural Modeling ✅
 
-- [ ] Mesh graph primitives (cube, sphere, cylinder, plane)
-- [ ] Mesh operations (boolean, bevel, subdivide, extrude)
-- [ ] Material and shader graphs
-- [ ] LOD and mesh baking pipeline
+- [x] Mesh graph primitives (cube, sphere, cylinder, plane)
+- [x] Mesh operations (boolean, bevel, subdivide, extrude)
+- [x] Material and shader graphs
+- [x] LOD and mesh baking pipeline
 
-### 6.3 AtlasAI Assistant ❌
+### 6.3 AtlasAI Assistant ✅
 
-- [ ] Structured I/O with permission-gated intents
-- [ ] Context-aware editor suggestions
-- [ ] AI diff viewer (preview changes before applying)
-- [ ] Web aggregation knowledge base
+- [x] Structured I/O with permission-gated intents
+- [x] Context-aware editor suggestions
+- [x] AI diff viewer (preview changes before applying)
+- [x] Web aggregation knowledge base
 
-### 6.4 Template Repository System ❌
+### 6.4 Template Repository System ✅
 
-- [ ] `atlas init` CLI tool (namespace rewrite, core freeze)
-- [ ] Template contract (ATLAS_TEMPLATE_CONTRACT.md)
-- [ ] Determinism versioning strategy across forks
+- [x] `atlas init` CLI tool (namespace rewrite, core freeze)
+- [x] Template contract (ATLAS_TEMPLATE_CONTRACT.md)
+- [x] Determinism versioning strategy across forks
 
 ---
 
@@ -294,13 +299,13 @@ Phase E — Documentation
 Phase F — Assets
   ✅ Mesh/texture/audio importers
   ✅ Asset validation and migration
-  → Editor asset panels
+  ✅ Editor asset panels
 
 Phase G — Advanced (post-lockdown)
-  → Flow Graph runtime
-  → Procedural modeling
-  → AtlasAI assistant
-  → Template system
+  ✅ Flow Graph runtime
+  ✅ Procedural modeling
+  ✅ AtlasAI assistant
+  ✅ Template system
 ```
 
 ---

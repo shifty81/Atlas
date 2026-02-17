@@ -147,6 +147,9 @@ add_executable(AtlasTests
     test_asset_category_registry.cpp
     test_replay_versioning.cpp
     test_next_tasks_phase3.cpp
+    test_mesh_viewer.cpp
+    test_material_editor.cpp
+    test_prefab_editor.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
