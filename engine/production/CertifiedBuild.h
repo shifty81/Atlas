@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <functional>
 
 namespace atlas::production {
 
@@ -31,6 +32,13 @@ struct CertifiedBuildResult {
     std::string buildID;
 };
 
+/// A named verification step that produces a VerificationArtifact.
+struct VerificationStep {
+    std::string name;
+    std::string type;
+    std::function<VerificationArtifact()> execute;
+};
+
 class CertifiedBuildSystem {
 public:
     void SetLevel(CertificationLevel level);
@@ -47,9 +55,36 @@ public:
 
     void Clear();
 
+    // --- Verification step registration ---
+
+    /// Register a verification step that will be executed during RunAllSteps.
+    void RegisterStep(const VerificationStep& step);
+
+    /// Number of registered steps.
+    size_t StepCount() const;
+
+    /// Execute all registered steps, adding their artifacts.
+    /// Returns the overall build result.
+    CertifiedBuildResult RunAllSteps();
+
+    // --- Built-in verification utilities ---
+
+    /// Compute a hash of the given file contents and return an artifact.
+    static VerificationArtifact VerifyFileHash(const std::string& filePath,
+                                               uint64_t expectedHash);
+
+    /// Create a test-result artifact from pass/fail counts.
+    static VerificationArtifact VerifyTestResults(const std::string& name,
+                                                  int passed, int failed);
+
+    /// Create a contract-scan artifact from the scan result.
+    static VerificationArtifact VerifyContractScan(bool scanPassed,
+                                                   int violationCount);
+
 private:
     CertificationLevel m_level = CertificationLevel::None;
     std::vector<VerificationArtifact> m_artifacts;
+    std::vector<VerificationStep> m_steps;
 };
 
 } // namespace atlas::production

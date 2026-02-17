@@ -1277,6 +1277,16 @@ void test_cert_generate_report();
 void test_cert_export_json();
 void test_cert_clear();
 
+// Certified Build Verification Steps tests (Phase 3)
+void test_cert_register_step();
+void test_cert_run_all_steps();
+void test_cert_run_all_steps_with_failure();
+void test_cert_verify_file_hash();
+void test_cert_verify_file_hash_not_found();
+void test_cert_verify_test_results();
+void test_cert_verify_contract_scan();
+void test_cert_clear_clears_steps();
+
 // Font Bootstrap tests
 void test_font_bootstrap_initial_state();
 void test_font_bootstrap_init_missing_font();
@@ -1324,6 +1334,17 @@ void test_launcher_select_invalid();
 void test_launcher_confirm_no_selection();
 void test_launcher_request_new_project();
 void test_launcher_request_quit();
+
+// Launcher descriptor parsing tests (Phase 3)
+void test_launcher_parses_project_name_from_descriptor();
+void test_launcher_parses_last_opened();
+void test_launcher_fallback_on_minimal_descriptor();
+void test_launcher_project_description_field();
+
+// DSL Layout tests (Phase 3)
+void test_dsl_parses_default_editor_layout();
+void test_dsl_layout_has_panels();
+void test_dsl_layout_has_dock_and_split();
 
 // Tile Editor tests
 void test_tile_editor_name();
@@ -2851,6 +2872,17 @@ int main() {
     test_cert_export_json();
     test_cert_clear();
 
+    // Certified Build Verification Steps (Phase 3)
+    std::cout << "\n--- Certified Build Steps ---" << std::endl;
+    test_cert_register_step();
+    test_cert_run_all_steps();
+    test_cert_run_all_steps_with_failure();
+    test_cert_verify_file_hash();
+    test_cert_verify_file_hash_not_found();
+    test_cert_verify_test_results();
+    test_cert_verify_contract_scan();
+    test_cert_clear_clears_steps();
+
     // Font Bootstrap
     std::cout << "\n--- Font Bootstrap ---" << std::endl;
     test_font_bootstrap_initial_state();
@@ -2904,6 +2936,19 @@ int main() {
     test_launcher_confirm_no_selection();
     test_launcher_request_new_project();
     test_launcher_request_quit();
+
+    // Launcher Descriptor Parsing (Phase 3)
+    std::cout << "\n--- Launcher Descriptor Parsing ---" << std::endl;
+    test_launcher_parses_project_name_from_descriptor();
+    test_launcher_parses_last_opened();
+    test_launcher_fallback_on_minimal_descriptor();
+    test_launcher_project_description_field();
+
+    // DSL Layout (Phase 3)
+    std::cout << "\n--- DSL Layout ---" << std::endl;
+    test_dsl_parses_default_editor_layout();
+    test_dsl_layout_has_panels();
+    test_dsl_layout_has_dock_and_split();
 
     // Tile Editor
     std::cout << "\n--- Tile Editor ---" << std::endl;

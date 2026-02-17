@@ -11,6 +11,7 @@ struct ProjectEntry {
     std::string path;
     std::string engineVersion;
     std::string lastOpened;
+    std::string description;
 };
 
 /// Launcher / project-browser screen displayed when the editor opens

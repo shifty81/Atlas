@@ -83,8 +83,8 @@ The `editor/main.cpp` entry point:
 - ✅ Input events routed from platform window to UIEventRouter
 - ✅ Diagnostics overlay toggled via Ctrl+` (backtick) key
 - ✅ Mouse position tracked for overlay and UI hit-testing
-- 🔧 `BuildEditorUI()` creates a hard-coded 1280×720 pixel layout
-- 📋 Should dynamically build UI from DSL or saved layout
+- ✅ `BuildEditorUI()` parses DefaultEditorDSL and builds widget tree from parsed nodes
+- 🔧 Falls back to hard-coded layout only when DSL parsing fails
 
 ### AI Assistant
 
@@ -125,15 +125,15 @@ The `editor/main.cpp` entry point:
 
 1. Integrate a UI rendering backend (Dear ImGui recommended)
 2. Wire `Draw()` methods to render their maintained state
-3. Replace hard-coded layout with DSL-driven or saved layout
+3. ✅ Replace hard-coded layout with DSL-driven or saved layout
 4. Verify all 14+ panels render correctly
 
 ### Phase B — Core Workflows (Weeks)
 
-1. Implement Play-In-Editor (simulate mode)
+1. ✅ Implement Play-In-Editor (simulate mode)
 2. Wire Game Packager to AssetCooker + BuildProfile
 3. Connect AI assistant to a local LLM or API endpoint
-4. Add layout save/restore
+4. ✅ Add layout save/restore
 
 ### Phase C — Polish (Months)
 
@@ -157,3 +157,4 @@ All editor panel logic is covered by the existing test suite:
 - `test_ci_dashboard.cpp` — Pipeline runs, checks, history
 - `test_game_mechanics_ui.cpp` — Elements, preview, export/import
 - `test_engine_input_routing.cpp` — UIEventRouter wiring, mouse tracking, overlay toggle
+- `test_next_tasks_phase3.cpp` — Launcher descriptor parsing, CertifiedBuild steps, DSL layout verification

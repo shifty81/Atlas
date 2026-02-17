@@ -1,8 +1,55 @@
 #include "LauncherScreen.h"
 #include "../../engine/core/Logger.h"
 #include <filesystem>
+#include <fstream>
+#include <sstream>
 
 namespace atlas::editor {
+
+// --- Minimal JSON field extraction (no external dependency) ---
+
+static std::string ExtractJSONString(const std::string& json,
+                                     const std::string& key) {
+    std::string needle = "\"" + key + "\"";
+    auto pos = json.find(needle);
+    if (pos == std::string::npos) return {};
+
+    pos = json.find(':', pos + needle.size());
+    if (pos == std::string::npos) return {};
+
+    pos = json.find('"', pos + 1);
+    if (pos == std::string::npos) return {};
+
+    ++pos; // skip opening quote
+    auto end = json.find('"', pos);
+    if (end == std::string::npos) return {};
+
+    return json.substr(pos, end - pos);
+}
+
+static bool ParseProjectDescriptor(const std::string& filePath,
+                                   ProjectEntry& entry) {
+    std::ifstream in(filePath);
+    if (!in.is_open()) return false;
+
+    std::ostringstream ss;
+    ss << in.rdbuf();
+    std::string json = ss.str();
+
+    std::string name = ExtractJSONString(json, "name");
+    if (!name.empty()) entry.name = name;
+
+    std::string version = ExtractJSONString(json, "version");
+    if (!version.empty()) entry.engineVersion = version;
+
+    std::string lastOpened = ExtractJSONString(json, "lastOpened");
+    if (!lastOpened.empty()) entry.lastOpened = lastOpened;
+
+    std::string description = ExtractJSONString(json, "description");
+    if (!description.empty()) entry.description = description;
+
+    return true;
+}
 
 void LauncherScreen::ScanProjects(const std::string& projectsDir) {
     m_projects.clear();
@@ -17,22 +64,23 @@ void LauncherScreen::ScanProjects(const std::string& projectsDir) {
     for (const auto& entry : std::filesystem::directory_iterator(projectsDir)) {
         if (!entry.is_directory()) continue;
 
-        bool hasProjectDescriptor = false;
+        std::string descriptorPath;
         for (const auto& file : std::filesystem::directory_iterator(entry.path())) {
             if (file.is_regular_file() && file.path().extension() == ".atlas") {
-                hasProjectDescriptor = true;
+                descriptorPath = file.path().string();
                 break;
             }
         }
-        if (!hasProjectDescriptor) continue;
+        if (descriptorPath.empty()) continue;
 
         ProjectEntry pe;
         pe.name = entry.path().filename().string();
         pe.path = entry.path().string();
-        // engineVersion and lastOpened would be read from the
-        // .atlas JSON file when the schema parser is wired up.
         pe.engineVersion = "0.1.0";
         pe.lastOpened = "";
+
+        ParseProjectDescriptor(descriptorPath, pe);
+
         m_projects.push_back(std::move(pe));
     }
 

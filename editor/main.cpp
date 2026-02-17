@@ -1,5 +1,6 @@
 #include "core/Engine.h"
 #include "core/EnginePhase.h"
+#include "core/Logger.h"
 #include "ui/UIScreenGraph.h"
 #include "ui/GUIDSLParser.h"
 #include "ui/DefaultEditorLayout.h"
@@ -21,20 +22,90 @@ static const char* kMainPanels[] = {
     "DeterminismStatus",
 };
 
+/// Recursively build widgets from a parsed DSL node tree.
+static void ApplyDSLNode(atlas::ui::UIScreen& screen,
+                         const atlas::ui::DSLNode& node,
+                         uint32_t parentWidget,
+                         int x, int y, int w, int h) {
+    switch (node.type) {
+    case atlas::ui::DSLNodeType::Panel: {
+        screen.AddWidget(atlas::ui::UIWidgetType::Panel, node.name, x, y, w, h);
+        break;
+    }
+    case atlas::ui::DSLNodeType::Split: {
+        if (node.children.size() < 2) break;
+        float ratio = node.ratio;
+        if (node.splitDir == atlas::ui::DSLSplitDir::Horizontal) {
+            int leftW = static_cast<int>(w * ratio);
+            int rightW = w - leftW;
+            ApplyDSLNode(screen, *node.children[0], parentWidget, x, y, leftW, h);
+            ApplyDSLNode(screen, *node.children[1], parentWidget, x + leftW, y, rightW, h);
+        } else {
+            int topH = static_cast<int>(h * ratio);
+            int botH = h - topH;
+            ApplyDSLNode(screen, *node.children[0], parentWidget, x, y, w, topH);
+            ApplyDSLNode(screen, *node.children[1], parentWidget, x, y + topH, w, botH);
+        }
+        break;
+    }
+    case atlas::ui::DSLNodeType::Dock: {
+        float ratio = node.ratio;
+        int dockX = x, dockY = y, dockW = w, dockH = h;
+        switch (node.dockTarget) {
+        case atlas::ui::DSLDockTarget::Right:
+            dockW = static_cast<int>(w * ratio);
+            dockX = x + w - dockW;
+            break;
+        case atlas::ui::DSLDockTarget::Left:
+            dockW = static_cast<int>(w * ratio);
+            break;
+        case atlas::ui::DSLDockTarget::Bottom:
+            dockH = static_cast<int>(h * ratio);
+            dockY = y + h - dockH;
+            break;
+        case atlas::ui::DSLDockTarget::Top:
+            dockH = static_cast<int>(h * ratio);
+            break;
+        default: break;
+        }
+        for (auto& child : node.children)
+            ApplyDSLNode(screen, *child, parentWidget, dockX, dockY, dockW, dockH);
+        break;
+    }
+    case atlas::ui::DSLNodeType::Tabs: {
+        for (auto& child : node.children)
+            ApplyDSLNode(screen, *child, parentWidget, x, y, w, h);
+        break;
+    }
+    case atlas::ui::DSLNodeType::Layout: {
+        for (auto& child : node.children)
+            ApplyDSLNode(screen, *child, parentWidget, x, y, w, h);
+        break;
+    }
+    }
+}
+
 static void BuildEditorUI(atlas::ui::UIScreen& screen) {
     // Self-hosting: parse the default editor DSL to build the initial
     // widget tree.  If DSL parsing fails, fall back to a hard-coded layout.
     atlas::ui::GUIDSLParser parser;
     auto result = parser.Parse(atlas::editor::DefaultEditorDSL());
 
-    if (!result.success) {
-        std::cerr << "DSL parse error: " << result.errorMessage << std::endl;
-    }
-
     // Apply editor theme colors to the hard-coded fallback widgets.
     atlas::editor::EditorTheme theme = atlas::editor::EditorTheme::Dark();
     (void)theme; // Theme values are used by the renderer; stored for future use.
 
+    if (result.success && result.root) {
+        // parentWidget=0 is the root; x,y=0,0 is the top-left; 1280x720 is default viewport
+        ApplyDSLNode(screen, *result.root, 0, 0, 0, 1280, 720);
+        return;
+    }
+
+    if (!result.success) {
+        std::cerr << "DSL parse error: " << result.errorMessage << std::endl;
+    }
+
+    // Fallback: hard-coded layout
     // Menu bar
     uint32_t menuBar = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "MenuBar",
                                          0, 0, 1280, 28);
@@ -126,6 +197,21 @@ int main() {
     // --- Launcher screen: scan for projects ---
     atlas::editor::LauncherScreen launcher;
     launcher.ScanProjects("projects");
+
+    if (launcher.IsQuitRequested()) {
+        fontBootstrap.Shutdown();
+        return 0;
+    }
+
+    // Auto-select first project if one was found
+    if (!launcher.Projects().empty() && !launcher.IsProjectChosen()) {
+        launcher.SelectProject(0);
+        launcher.ConfirmSelection();
+        if (auto* proj = launcher.SelectedProject()) {
+            atlas::Logger::Info("Launcher: opening project '" + proj->name
+                                + "' (" + proj->path + ")");
+        }
+    }
 
     BuildEditorUI(engine.GetUIManager().GetScreen());
 
