@@ -41,7 +41,7 @@ template<>
 struct std::hash<atlas::editor::GridCoord> {
     size_t operator()(const atlas::editor::GridCoord& c) const noexcept {
         return std::hash<int64_t>{}(
-            (static_cast<int64_t>(c.x) << 32) | static_cast<int64_t>(c.y & 0xFFFFFFFF));
+            (static_cast<int64_t>(c.x) << 32) | static_cast<int64_t>(static_cast<uint32_t>(c.y)));
     }
 };
 
