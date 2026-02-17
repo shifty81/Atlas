@@ -77,7 +77,7 @@ This document tracks the remaining implementation tasks to complete the vision o
 **Status**: Basic determinism gate exists, needs tooling
 
 **Remaining work**:
-- [ ] Implement replay minimizer
+- [x] Implement replay minimizer
   - Automatically reduce failing replays to minimal reproduction
   - Binary search through replay frames
   - Output minimal .atlasreplay file
@@ -98,10 +98,10 @@ This document tracks the remaining implementation tasks to complete the vision o
 ### 📋 Planned (Lower Priority)
 
 #### 4. CORE/ Namespace Enforcement
-**Status**: Directory structure exists, CMake enforcement missing
+**Status**: Directory structure exists, CMake enforcement implemented
 
 **Remaining work**:
-- [ ] Add CMake target dependency validation
+- [x] Add CMake target dependency validation
   - Enforce that `core/` never depends on other modules
   - Enforce that `simulation/` only depends on `core/`
   - Enforce that `editor/` never links `simulation` directly

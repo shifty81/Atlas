@@ -51,7 +51,7 @@ import sys
 import pathlib
 
 # Add tools directory to path
-sys.path.insert(0, r'{tools_dir}')
+sys.path.insert(0, '{tools_dir}')
 import replay_minimizer
 
 replay_path = pathlib.Path(sys.argv[1])

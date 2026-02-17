@@ -197,7 +197,7 @@ def minimize_replay(
         
         # Binary search bounds: looking for smallest N where replay[0:N] fails
         left = 1
-        right = total_frames + 1  # +1 to include total_frames in search
+        right = total_frames  # Full replay already verified to fail
         
         iteration = 0
         while left < right:
