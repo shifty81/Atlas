@@ -85,6 +85,8 @@ add_library(AtlasEngine STATIC
     ai/FactionRouter.cpp
     ai/AtlasAICore.cpp
     ai/WebAggregationKB.cpp
+    ai/ProjectContext.cpp
+    ai/AIAssetDecisionFramework.cpp
     asset_graph/AssetGraphExecutor.cpp
     audio/AudioEngine.cpp
     camera/Camera.cpp

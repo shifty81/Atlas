@@ -137,6 +137,7 @@ add_executable(AtlasTests
     test_launcher_screen.cpp
     test_tile_editor.cpp
     test_text_renderer.cpp
+    test_ai_decision_framework.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
