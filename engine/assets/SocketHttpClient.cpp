@@ -12,6 +12,7 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <cerrno>
+#include <sys/time.h>
 #endif
 
 namespace atlas::asset {
@@ -145,6 +146,17 @@ HttpResponse SocketHttpClient::DoGet(
         resp.errorMessage = "Failed to create socket";
         return resp;
     }
+
+    // Set connect and read timeouts
+    struct timeval tv;
+    tv.tv_sec = static_cast<long>(m_config.connectTimeoutMs / 1000);
+    tv.tv_usec = static_cast<long>((m_config.connectTimeoutMs % 1000) * 1000);
+    setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
+
+    struct timeval rtv;
+    rtv.tv_sec = static_cast<long>(m_config.readTimeoutMs / 1000);
+    rtv.tv_usec = static_cast<long>((m_config.readTimeoutMs % 1000) * 1000);
+    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &rtv, sizeof(rtv));
 
     struct hostent* server = gethostbyname(host.c_str());
     if (!server) {

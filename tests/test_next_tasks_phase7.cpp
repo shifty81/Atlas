@@ -277,11 +277,14 @@ void test_socket_http_config_defaults() {
 }
 
 void test_socket_http_request_count() {
-    atlas::asset::SocketHttpClient client;
+    atlas::asset::SocketHttpConfig cfg;
+    cfg.connectTimeoutMs = 100;   // very short timeout for test
+    cfg.readTimeoutMs = 100;
+    atlas::asset::SocketHttpClient client(cfg);
     assert(client.TotalRequestCount() == 0);
 
     // GET to invalid host — will fail but should still increment count
-    auto resp = client.Get("http://192.0.2.1:1/test");
+    auto resp = client.Get("http://127.0.0.1:1/test");
     assert(client.TotalRequestCount() == 1);
 
     // Invalid URL should not increment (ParseURL fails before increment)

@@ -12,11 +12,14 @@
 
 Atlas is a deterministic, data-driven game engine built in C++20. The
 project is **approximately 93–97% complete** across its core systems.
-All 1401 tests pass. The engine compiles and runs on Linux with
-OpenGL and Vulkan rendering backends. The Vulkan renderer now records
-and submits draw commands through a GPU command buffer pipeline. The
+All 1430 tests pass. The engine compiles and runs on Linux with
+OpenGL and Vulkan rendering backends. The Vulkan renderer records
+and submits draw commands through a GPU command buffer pipeline with
+render pass, pipeline state, and GPU resource management. The
 AI assistant has an offline template backend. The marketplace system
-has an HTTP client interface for remote API downloads.
+has both a null and a socket-based HTTP client for remote API
+downloads. The editor attach protocol enforces permission tiers.
+Server rules support config-driven hot-reload with change tracking.
 
 ---
 
@@ -146,7 +149,7 @@ has an HTTP client interface for remote API downloads.
 - [x] Contributor rules (`ATLAS_CONTRIBUTOR_RULES.md`)
 
 ### Testing (`tests/`)
-- [x] 1401 tests across 130+ test files — all passing
+- [x] 1430 tests across 130+ test files — all passing
 - [x] Covers ECS, networking, replay, assets, UI, editor panels, graphs, etc.
 
 ---
@@ -194,7 +197,7 @@ commands via `UIDrawList`.
 - [x] Local file import and hash verification
 - [x] HTTP client interface (`IHttpClient`, `NullHttpClient`)
 - [x] API download paths for itch.io, Unreal, Unity (via pluggable HTTP client)
-- [ ] Production HTTP backend (libcurl or platform-native)
+- [x] Socket-based HTTP client (`SocketHttpClient` with POSIX sockets, URL parsing, timeouts)
 
 ### AI Assistant (`editor/ai/`)
 - [x] AtlasAICore — intent registry, permissions, request routing
@@ -210,6 +213,9 @@ commands via `UIDrawList`.
 - [x] Draw command recording (deferred command buffer with rect, text, icon, border, image)
 - [x] Frame lifecycle management (begin/end frame, command clear, frame counting)
 - [x] GPU command buffer submission pipeline (triple-buffered, auto-submit on EndFrame)
+- [x] Render pass management (create, begin/end, multiple passes)
+- [x] Pipeline state management (create, bind, shader descriptors)
+- [x] GPU resource management (vertex/index/uniform buffers, map/unmap, destroy)
 - [ ] Full hardware Vulkan device integration (requires Vulkan SDK)
 
 ### Font System (`engine/ui/FontBootstrap.cpp`)
@@ -224,12 +230,9 @@ commands via `UIDrawList`.
 | Feature | Description | Priority |
 |---------|-------------|----------|
 | LLM Backend Integration | Wire AI assistant to external LLM service | Low |
-| Production HTTP Backend | libcurl or platform-native HTTP for marketplace downloads | Low |
 | Real Font Bundling | Ship Inter-Regular.ttf with builds | Low |
 | macOS Platform Window | Only Linux (X11) and Windows supported | Low |
 | Vulkan Hardware Device | Connect command buffer pipeline to Vulkan SDK | Medium |
-| Editor Permission Enforcement | Attach protocol tier enforcement | Low |
-| Live Edit Rules | Config hot-reload gating | Low |
 
 ---
 
@@ -247,13 +250,13 @@ Assets             ✅ 100%   Registry, import, cook, validate, hot-reload
 World Generation   ✅ 100%   Terrain, voxel, galaxy, streaming
 AI Systems         ✅ 100%   Behavior, memory, faction, strategy
 UI Framework       ✅ 100%   DrawList, SceneGraph, Layout, Events, DSL
-Rendering          ✅  95%   OpenGL working; Vulkan command buffer pipeline active (hardware device pending)
+Rendering          ✅  97%   OpenGL working; Vulkan render pipeline (passes, states, resources) active (hardware device pending)
 Editor Logic       ✅ 100%   All panels have full business logic
 Editor Rendering   ✅ 100%   All panels produce draw commands via UIDrawList
 Production         ✅ 100%   Full packager pipeline
 CI/Enforcement     ✅ 100%   Determinism gate, contract bot
 Documentation      ✅  95%   43 docs; minor updates needed
-Testing            ✅ 100%   1374 tests, all passing
+Testing            ✅ 100%   1430 tests, all passing
 ```
 
 ---
@@ -266,7 +269,7 @@ Testing            ✅ 100%   1374 tests, all passing
 | AtlasServer | ✅ | ✅ | Headless, no graphics deps |
 | AtlasClient | ✅ | ✅ | Player runtime |
 | AtlasRuntime | ✅ | ✅ | Unified CLI runtime |
-| AtlasTests | ✅ | ✅ | 1374 tests passing |
+| AtlasTests | ✅ | ✅ | 1430 tests passing |
 | TileEditor | ✅ | ✅ | Standalone tile tool |
 
 ---
@@ -287,16 +290,15 @@ Testing            ✅ 100%   1374 tests, all passing
 | Production | ~20 | ✅ All pass |
 | World Gen | ~30 | ✅ All pass |
 | Tile Editor | ~40 | ✅ All pass |
-| **Total** | **1401** | **✅ All pass** |
+| **Total** | **1430** | **✅ All pass** |
 
 ---
 
 ## Recommended Next Steps (Priority Order)
 
-1. **Connect Vulkan hardware device** — Wire command buffer pipeline to real VkDevice/VkCommandBuffer
+1. **Connect Vulkan hardware device** — Wire render pass and pipeline state objects to real VkDevice/VkCommandBuffer
 2. **Ship real font** — Bundle Inter-Regular.ttf in builds
-3. **Add production HTTP backend** — Implement IHttpClient with libcurl
-4. **Integrate external LLM** — Wire AI assistant to OpenAI/local LLM via AIBackend
+3. **Integrate external LLM** — Wire AI assistant to OpenAI/local LLM via AIBackend
 
 ---
 
@@ -308,6 +310,8 @@ build systems are all production-ready. The Vulkan renderer records
 draw commands and submits them through a triple-buffered GPU command
 buffer pipeline, ready for hardware device integration. The AI
 assistant has an offline template backend and the marketplace system
-has an HTTP client interface for remote downloads. All 1401 tests
-pass. The primary remaining work is Vulkan hardware device integration
-and shipping font/HTTP production backends.
+has both null and socket-based HTTP clients for remote downloads.
+The editor enforces permission tiers and server rules support
+hot-reload. All 1430 tests pass. The primary remaining work is
+Vulkan hardware device integration (real VkDevice/VkCommandBuffer)
+and shipping production font backends.
