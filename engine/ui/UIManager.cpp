@@ -17,8 +17,13 @@ void UIManager::Init(GUIContext context) {
 }
 
 void UIManager::Shutdown() {
+    m_fontBootstrap.Shutdown();
+    m_eventRouter.Clear();
     m_commandBus.Clear();
     m_renderer = nullptr;
+    m_viewportWidth = 0.0f;
+    m_viewportHeight = 0.0f;
+    m_dpiScale = 1.0f;
     m_initialized = false;
 }
 
@@ -150,6 +155,52 @@ UICommandBus& UIManager::GetCommandBus() {
 
 bool UIManager::IsInitialized() const {
     return m_initialized;
+}
+
+void UIManager::SetViewportSize(float width, float height) {
+    m_viewportWidth = width;
+    m_viewportHeight = height;
+}
+
+float UIManager::GetViewportWidth() const {
+    return m_viewportWidth;
+}
+
+float UIManager::GetViewportHeight() const {
+    return m_viewportHeight;
+}
+
+void UIManager::SetDPIScale(float scale) {
+    m_dpiScale = scale;
+}
+
+float UIManager::GetDPIScale() const {
+    return m_dpiScale;
+}
+
+UIEventRouter& UIManager::GetEventRouter() {
+    return m_eventRouter;
+}
+
+const UIEventRouter& UIManager::GetEventRouter() const {
+    return m_eventRouter;
+}
+
+bool UIManager::DispatchEvent(const UIEvent& event) {
+    if (!m_initialized) return false;
+    return m_eventRouter.Dispatch(event);
+}
+
+FontBootstrap& UIManager::GetFontBootstrap() {
+    return m_fontBootstrap;
+}
+
+const FontBootstrap& UIManager::GetFontBootstrap() const {
+    return m_fontBootstrap;
+}
+
+bool UIManager::IsFontReady() const {
+    return m_fontBootstrap.IsReady();
 }
 
 } // namespace atlas::ui
