@@ -67,8 +67,9 @@ public:
     virtual bool       HandleEvent(const UIEvent& event);
 
 private:
+    static uint32_t NextGlobalId();
+
     std::vector<std::unique_ptr<UISceneNode>> m_children;
-    uint32_t m_nextChildId = 1;
 };
 
 /// Root of the scene graph — thin wrapper that owns the top-level node.
