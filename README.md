@@ -261,7 +261,7 @@ Atlas is a modular, data-driven game engine and simulation platform built in C++
 | Area | Status |
 |------|--------|
 | **Panel count** | 14+ panels with functional logic (Console, ECS Inspector, Graph Editor, World Graph, Net Inspector, Profiler, etc.) |
-| **Rendering layer** | Deferred — `Draw()` methods are currently no-ops awaiting a UI backend (ImGui or custom) |
+| **Rendering layer** | Deferred — `Draw()` methods are currently no-ops awaiting full integration with the Atlas custom UI rendering backend |
 | **Docking infrastructure** | ✅ Layout serialization, split/tab docking framework exists |
 | **AI assistant** | ✅ Framework present (explain, suggest, generate) — no LLM backend wired yet |
 | **GUI DSL** | ✅ Custom DSL and layout solver implemented |

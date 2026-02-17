@@ -96,3 +96,19 @@ static_assert(sizeof(double) == 8, "Double size mismatch — determinism at risk
     #error "<random> included in simulation code — violates Atlas Core Contract"
   #endif
 #endif
+
+// ---- Banned Third-Party UI Libraries ----
+//
+// Atlas uses a fully custom UI stack. Third-party UI libraries are
+// permanently banned from all code (engine, editor, client, server).
+// See: docs/ATLAS_CORE_CONTRACT.md §6
+//
+// This guard fires in ALL translation units, not just simulation code.
+
+#if defined(IMGUI_VERSION) || defined(IMGUI_API)
+  #error "ImGui detected — ImGui is permanently banned. Use Atlas custom UI (UISceneGraph, WidgetDSL, UILayoutSolver). See docs/ATLAS_CORE_CONTRACT.md"
+#endif
+
+#if defined(NK_NUKLEAR_H_)
+  #error "Nuklear detected — third-party UI libraries are permanently banned. Use Atlas custom UI. See docs/ATLAS_CORE_CONTRACT.md"
+#endif

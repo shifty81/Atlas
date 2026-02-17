@@ -82,13 +82,34 @@ Only Simulation Time may influence logic.
 
 ---
 
-## 6. Enforcement
+## 6. Forbidden Third-Party UI Libraries
+
+Atlas uses a **custom-built UI system**. Third-party immediate-mode or
+retained-mode UI libraries are permanently banned from the entire codebase.
+
+| Banned Library | Reason |
+|----------------|--------|
+| Dear ImGui | Violates determinism, self-hosting, and architectural ownership |
+| Nuklear | Same category — external UI dependency |
+| Any third-party UI framework | Atlas owns its rendering, layout, and event pipeline end-to-end |
+
+The custom UI stack (`UILayoutSolver`, `GUIDSLParser`, `UISceneGraph`,
+`WidgetDSL`, `FontBootstrap`, `TextRenderer`, `UIEventRouter`) is the
+only permitted UI implementation. This is enforced at compile time, by
+the contract scanner, and in CI.
+
+**No exceptions. No "just for prototyping." No feature flags.**
+
+---
+
+## 7. Enforcement
 
 This contract is enforced via:
 
-- Compile-time bans (forbidden includes, macro guards)
+- Compile-time bans (forbidden includes, macro guards, ImGui include guard)
 - Runtime assertions (tick boundary checks, mutation guards)
 - CI determinism checks (golden replay comparison)
+- CI contract scanner (forbidden API and library detection)
 - Replay hash validation (cross-machine)
 
 No exceptions. No feature flags.

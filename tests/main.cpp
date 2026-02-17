@@ -963,6 +963,10 @@ void test_component_category_runtime_query();
 // Include Firewall tests
 void test_include_firewall_sim_no_render();
 void test_include_firewall_contract_no_render();
+void test_no_imgui_in_engine();
+void test_no_imgui_in_editor();
+void test_no_imgui_in_client();
+void test_no_imgui_in_server();
 
 // FP Drift Detector tests
 void test_fp_drift_no_drift();
@@ -2687,6 +2691,13 @@ int main() {
     std::cout << "\n--- Include Firewall ---" << std::endl;
     test_include_firewall_sim_no_render();
     test_include_firewall_contract_no_render();
+
+    // ImGui Ban (ATLAS_CORE_CONTRACT.md §6)
+    std::cout << "\n--- ImGui Ban Enforcement ---" << std::endl;
+    test_no_imgui_in_engine();
+    test_no_imgui_in_editor();
+    test_no_imgui_in_client();
+    test_no_imgui_in_server();
 
     // FP Drift Detector
     std::cout << "\n--- FP Drift Detector ---" << std::endl;

@@ -14,8 +14,8 @@ graph editing, and AI-assisted workflows.
 
 **Current state:** The editor's **logic layer is solid** — 14+ panels have
 real, functional implementations. The **rendering layer is deferred** — all
-`Draw()` methods are no-ops awaiting a UI backend (ImGui, custom, or
-terminal).
+`Draw()` methods are no-ops awaiting full integration with the Atlas custom
+UI rendering backend.
 
 ---
 
@@ -72,10 +72,10 @@ void SomePanel::Draw() {
 nothing appears on screen. The engine needs a concrete UI rendering backend.
 
 **Options for rendering backend:**
-1. **Dear ImGui** — Most common for C++ game engine editors. Low integration cost.
-2. **Custom Atlas renderer** — Uses the existing `UIGraph` and `UILayoutSolver`.
-   More work, but self-hosting the editor in Atlas's own GUI system is a project goal.
-3. **Terminal UI (TUI)** — For headless/server environments. The `HeadlessGUI`
+1. **Custom Atlas renderer** — Uses the existing `UIGraph`, `UILayoutSolver`,
+   `UISceneGraph`, `WidgetDSL`, and `FontBootstrap`. This is the only permitted
+   approach — Atlas owns its UI stack end-to-end. See `ATLAS_CORE_CONTRACT.md` §6.
+2. **Terminal UI (TUI)** — For headless/server environments. The `HeadlessGUI`
    class already exists as a foundation.
 
 ### Editor Main Loop
@@ -128,7 +128,7 @@ The `editor/main.cpp` entry point:
 
 ### Phase A — Minimum Viable Editor (Weeks)
 
-1. Integrate a UI rendering backend (Dear ImGui recommended)
+1. Wire the Atlas custom UI rendering backend (`UISceneGraph`, `UILayoutSolver`, `WidgetDSL`)
 2. Wire `Draw()` methods to render their maintained state
 3. ✅ Replace hard-coded layout with DSL-driven or saved layout
 4. Verify all 14+ panels render correctly

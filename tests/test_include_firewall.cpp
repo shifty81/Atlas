@@ -92,3 +92,131 @@ void test_include_firewall_contract_no_render() {
 
     std::cout << "[PASS] test_include_firewall_contract_no_render" << std::endl;
 }
+
+// ============================================================
+// ImGui Ban: No source file anywhere may include imgui headers
+// or use ImGui API calls.  See ATLAS_CORE_CONTRACT.md §6.
+// ============================================================
+
+static bool fileContainsBannedUILibrary(const std::string& path) {
+    std::ifstream file(path);
+    if (!file.is_open()) return false;
+
+    std::string line;
+    while (std::getline(file, line)) {
+        // Skip comment-only lines
+        auto trimStart = line.find_first_not_of(" \t");
+        if (trimStart != std::string::npos && line.substr(trimStart, 2) == "//")
+            continue;
+
+        // Check for imgui includes
+        if (line.find("#include") != std::string::npos) {
+            if (line.find("imgui.h") != std::string::npos ||
+                line.find("imgui_impl_") != std::string::npos) {
+                return true;
+            }
+        }
+
+        // Check for ImGui API usage (not in comments or string literals)
+        if (line.find("ImGui::") != std::string::npos) {
+            auto commentPos = line.find("//");
+            auto apiPos = line.find("ImGui::");
+            if (commentPos == std::string::npos || apiPos < commentPos) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void test_no_imgui_in_engine() {
+    std::string engineDir = "engine";
+    if (!fs::exists(engineDir)) engineDir = "../engine";
+    if (!fs::exists(engineDir)) {
+        std::cout << "[PASS] test_no_imgui_in_engine (skipped - dir not found)" << std::endl;
+        return;
+    }
+
+    for (const auto& entry : fs::recursive_directory_iterator(engineDir)) {
+        if (!entry.is_regular_file()) continue;
+        std::string ext = entry.path().extension().string();
+        if (ext != ".h" && ext != ".cpp") continue;
+
+        bool violation = fileContainsBannedUILibrary(entry.path().string());
+        if (violation) {
+            std::cerr << "IMGUI BAN VIOLATION: " << entry.path() << std::endl;
+        }
+        assert(!violation);
+    }
+
+    std::cout << "[PASS] test_no_imgui_in_engine" << std::endl;
+}
+
+void test_no_imgui_in_editor() {
+    std::string editorDir = "editor";
+    if (!fs::exists(editorDir)) editorDir = "../editor";
+    if (!fs::exists(editorDir)) {
+        std::cout << "[PASS] test_no_imgui_in_editor (skipped - dir not found)" << std::endl;
+        return;
+    }
+
+    for (const auto& entry : fs::recursive_directory_iterator(editorDir)) {
+        if (!entry.is_regular_file()) continue;
+        std::string ext = entry.path().extension().string();
+        if (ext != ".h" && ext != ".cpp") continue;
+
+        bool violation = fileContainsBannedUILibrary(entry.path().string());
+        if (violation) {
+            std::cerr << "IMGUI BAN VIOLATION: " << entry.path() << std::endl;
+        }
+        assert(!violation);
+    }
+
+    std::cout << "[PASS] test_no_imgui_in_editor" << std::endl;
+}
+
+void test_no_imgui_in_client() {
+    std::string clientDir = "client";
+    if (!fs::exists(clientDir)) clientDir = "../client";
+    if (!fs::exists(clientDir)) {
+        std::cout << "[PASS] test_no_imgui_in_client (skipped - dir not found)" << std::endl;
+        return;
+    }
+
+    for (const auto& entry : fs::recursive_directory_iterator(clientDir)) {
+        if (!entry.is_regular_file()) continue;
+        std::string ext = entry.path().extension().string();
+        if (ext != ".h" && ext != ".cpp") continue;
+
+        bool violation = fileContainsBannedUILibrary(entry.path().string());
+        if (violation) {
+            std::cerr << "IMGUI BAN VIOLATION: " << entry.path() << std::endl;
+        }
+        assert(!violation);
+    }
+
+    std::cout << "[PASS] test_no_imgui_in_client" << std::endl;
+}
+
+void test_no_imgui_in_server() {
+    std::string serverDir = "server";
+    if (!fs::exists(serverDir)) serverDir = "../server";
+    if (!fs::exists(serverDir)) {
+        std::cout << "[PASS] test_no_imgui_in_server (skipped - dir not found)" << std::endl;
+        return;
+    }
+
+    for (const auto& entry : fs::recursive_directory_iterator(serverDir)) {
+        if (!entry.is_regular_file()) continue;
+        std::string ext = entry.path().extension().string();
+        if (ext != ".h" && ext != ".cpp") continue;
+
+        bool violation = fileContainsBannedUILibrary(entry.path().string());
+        if (violation) {
+            std::cerr << "IMGUI BAN VIOLATION: " << entry.path() << std::endl;
+        }
+        assert(!violation);
+    }
+
+    std::cout << "[PASS] test_no_imgui_in_server" << std::endl;
+}

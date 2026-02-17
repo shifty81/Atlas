@@ -30,6 +30,16 @@ FORBIDDEN_PATTERNS = [
     ("clock_gettime", "Wall-clock time access"),
 ]
 
+# Third-party UI libraries: banned from the ENTIRE codebase.
+# Atlas uses a custom UI stack — see ATLAS_CORE_CONTRACT.md §6.
+BANNED_LIBRARY_PATTERNS = [
+    ("imgui.h", "ImGui is banned — use Atlas custom UI (UISceneGraph, WidgetDSL, UILayoutSolver)"),
+    ("imgui_impl_", "ImGui backend is banned — use Atlas custom UI"),
+    ("ImGui::", "ImGui API usage is banned — use Atlas custom UI"),
+    ("IMGUI_", "ImGui macro usage is banned — use Atlas custom UI"),
+    ("nuklear.h", "Nuklear is banned — use Atlas custom UI"),
+]
+
 # Platform-dependent math patterns: forbidden in simulation code
 # but allowed in render/platform directories
 PLATFORM_MATH_PATTERNS = [
@@ -102,6 +112,23 @@ def scan_file(filepath: pathlib.Path, include_platform_math: bool = True) -> lis
     return violations
 
 
+def scan_file_banned_libraries(filepath: pathlib.Path) -> list[str]:
+    """Scan a file for banned third-party UI library usage."""
+    violations = []
+    try:
+        text = filepath.read_text(errors="ignore")
+    except OSError:
+        return violations
+
+    for pattern, reason in BANNED_LIBRARY_PATTERNS:
+        if pattern in text:
+            violations.append(
+                f"{filepath}: uses banned library `{pattern}` — {reason}"
+            )
+
+    return violations
+
+
 def main():
     parser = argparse.ArgumentParser(description="Atlas Contract Scanner")
     parser.add_argument(
@@ -131,6 +158,17 @@ def main():
                 if filepath.name in SKIP_FILES:
                     continue
                 all_violations.extend(scan_file(filepath))
+
+    # Scan the ENTIRE codebase for banned third-party UI libraries.
+    # This is not limited to simulation directories — ImGui and similar
+    # libraries are banned everywhere (engine, editor, client, server, tools).
+    # Skip the contract directory itself — it references banned library
+    # names in compile-time guards that *reject* those libraries.
+    for filepath in root.rglob("*"):
+        if filepath.suffix in SOURCE_EXTENSIONS:
+            if "contract" in filepath.parts:
+                continue
+            all_violations.extend(scan_file_banned_libraries(filepath))
 
     if all_violations:
         print("❌ Atlas Core Contract Violations Detected:\n")

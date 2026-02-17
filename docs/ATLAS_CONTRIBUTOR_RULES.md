@@ -58,6 +58,12 @@ Every feature, every system, every line of simulation code must be 100% determin
 - All `WorldState` mutations must happen inside `ATLAS_SIM_TICK_BEGIN` / `ATLAS_SIM_TICK_END`
 - Use `ATLAS_SIM_MUTATION_GUARD()` in mutation functions to enforce this
 
+❌ **Never Use Third-Party UI Libraries:**
+- Do not include, link, or reference Dear ImGui, Nuklear, or any external UI framework
+- Atlas uses a fully custom UI stack: `UILayoutSolver`, `GUIDSLParser`, `UISceneGraph`, `WidgetDSL`, `FontBootstrap`, `TextRenderer`, `UIEventRouter`
+- This applies to all code: engine, editor, client, server, tools, and tests
+- The contract scanner and compile-time guards enforce this automatically
+
 ---
 
 ## Architecture Layers
@@ -209,9 +215,31 @@ worldState.RegisterBlock("PathCache", StateCategory::Derived);
 
 ---
 
+### ❌ Mistake: "I'll use ImGui for quick editor UI"
+
+**Wrong:**
+```cpp
+#include <imgui.h>
+ImGui::Begin("My Panel");
+```
+
+**Correct:**
+```cpp
+// Use Atlas custom UI system
+#include <engine/ui/UISceneGraph.h>
+#include <engine/ui/WidgetDSL.h>
+// Build UI with Atlas WidgetDSL or UISceneGraph
+```
+
+Atlas has a complete custom UI stack. Third-party UI libraries are
+permanently banned — see `ATLAS_CORE_CONTRACT.md` §6.
+
+---
+
 ## CI Will Reject Your PR If:
 
 - ❌ Contract scanner detects forbidden APIs
+- ❌ Contract scanner detects ImGui or other banned third-party UI libraries
 - ❌ Golden replay hashes change unexpectedly
 - ❌ Tests fail
 - ❌ Determinism violations are logged

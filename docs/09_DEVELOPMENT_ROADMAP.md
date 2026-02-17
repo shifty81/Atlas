@@ -26,7 +26,7 @@ All core engine systems are implemented and tested.
 
 ## Phase 2 — Editor 🔧
 
-The editor framework is in place with docking and functional panels. Draw() methods are no-ops awaiting a UI rendering backend (ImGui or custom).
+The editor framework is in place with docking and functional panels. Draw() methods are no-ops awaiting full integration with the Atlas custom UI rendering backend.
 
 - [x] UI framework (EditorPanel base class, visibility control)
 - [x] Panel docking system (recursive dock nodes, horizontal/vertical splits)
@@ -245,7 +245,7 @@ Production-grade CI, build experience, and template repository support.
 | Gameplay | ✅ Complete | Camera, input, physics, audio, mechanics |
 | Interaction/Voice | ✅ Complete | Unified intent pipeline |
 | Project/Plugin | ✅ Complete | Multi-project, schema validation, plugins, game modules |
-| Editor Framework | 🔧 Functional | All panel logic works, layout persistence added, PIE implemented, rendering layer (Draw() methods) deferred pending UI backend |
+| Editor Framework | 🔧 Functional | All panel logic works, layout persistence added, PIE implemented, rendering layer (Draw() methods) deferred pending Atlas custom UI backend integration |
 | Networking | ✅ Complete | API, lockstep/rollback, replication, production hardening (timeouts, reconnect, bandwidth, heartbeat) |
 | Production Tools | ✅ Complete | Game packager pipeline (Validate → Cook → Bundle → Emit), asset cooker, build profiles, platform targeting |
 | Polish | ✅ Complete | Undo/redo, visual diff, profiler, replay recorder, crash analysis |
