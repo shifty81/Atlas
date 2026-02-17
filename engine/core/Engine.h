@@ -9,6 +9,7 @@
 #include "../sim/WorldState.h"
 #include "../sim/SaveSystem.h"
 #include "../ui/UIManager.h"
+#include "../ui/UIEventRouter.h"
 #include "../platform/PlatformWindow.h"
 #include "../render/RenderAPI.h"
 
@@ -96,9 +97,13 @@ public:
     sim::WorldState& GetWorldState() { return m_worldState; }
     sim::SaveSystem& GetSaveSystem() { return m_saveSystem; }
     ui::UIManager& GetUIManager() { return m_uiManager; }
+    ui::UIEventRouter& GetEventRouter() { return m_eventRouter; }
 
     platform::PlatformWindow* GetWindow() { return m_window.get(); }
     ui::UIRenderer* GetRenderer() { return m_renderer.get(); }
+
+    int32_t MouseX() const { return m_mouseX; }
+    int32_t MouseY() const { return m_mouseY; }
 
     /// Returns the names of systems in their registered execution order.
     const std::vector<std::string>& SystemExecutionOrder() const;
@@ -119,9 +124,12 @@ private:
     sim::WorldState m_worldState;
     sim::SaveSystem m_saveSystem;
     ui::UIManager m_uiManager;
+    ui::UIEventRouter m_eventRouter;
     std::unique_ptr<platform::PlatformWindow> m_window;
     std::unique_ptr<ui::UIRenderer> m_renderer;
     std::vector<std::string> m_systemOrder;
+    int32_t m_mouseX = 0;
+    int32_t m_mouseY = 0;
 };
 
 }

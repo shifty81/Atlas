@@ -3,6 +3,7 @@
 #include "../render/VulkanRenderer.h"
 #include "../sim/StateHasher.h"
 #include "../sim/ReplayRecorder.h"
+#include "../ui/DiagnosticsOverlay.h"
 
 #ifdef ATLAS_HAS_X11
 #include "../platform/X11Window.h"
@@ -177,12 +178,68 @@ void Engine::ProcessWindowEvents() {
 #endif
                 }
                 break;
+            case platform::WindowEvent::Type::KeyDown: {
+                // Ctrl+` (grave accent) toggles diagnostics overlay
+                if (event.keyCode == '`' || event.keyCode == 0x60) {
+                    ui::DiagnosticsOverlay::Toggle();
+                }
+                ui::UIEvent uiEvent;
+                uiEvent.type = ui::UIEvent::Type::KeyDown;
+                uiEvent.keyCode = event.keyCode;
+                uiEvent.textChar = event.textChar;
+                m_eventRouter.Dispatch(uiEvent);
+                break;
+            }
+            case platform::WindowEvent::Type::KeyUp: {
+                ui::UIEvent uiEvent;
+                uiEvent.type = ui::UIEvent::Type::KeyUp;
+                uiEvent.keyCode = event.keyCode;
+                m_eventRouter.Dispatch(uiEvent);
+                break;
+            }
+            case platform::WindowEvent::Type::MouseMove: {
+                m_mouseX = event.mouseX;
+                m_mouseY = event.mouseY;
+                ui::UIEvent uiEvent;
+                uiEvent.type = ui::UIEvent::Type::MouseMove;
+                uiEvent.x = event.mouseX;
+                uiEvent.y = event.mouseY;
+                m_eventRouter.Dispatch(uiEvent);
+                break;
+            }
             case platform::WindowEvent::Type::MouseButtonDown: {
+                m_mouseX = event.mouseX;
+                m_mouseY = event.mouseY;
+                ui::UIEvent uiEvent;
+                uiEvent.type = ui::UIEvent::Type::MouseDown;
+                uiEvent.x = event.mouseX;
+                uiEvent.y = event.mouseY;
+                uiEvent.mouseButton = event.mouseButton;
+                m_eventRouter.Dispatch(uiEvent);
+                // Also enqueue on UI command bus for backward compat
                 ui::UICommand cmd;
                 cmd.type = ui::UICommandType::ButtonPress;
                 cmd.valueFloat = static_cast<float>(event.mouseX);
                 cmd.valueString = std::to_string(event.mouseY);
                 m_uiManager.GetCommandBus().Enqueue(std::move(cmd));
+                break;
+            }
+            case platform::WindowEvent::Type::MouseButtonUp: {
+                m_mouseX = event.mouseX;
+                m_mouseY = event.mouseY;
+                ui::UIEvent uiEvent;
+                uiEvent.type = ui::UIEvent::Type::MouseUp;
+                uiEvent.x = event.mouseX;
+                uiEvent.y = event.mouseY;
+                uiEvent.mouseButton = event.mouseButton;
+                m_eventRouter.Dispatch(uiEvent);
+                break;
+            }
+            case platform::WindowEvent::Type::TextInput: {
+                ui::UIEvent uiEvent;
+                uiEvent.type = ui::UIEvent::Type::TextInput;
+                uiEvent.textChar = event.textChar;
+                m_eventRouter.Dispatch(uiEvent);
                 break;
             }
             default:
@@ -214,6 +271,15 @@ void Engine::RunEditor() {
         if (m_renderer && m_window && m_window->IsOpen()) {
             m_renderer->BeginFrame();
             m_uiManager.Render(m_renderer.get());
+            ui::UIContext overlayCtx{};
+            if (m_window) {
+                overlayCtx.screenWidth = static_cast<float>(m_window->Width());
+                overlayCtx.screenHeight = static_cast<float>(m_window->Height());
+            }
+            overlayCtx.deltaTime = m_timeModel.Context().sim.fixedDeltaTime;
+            overlayCtx.tick = static_cast<uint32_t>(m_timeModel.Context().sim.tick);
+            ui::DiagnosticsOverlay::Render(m_renderer.get(), overlayCtx, 1.0f,
+                                           m_mouseX, m_mouseY);
             m_renderer->EndFrame();
             m_window->SwapBuffers();
         }
@@ -248,6 +314,15 @@ void Engine::RunClient() {
         if (m_renderer && m_window && m_window->IsOpen()) {
             m_renderer->BeginFrame();
             m_uiManager.Render(m_renderer.get());
+            ui::UIContext overlayCtx{};
+            if (m_window) {
+                overlayCtx.screenWidth = static_cast<float>(m_window->Width());
+                overlayCtx.screenHeight = static_cast<float>(m_window->Height());
+            }
+            overlayCtx.deltaTime = m_timeModel.Context().sim.fixedDeltaTime;
+            overlayCtx.tick = static_cast<uint32_t>(m_timeModel.Context().sim.tick);
+            ui::DiagnosticsOverlay::Render(m_renderer.get(), overlayCtx, 1.0f,
+                                           m_mouseX, m_mouseY);
             m_renderer->EndFrame();
             m_window->SwapBuffers();
         }

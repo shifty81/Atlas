@@ -142,6 +142,7 @@ add_executable(AtlasTests
     test_layout_persistence.cpp
     test_net_hardening.cpp
     test_play_in_editor.cpp
+    test_engine_input_routing.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp

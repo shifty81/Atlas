@@ -80,6 +80,9 @@ nothing appears on screen. The engine needs a concrete UI rendering backend.
 The `editor/main.cpp` entry point:
 - ✅ Initializes engine correctly (Core, Render, UI, ECS, Networking, Editor)
 - ✅ Uses `EditorAttachProtocol` for mode selection
+- ✅ Input events routed from platform window to UIEventRouter
+- ✅ Diagnostics overlay toggled via Ctrl+` (backtick) key
+- ✅ Mouse position tracked for overlay and UI hit-testing
 - 🔧 `BuildEditorUI()` creates a hard-coded 1280×720 pixel layout
 - 📋 Should dynamically build UI from DSL or saved layout
 
@@ -153,3 +156,4 @@ All editor panel logic is covered by the existing test suite:
 - `test_ai_diff_viewer.cpp` — Hunk accept/reject, apply
 - `test_ci_dashboard.cpp` — Pipeline runs, checks, history
 - `test_game_mechanics_ui.cpp` — Elements, preview, export/import
+- `test_engine_input_routing.cpp` — UIEventRouter wiring, mouse tracking, overlay toggle

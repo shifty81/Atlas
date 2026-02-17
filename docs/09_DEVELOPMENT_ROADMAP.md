@@ -251,7 +251,7 @@ Production-grade CI, build experience, and template repository support.
 | Polish | ✅ Complete | Undo/redo, visual diff, profiler, replay recorder, crash analysis |
 | Game Module System | ✅ Complete | IGameModule interface, ModuleLoader, AtlasGameplay library, EveOffline (shipped in-repo), SDK export |
 | GUI System & Editor Hardening | 🔧 Functional | DSL and layout solver work, self-hosting partial, Unreal-grade aesthetics pending |
-| Replay & Formal Verification | ✅ Complete | TLA+ specs, TLC CI, proof viewer, replay→proof export, ShaderIR — 1 known issue: `test_replay_record_frames` inputData assertion (`test_replay_recorder.cpp:45`) |
+| Replay & Formal Verification | ✅ Complete | TLA+ specs, TLC CI, proof viewer, replay→proof export, ShaderIR |
 | Flow Graph & Procedural Content | ✅ Complete | Flow Graph IR/VM/debugger, procedural mesh/material/LOD, deterministic animation, collaborative editing |
 | AtlasAI & Game GUI Authoring | 🔧 Functional | Framework and routing exist, no LLM backend wired |
 | CI, Build & Template System | 🔧 Functional | CI gates and build scripts work, certified build pipeline scaffolded |

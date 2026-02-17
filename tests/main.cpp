@@ -1388,6 +1388,12 @@ void test_pie_double_start_fails();
 void test_pie_stop_when_stopped();
 void test_pie_auto_possess();
 
+// Engine Input Routing
+void test_engine_has_event_router();
+void test_engine_mouse_tracking_defaults();
+void test_engine_event_router_register();
+void test_diagnostics_overlay_toggle_state();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -2921,6 +2927,13 @@ int main() {
     test_pie_double_start_fails();
     test_pie_stop_when_stopped();
     test_pie_auto_possess();
+
+    // Engine Input Routing
+    std::cout << "\n--- Engine Input Routing ---" << std::endl;
+    test_engine_has_event_router();
+    test_engine_mouse_tracking_defaults();
+    test_engine_event_router_register();
+    test_diagnostics_overlay_toggle_state();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
