@@ -1157,6 +1157,9 @@ void test_ai_core_unknown_intent();
 void test_ai_core_history();
 void test_ai_core_clear();
 
+// AI Asset Decision Framework
+void run_ai_decision_framework_tests();
+
 // Atlas Assistant Panel
 void test_assistant_panel_name();
 void test_assistant_panel_context();
@@ -2616,6 +2619,9 @@ int main() {
     test_ai_core_unknown_intent();
     test_ai_core_history();
     test_ai_core_clear();
+
+    // AI Asset Decision Framework
+    run_ai_decision_framework_tests();
 
     // Atlas Assistant Panel
     std::cout << "\n--- Atlas Assistant Panel ---" << std::endl;
