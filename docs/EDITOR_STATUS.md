@@ -168,3 +168,4 @@ All editor panel logic is covered by the existing test suite:
 - `test_mesh_viewer.cpp` — Mesh loading, view modes, vertex selection, bounds
 - `test_material_editor.cpp` — Material parameters, preview mode, dirty tracking
 - `test_prefab_editor.cpp` — Entity hierarchy, components, parent-child relationships
+- `test_panel_draw_impl.cpp` — AssetBrowser, NetInspector, JobTrace, StateHashDiff Draw() rendering

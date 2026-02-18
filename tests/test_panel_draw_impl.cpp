@@ -12,11 +12,11 @@ using namespace atlas::ui;
 
 // Helper to create a temporary directory with asset files
 static std::string create_temp_asset_dir() {
-    std::string dir = "/tmp/atlas_panel_draw_test_" + std::to_string(time(nullptr));
+    auto dir = std::filesystem::temp_directory_path() / ("atlas_panel_draw_test_" + std::to_string(time(nullptr)));
     std::filesystem::create_directories(dir);
-    std::ofstream(dir + "/ship.fbx") << "mesh";
-    std::ofstream(dir + "/hull.png") << "texture";
-    return dir;
+    std::ofstream(dir / "ship.fbx") << "mesh";
+    std::ofstream(dir / "hull.png") << "texture";
+    return dir.string();
 }
 
 // ---------------------------------------------------------------
@@ -146,7 +146,7 @@ void test_asset_browser_draw_clears_between_frames() {
 // NetInspectorPanel Draw tests
 // ---------------------------------------------------------------
 
-void test_net_inspector_draw_standalone2() {
+void test_net_inspector_draw_standalone_mode() {
     atlas::net::NetContext net;
     net.Init(atlas::net::NetMode::Standalone);
     NetInspectorPanel panel(net);
@@ -162,10 +162,10 @@ void test_net_inspector_draw_standalone2() {
     }
     assert(foundTitle);
     assert(foundMode);
-    std::cout << "[PASS] test_net_inspector_draw_standalone2" << std::endl;
+    std::cout << "[PASS] test_net_inspector_draw_standalone_mode" << std::endl;
 }
 
-void test_net_inspector_draw_no_peers2() {
+void test_net_inspector_draw_no_peers_msg() {
     atlas::net::NetContext net;
     net.Init(atlas::net::NetMode::Standalone);
     NetInspectorPanel panel(net);
@@ -180,10 +180,10 @@ void test_net_inspector_draw_no_peers2() {
         }
     }
     assert(foundNoPeers);
-    std::cout << "[PASS] test_net_inspector_draw_no_peers2" << std::endl;
+    std::cout << "[PASS] test_net_inspector_draw_no_peers_msg" << std::endl;
 }
 
-void test_net_inspector_draw_with_peers2() {
+void test_net_inspector_draw_with_peers_count() {
     atlas::net::NetContext net;
     net.Init(atlas::net::NetMode::Server);
     net.AddPeer();
@@ -201,10 +201,10 @@ void test_net_inspector_draw_with_peers2() {
         }
     }
     assert(foundPeers);
-    std::cout << "[PASS] test_net_inspector_draw_with_peers2" << std::endl;
+    std::cout << "[PASS] test_net_inspector_draw_with_peers_count" << std::endl;
 }
 
-void test_net_inspector_draw_shows_rtt2() {
+void test_net_inspector_draw_rtt_display() {
     atlas::net::NetContext net;
     net.Init(atlas::net::NetMode::Standalone);
     NetInspectorPanel panel(net);
@@ -219,10 +219,10 @@ void test_net_inspector_draw_shows_rtt2() {
         }
     }
     assert(foundRtt);
-    std::cout << "[PASS] test_net_inspector_draw_shows_rtt2" << std::endl;
+    std::cout << "[PASS] test_net_inspector_draw_rtt_display" << std::endl;
 }
 
-void test_net_inspector_draw_clears_between_frames2() {
+void test_net_inspector_draw_frame_clear() {
     atlas::net::NetContext net;
     net.Init(atlas::net::NetMode::Standalone);
     NetInspectorPanel panel(net);
@@ -234,7 +234,7 @@ void test_net_inspector_draw_clears_between_frames2() {
     panel.Draw();
     size_t second = panel.GetDrawList().CommandCount();
     assert(second == first);
-    std::cout << "[PASS] test_net_inspector_draw_clears_between_frames2" << std::endl;
+    std::cout << "[PASS] test_net_inspector_draw_frame_clear" << std::endl;
 }
 
 // ---------------------------------------------------------------
@@ -558,11 +558,11 @@ void register_panel_draw_impl_tests() {
     test_asset_browser_draw_clears_between_frames();
 
     std::cout << "\n--- NetInspectorPanel Draw ---" << std::endl;
-    test_net_inspector_draw_standalone2();
-    test_net_inspector_draw_no_peers2();
-    test_net_inspector_draw_with_peers2();
-    test_net_inspector_draw_shows_rtt2();
-    test_net_inspector_draw_clears_between_frames2();
+    test_net_inspector_draw_standalone_mode();
+    test_net_inspector_draw_no_peers_msg();
+    test_net_inspector_draw_with_peers_count();
+    test_net_inspector_draw_rtt_display();
+    test_net_inspector_draw_frame_clear();
 
     std::cout << "\n--- JobTracePanel Draw ---" << std::endl;
     test_job_trace_draw_no_tracer();

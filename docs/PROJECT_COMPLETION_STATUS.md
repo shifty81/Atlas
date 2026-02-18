@@ -12,7 +12,7 @@
 
 Atlas is a deterministic, data-driven game engine built in C++20. The
 project is **approximately 98–99% complete** across its core systems.
-All 1041+ tests pass. The engine compiles and runs on Linux with
+All 1067+ tests pass. The engine compiles and runs on Linux with
 OpenGL and Vulkan rendering backends. The Vulkan renderer records
 and submits draw commands through a GPU command buffer pipeline with
 render pass, pipeline state, GPU resource management, descriptor set
@@ -180,7 +180,7 @@ Server rules support config-driven hot-reload with change tracking.
 - [x] Contributor rules (`ATLAS_CONTRIBUTOR_RULES.md`)
 
 ### Testing (`tests/`)
-- [x] 1041+ tests across 166+ test files — all passing
+- [x] 1067+ tests across 166+ test files — all passing
 - [x] Covers ECS, networking, replay, assets, UI, editor panels, graphs, etc.
 
 ---
@@ -189,19 +189,17 @@ Server rules support config-driven hot-reload with change tracking.
 
 ### Editor Panel Rendering (`editor/panels/`)
 
-All 20+ editor panels have **full logic implementations**. Panels that
-use `UIDrawList` for deferred rendering are fully wired. Several panels
-have empty or comment-only `Draw()` methods that need to produce draw
-commands via `UIDrawList`.
+All 20+ editor panels have **full logic implementations** and **full Draw()
+implementations** producing deferred draw commands via `UIDrawList`.
 
 **Panels with real Draw() output:**
 - [x] RuleGraphEditorPanel — full UIDrawList rendering
 - [x] TilePalettePanel — full UIDrawList rendering
 - [x] TruthUIPanel — full UIDrawList rendering
-- [x] NetInspectorPanel — populates snapshot data
+- [x] NetInspectorPanel — full UIDrawList rendering (mode, peers, RTT, peer list)
 - [x] WorldGraphPanel — populates node info list
 - [x] ECSInspectorPanel — populates snapshot entries
-- [x] AssetBrowserPanel — calls Refresh() to populate entries
+- [x] AssetBrowserPanel — full UIDrawList rendering (title, filter, sort, asset list)
 - [x] ConsolePanel — produces draw commands via UIDrawList
 - [x] ProfilerPanel — produces draw commands via UIDrawList
 - [x] ReplayTimelinePanel — produces draw commands via UIDrawList
@@ -216,6 +214,8 @@ commands via `UIDrawList`.
 - [x] GameMechanicsUIPanel — produces draw commands via UIDrawList
 - [x] AIDiffViewerPanel — produces draw commands via UIDrawList
 - [x] ProofViewerPanel — produces draw commands via UIDrawList
+- [x] JobTracePanel — full UIDrawList rendering (trace summaries, mismatch highlighting)
+- [x] StateHashDiffPanel — full UIDrawList rendering (hash entries, divergence, per-system breakdown)
 
 ### TileEditorModule (`editor/tools/`)
 - [x] Mode management (Paint, Erase, Select, LayerEdit, RuleEdit)
@@ -330,7 +330,7 @@ Editor Rendering   ✅ 100%   All panels produce draw commands via UIDrawList
 Production         ✅ 100%   Full packager pipeline
 CI/Enforcement     ✅ 100%   Determinism gate, contract bot, crash reporter
 Documentation      ✅  95%   43 docs; minor updates needed
-Testing            ✅ 100%   1041+ tests, all passing
+Testing            ✅ 100%   1067+ tests, all passing
 ```
 
 ---
@@ -343,7 +343,7 @@ Testing            ✅ 100%   1041+ tests, all passing
 | AtlasServer | ✅ | ✅ | Headless, no graphics deps |
 | AtlasClient | ✅ | ✅ | Player runtime |
 | AtlasRuntime | ✅ | ✅ | Unified CLI runtime |
-| AtlasTests | ✅ | ✅ | 1041+ tests passing |
+| AtlasTests | ✅ | ✅ | 1067+ tests passing |
 | TileEditor | ✅ | ✅ | Standalone tile tool |
 
 ---
@@ -358,14 +358,14 @@ Testing            ✅ 100%   1041+ tests, all passing
 | Replay | ~37 | ✅ All pass |
 | Assets | ~57 | ✅ All pass |
 | UI System | ~80 | ✅ All pass |
-| Editor Panels | ~120 | ✅ All pass |
+| Editor Panels | ~146 | ✅ All pass |
 | Graph Systems | ~80 | ✅ All pass |
 | AI Systems | ~30 | ✅ All pass |
 | Production | ~20 | ✅ All pass |
 | World Gen | ~30 | ✅ All pass |
 | Tile Editor | ~40 | ✅ All pass |
 | CI/Tooling | ~12 | ✅ All pass |
-| **Total** | **1041+** | **✅ All pass** |
+| **Total** | **1067+** | **✅ All pass** |
 
 ---
 
@@ -406,7 +406,7 @@ diff viewing and replay inspection are available in `tools/`. The
 networking layer includes packet loss simulation, latency/jitter
 simulation, CRC32 checksum validation, bandwidth enforcement on send,
 manual replication triggers, and reliable/unreliable delta splitting
-with connection quality diagnostics. All 1041+ tests pass. The IHttpClient interface now supports
+with connection quality diagnostics. All 1067+ tests pass. The IHttpClient interface now supports
 HTTP POST, and the HttpLLMBackend uses proper POST requests for API
 communication. The LLMBackendFactory enables environment-based
 configuration via ATLAS_LLM_ENDPOINT, ATLAS_LLM_MODEL, and

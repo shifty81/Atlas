@@ -339,6 +339,35 @@ This document tracks the remaining implementation tasks to complete the vision o
 - `editor/ui/EditorAttachProtocol.h/.cpp` — Added RequestOperation() with mode-aware enforcement
 - `tests/test_next_tasks_phase16.cpp` — 21 new tests
 
+#### 12. Remaining Panel Draw() Implementations
+**Status**: Complete
+
+**Completed work**:
+- [x] AssetBrowserPanel Draw() implementation
+  - Title bar, summary line with count/sort mode/filter
+  - Asset list with extension display
+  - Selected asset highlighting
+- [x] NetInspectorPanel Draw() implementation
+  - Title bar, network mode, peer count, connected count, average RTT
+  - Peer list with per-peer status (connected/disconnected) and RTT
+- [x] JobTracePanel inherits EditorPanel + Draw() implementation
+  - Title bar, execution order status (consistent/mismatch)
+  - Column header and trace entry rows
+  - Mismatch highlighting in red
+- [x] StateHashDiffPanel inherits EditorPanel + Draw() implementation
+  - Title bar, divergence status summary
+  - Column header and hash entry rows
+  - Divergent entries highlighted in red
+  - Per-system breakdown section when available
+- [x] 26 new tests covering all 4 panel Draw() implementations
+
+**Files modified**:
+- `editor/panels/AssetBrowserPanel.h/.cpp` — Added UIDrawList member, GetDrawList(), full Draw() rendering
+- `editor/panels/NetInspectorPanel.h/.cpp` — Added UIDrawList member, GetDrawList(), full Draw() rendering
+- `editor/panels/JobTracePanel.h/.cpp` — Added EditorPanel inheritance, UIDrawList, Name(), Draw()
+- `editor/panels/StateHashDiffPanel.h/.cpp` — Added EditorPanel inheritance, UIDrawList, Name(), Draw()
+- `tests/test_panel_draw_impl.cpp` — 26 new tests
+
 ## References
 
 - Original gaps analysis: `gaps.txt`
