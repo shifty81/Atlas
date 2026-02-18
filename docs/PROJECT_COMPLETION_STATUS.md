@@ -11,8 +11,8 @@
 ## Executive Summary
 
 Atlas is a deterministic, data-driven game engine built in C++20. The
-project is **approximately 97–99% complete** across its core systems.
-All 941+ tests pass. The engine compiles and runs on Linux with
+project is **approximately 98–99% complete** across its core systems.
+All 993+ tests pass. The engine compiles and runs on Linux with
 OpenGL and Vulkan rendering backends. The Vulkan renderer records
 and submits draw commands through a GPU command buffer pipeline with
 render pass, pipeline state, GPU resource management, descriptor set
@@ -175,7 +175,7 @@ Server rules support config-driven hot-reload with change tracking.
 - [x] Contributor rules (`ATLAS_CONTRIBUTOR_RULES.md`)
 
 ### Testing (`tests/`)
-- [x] 941+ tests across 166+ test files — all passing
+- [x] 993+ tests across 166+ test files — all passing
 - [x] Covers ECS, networking, replay, assets, UI, editor panels, graphs, etc.
 
 ---
@@ -241,6 +241,17 @@ commands via `UIDrawList`.
 - [x] TemplateAIBackend — offline template-based responses (Layer 1)
 - [ ] LLM AIBackend — external LLM service integration (Layer 3)
 
+### HttpLLMBackend (`engine/ai/LLMBackend`)
+- [x] OpenAI-compatible chat completions API client
+- [x] API key management and authentication
+- [x] JSON request body construction with escaping
+- [x] JSON response parsing
+- [x] Error handling (no client, no key, HTTP error, parse error)
+- [x] Success/failure metrics tracking
+- [x] Configurable timeout
+- [x] LLMBackendRegistry integration
+- [ ] Production deployment with real API endpoint
+
 ### Vulkan Renderer (`engine/render/VulkanRenderer`)
 - [x] Initialization and viewport setup
 - [x] Draw command recording (deferred command buffer with rect, text, icon, border, image)
@@ -255,12 +266,17 @@ commands via `UIDrawList`.
 - [x] Fence management (create, destroy, wait, reset, signal query)
 - [x] Semaphore management (create, destroy, signal, wait)
 - [x] Memory pool management (create, destroy, allocate, free, usage tracking)
+- [x] Device abstraction (physical device info, queue families, swap chain, device config)
+- [x] Device enumeration and selection (simulated GPU stub for testing)
 - [ ] Full hardware Vulkan device integration (requires Vulkan SDK)
 
 ### Font System (`engine/ui/FontBootstrap.cpp`)
 - [x] Fallback placeholder glyph generation
 - [x] TTF/OTF header parsing and font name extraction
 - [x] Built-in 5×7 bitmap font for readable text rendering (GLRenderer)
+- [x] Font search path management (multiple directories, deduplication)
+- [x] Font file discovery (.ttf, .otf scanning across search paths)
+- [x] Direct font loading by path with validation
 - [ ] Real Inter-Regular.ttf font bundling
 
 ### GL Viewport Framebuffer (`engine/render/GLViewportFramebuffer`)
@@ -281,10 +297,10 @@ commands via `UIDrawList`.
 
 | Feature | Description | Priority |
 |---------|-------------|----------|
-| LLM Backend Integration | Wire AI assistant to external LLM service | Low |
+| LLM Production Deployment | Configure HttpLLMBackend with real API endpoint | Low |
 | Real Font Bundling | Ship Inter-Regular.ttf with builds | Low |
 | macOS Platform Window | Only Linux (X11) and Windows supported | Low |
-| Vulkan Hardware Device | Connect command buffer pipeline to Vulkan SDK | Medium |
+| Vulkan Hardware Device | Connect device abstraction to real VkDevice via Vulkan SDK | Medium |
 
 ---
 
@@ -302,13 +318,13 @@ Assets             ✅ 100%   Registry, import, cook, validate, hot-reload, depe
 World Generation   ✅ 100%   Terrain, voxel, galaxy, streaming
 AI Systems         ✅ 100%   Behavior, memory, faction, strategy
 UI Framework       ✅ 100%   DrawList, SceneGraph, Layout, Events, DSL
-Rendering          ✅  98%   OpenGL working (bitmap font, FBO viewport); Vulkan render pipeline (passes, states, resources, descriptors, textures, samplers, fences, semaphores, memory pools) active (hardware device pending)
+Rendering          ✅  99%   OpenGL working (bitmap font, FBO viewport); Vulkan render pipeline with device abstraction (device enum, queue families, swap chain); hardware SDK pending
 Editor Logic       ✅ 100%   All panels have full business logic
 Editor Rendering   ✅ 100%   All panels produce draw commands via UIDrawList
 Production         ✅ 100%   Full packager pipeline
 CI/Enforcement     ✅ 100%   Determinism gate, contract bot, crash reporter
 Documentation      ✅  95%   43 docs; minor updates needed
-Testing            ✅ 100%   941+ tests, all passing
+Testing            ✅ 100%   993+ tests, all passing
 ```
 
 ---
@@ -321,7 +337,7 @@ Testing            ✅ 100%   941+ tests, all passing
 | AtlasServer | ✅ | ✅ | Headless, no graphics deps |
 | AtlasClient | ✅ | ✅ | Player runtime |
 | AtlasRuntime | ✅ | ✅ | Unified CLI runtime |
-| AtlasTests | ✅ | ✅ | 941+ tests passing |
+| AtlasTests | ✅ | ✅ | 993+ tests passing |
 | TileEditor | ✅ | ✅ | Standalone tile tool |
 
 ---
@@ -343,15 +359,15 @@ Testing            ✅ 100%   941+ tests, all passing
 | World Gen | ~30 | ✅ All pass |
 | Tile Editor | ~40 | ✅ All pass |
 | CI/Tooling | ~12 | ✅ All pass |
-| **Total** | **941+** | **✅ All pass** |
+| **Total** | **993+** | **✅ All pass** |
 
 ---
 
 ## Recommended Next Steps (Priority Order)
 
-1. **Connect Vulkan hardware device** — Wire render pass and pipeline state objects to real VkDevice/VkCommandBuffer
+1. **Connect Vulkan hardware device** — Wire device abstraction to real VkDevice/VkCommandBuffer via Vulkan SDK
 2. **Ship real font** — Bundle Inter-Regular.ttf in builds
-3. **Integrate external LLM** — Wire AI assistant to OpenAI/local LLM via AIBackend
+3. **Deploy HttpLLMBackend** — Configure with production API endpoint (OpenAI, local LLM)
 
 ---
 
@@ -363,20 +379,26 @@ build systems are all production-ready. The Vulkan renderer records
 draw commands and submits them through a triple-buffered GPU command
 buffer pipeline with descriptor set layouts, texture management,
 sampler objects, fence/semaphore synchronization, and memory pool
-allocation, ready for hardware device integration. The GL renderer now
-features a built-in 5×7 bitmap font for readable text and a
-GLViewportFramebuffer for offscreen scene rendering into the editor
-viewport panel. The editor layout scales proportionally on window
-resize. The marketplace
-importers now parse .uasset binary headers and .prefab YAML formats
-with API credential management, hot-reload monitoring, asset validation,
-and mod sandboxing with budget enforcement. The editor features live
-component inspection, entity hierarchy browsing, component mutation
-tracking, per-system hash breakdowns, tick-step debugging with
-breakpoints, and a full replay inspector with input frame viewer,
-event timeline visualization, and branch point markers. Standalone
-tools for state diff viewing and replay inspection are available in
-`tools/`. The networking layer includes packet loss simulation and
-connection quality diagnostics. All 941+ tests pass. The primary
-remaining work is Vulkan hardware device integration (real
-VkDevice/VkCommandBuffer) and shipping production font backends.
+allocation. The device abstraction layer provides physical device
+enumeration, queue family discovery, and swap chain management, ready
+for connection to a real Vulkan SDK. The GL renderer now features a
+built-in 5×7 bitmap font for readable text and a GLViewportFramebuffer
+for offscreen scene rendering into the editor viewport panel. The
+editor layout scales proportionally on window resize. The font system
+supports multi-directory search path discovery for .ttf and .otf files.
+The marketplace importers now parse .uasset binary headers and .prefab
+YAML formats with API credential management, hot-reload monitoring,
+asset validation, and mod sandboxing with budget enforcement. The AI
+assistant now includes an HttpLLMBackend for OpenAI-compatible API
+integration with API key management, JSON request/response handling,
+and configurable timeouts. The editor features live component
+inspection, entity hierarchy browsing, component mutation tracking,
+per-system hash breakdowns, tick-step debugging with breakpoints, and
+a full replay inspector with input frame viewer, event timeline
+visualization, and branch point markers. Standalone tools for state
+diff viewing and replay inspection are available in `tools/`. The
+networking layer includes packet loss simulation and connection quality
+diagnostics. All 993+ tests pass. The primary remaining work is Vulkan
+hardware device integration (connecting to real VkDevice via Vulkan
+SDK), shipping a production font file, and deploying the HttpLLMBackend
+with a real API endpoint.

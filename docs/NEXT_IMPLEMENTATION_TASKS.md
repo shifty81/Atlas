@@ -194,6 +194,44 @@ This document tracks the remaining implementation tasks to complete the vision o
 - `engine/core/Engine.cpp` - Resize and initial viewport wiring
 - `tests/test_next_tasks_phase13.cpp` - 12 new tests
 
+#### 8. Vulkan Device Abstraction, HttpLLMBackend, Font Discovery
+**Status**: Complete
+
+**Completed work**:
+- [x] Vulkan hardware device abstraction
+  - VkPhysicalDeviceInfo struct (device name, vendor, type, memory, capabilities)
+  - VkQueueFamilyInfo struct (graphics, compute, transfer, present queues)
+  - VkSwapChainDesc struct (image count, present mode, format)
+  - VkDeviceConfig struct (application name, validation layers, extensions)
+  - InitDevice/ShutdownDevice lifecycle with simulated GPU
+  - Queue family discovery (graphics, compute, dedicated transfer)
+  - Swap chain create/resize with validation
+  - Device enumeration and selection
+- [x] HttpLLMBackend for external LLM API integration
+  - OpenAI-compatible chat completions API
+  - API key management and authentication headers
+  - JSON request body construction with proper escaping
+  - JSON response parsing for content extraction
+  - Error handling (no client, no key, HTTP error, parse error)
+  - Success/failure tracking metrics
+  - LLMBackendRegistry integration
+  - Configurable timeout
+- [x] FontBootstrap font discovery enhancements
+  - Multiple font search path registration with deduplication
+  - Font file discovery (.ttf, .otf) across all search paths
+  - Direct font loading by path with TTF header validation
+  - Loaded font path tracking
+  - Init() auto-registers asset fonts directory
+
+**Files created/modified**:
+- `engine/render/VulkanRenderer.h` - VkPhysicalDeviceInfo, VkQueueFamilyInfo, VkSwapChainDesc, VkDeviceConfig, device management API
+- `engine/render/VulkanRenderer.cpp` - Device initialization, queue discovery, swap chain management stubs
+- `engine/ai/LLMBackend.h` - HttpLLMBackend class declaration
+- `engine/ai/LLMBackend.cpp` - HttpLLMBackend implementation with JSON request/response handling
+- `engine/ui/FontBootstrap.h` - Font search path and discovery API
+- `engine/ui/FontBootstrap.cpp` - Font discovery and loading implementations
+- `tests/test_next_tasks_phase14.cpp` - 35 new tests
+
 ## Implementation Priority Order
 
 1. **Marketplace Integration Completion** (Highest business value)
@@ -222,11 +260,9 @@ This document tracks the remaining implementation tasks to complete the vision o
 
 ## Next Steps
 
-1. Complete marketplace importers (itch.io, Unreal, Unity)
-2. Add comprehensive tests for asset importing
-3. Enhance Editor Truth UI with live inspection
-4. Implement replay minimizer tool
-5. Add CMake dependency enforcement
+1. Connect Vulkan hardware device — wire stub pipeline to real VkDevice/VkCommandBuffer (requires Vulkan SDK)
+2. Ship real font — bundle Inter-Regular.ttf in builds
+3. Deploy HttpLLMBackend — configure with production API endpoint and model
 
 ## References
 

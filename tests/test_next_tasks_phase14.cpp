@@ -494,7 +494,7 @@ void test_font_discover_nonexistent_path() {
 
 void test_font_discover_with_files() {
     // Create a temp directory with font-like files
-    std::string tmpDir = "/tmp/atlas_font_test_" + std::to_string(getpid());
+    std::string tmpDir = (std::filesystem::temp_directory_path() / ("atlas_font_test_" + std::to_string(getpid()))).string();
     std::error_code ec;
     std::filesystem::create_directories(tmpDir, ec);
     assert(!ec);
@@ -533,7 +533,7 @@ void test_font_load_empty_path() {
 
 void test_font_init_adds_search_path() {
     // Init should add the assets/fonts path to search paths
-    std::string tmpDir = "/tmp/atlas_font_init_" + std::to_string(getpid());
+    std::string tmpDir = (std::filesystem::temp_directory_path() / ("atlas_font_init_" + std::to_string(getpid()))).string();
     std::error_code ec;
     std::filesystem::create_directories(tmpDir + "/fonts", ec);
 

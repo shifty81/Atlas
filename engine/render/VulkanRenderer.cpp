@@ -697,21 +697,30 @@ bool VulkanRenderer::InitDevice(const VkDeviceConfig& config) {
     // Simulate queue families.
     m_queueFamilies.clear();
     VkQueueFamilyInfo gfx;
-    gfx.index = 0; gfx.queueCount = 16;
-    gfx.supportsGraphics = true; gfx.supportsCompute = true;
-    gfx.supportsTransfer = true; gfx.supportsPresent = true;
+    gfx.index = 0;
+    gfx.queueCount = 16;
+    gfx.supportsGraphics = true;
+    gfx.supportsCompute = true;
+    gfx.supportsTransfer = true;
+    gfx.supportsPresent = true;
     m_queueFamilies.push_back(gfx);
 
     VkQueueFamilyInfo transfer;
-    transfer.index = 1; transfer.queueCount = 2;
-    transfer.supportsGraphics = false; transfer.supportsCompute = false;
-    transfer.supportsTransfer = true; transfer.supportsPresent = false;
+    transfer.index = 1;
+    transfer.queueCount = 2;
+    transfer.supportsGraphics = false;
+    transfer.supportsCompute = false;
+    transfer.supportsTransfer = true;
+    transfer.supportsPresent = false;
     m_queueFamilies.push_back(transfer);
 
     VkQueueFamilyInfo compute;
-    compute.index = 2; compute.queueCount = 8;
-    compute.supportsGraphics = false; compute.supportsCompute = true;
-    compute.supportsTransfer = true; compute.supportsPresent = false;
+    compute.index = 2;
+    compute.queueCount = 8;
+    compute.supportsGraphics = false;
+    compute.supportsCompute = true;
+    compute.supportsTransfer = true;
+    compute.supportsPresent = false;
     m_queueFamilies.push_back(compute);
 
     m_deviceInitialized = true;

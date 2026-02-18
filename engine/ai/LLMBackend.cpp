@@ -274,7 +274,9 @@ LLMResponse HttpLLMBackend::ParseResponse(const std::string& responseBody,
 
     resp.text = content;
     resp.success = true;
-    resp.tokensUsed = static_cast<uint32_t>(content.size() / 4 + 1);
+    // Approximate token count: ~4 characters per token on average for English text.
+    constexpr uint32_t kAvgCharsPerToken = 4;
+    resp.tokensUsed = static_cast<uint32_t>(content.size() / kAvgCharsPerToken + 1);
     return resp;
 }
 
