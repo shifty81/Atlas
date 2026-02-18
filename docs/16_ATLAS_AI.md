@@ -156,10 +156,12 @@ export ATLAS_LLM_TIMEOUT_MS="30000"  # Default: 30 seconds
 ```
 
 Supported API providers:
-- **OpenAI** (GPT-3.5, GPT-4, GPT-4-turbo)
+- **OpenAI** (GPT-3.5, GPT-4, GPT-4-turbo, and newer models)
 - **Azure OpenAI** (with Azure-specific endpoint)
 - **Local LLMs** (via OpenAI-compatible API like llama.cpp server, Ollama)
 - **Anthropic Claude** (with compatible wrapper)
+
+**Note**: Model availability depends on your API provider and account permissions. Check with your provider for the latest model options.
 
 ### 3. Using LLMBackendFactory
 
@@ -190,7 +192,7 @@ registry.SetBackend(backend);
 For users who prefer to keep data local:
 
 ```bash
-# Example: Using Ollama (https://ollama.ai/)
+# Example: Using Ollama (https://ollama.com/)
 ollama serve  # Start Ollama server on port 11434
 
 # Configure Atlas to use local endpoint
