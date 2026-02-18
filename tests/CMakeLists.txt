@@ -168,6 +168,7 @@ add_executable(AtlasTests
     test_next_tasks_phase7.cpp
     test_next_tasks_phase8.cpp
     test_next_tasks_phase9.cpp
+    test_next_tasks_phase10.cpp
     test_viewport_framebuffer.cpp
     test_menu_system.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp

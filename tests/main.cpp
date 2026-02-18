@@ -1642,6 +1642,7 @@ void run_next_tasks_phase6_tests();
 void run_next_tasks_phase7_tests();
 void run_next_tasks_phase8_tests();
 void run_next_tasks_phase9_tests();
+void run_next_tasks_phase10_tests();
 void run_panel_draw_tests();
 
 // Menu System tests
@@ -3476,6 +3477,9 @@ int main() {
 
     // Next Tasks Phase 9
     run_next_tasks_phase9_tests();
+
+    // Next Tasks Phase 10
+    run_next_tasks_phase10_tests();
 
     // Panel Draw + TileEditor Input Tests
     run_panel_draw_tests();

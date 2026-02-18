@@ -1,0 +1,133 @@
+#pragma once
+// ============================================================
+// Atlas LLM Backend — Offline-safe language model interface
+// ============================================================
+//
+// Provides a structured interface for wiring an LLM backend
+// (local or remote) into AtlasAI. The default implementation
+// is an offline stub that returns deterministic responses
+// without network access. A real backend subclass can be
+// swapped in at runtime via SetBackend().
+//
+// See: docs/11_ATLAS_AI.md
+//      docs/ATLAS_CORE_CONTRACT.md
+
+#include <cstdint>
+#include <string>
+#include <vector>
+#include <functional>
+#include <memory>
+#include <unordered_map>
+
+namespace atlas::ai {
+
+/// Configuration for an LLM request.
+struct LLMRequest {
+    std::string prompt;
+    std::string systemPrompt;
+    float temperature = 0.7f;    ///< 0 = deterministic, 1 = creative
+    uint32_t maxTokens = 256;
+    uint64_t requestId = 0;
+};
+
+/// Response from the LLM backend.
+struct LLMResponse {
+    uint64_t requestId = 0;
+    std::string text;
+    bool success = false;
+    std::string errorMessage;
+    uint32_t tokensUsed = 0;
+    float latencyMs = 0.0f;
+};
+
+/// Backend capability flags.
+enum class LLMCapability : uint8_t {
+    None          = 0,
+    TextGeneration = 1,
+    Embeddings     = 2,
+    FunctionCall   = 4,
+    Streaming      = 8,
+};
+
+/// Abstract LLM backend interface.
+class ILLMBackend {
+public:
+    virtual ~ILLMBackend() = default;
+
+    /// Process a single prompt request.
+    virtual LLMResponse Complete(const LLMRequest& request) = 0;
+
+    /// Whether the backend is available/healthy.
+    virtual bool IsAvailable() const = 0;
+
+    /// Human-readable name of the backend.
+    virtual std::string Name() const = 0;
+
+    /// Capability bitfield for this backend.
+    virtual uint8_t Capabilities() const = 0;
+};
+
+/// Offline stub — returns canned responses keyed by prompt prefix.
+/// Used in headless CI and environments with no network access.
+class OfflineLLMBackend : public ILLMBackend {
+public:
+    LLMResponse Complete(const LLMRequest& request) override;
+    bool IsAvailable() const override;
+    std::string Name() const override;
+    uint8_t Capabilities() const override;
+
+    /// Register a canned response for prompts that start with `prefix`.
+    void RegisterResponse(const std::string& prefix, const std::string& response);
+
+    /// Number of registered canned responses.
+    size_t ResponseCount() const;
+
+    /// Clear all canned responses.
+    void ClearResponses();
+
+    /// Total number of calls since construction.
+    uint64_t CallCount() const;
+
+private:
+    std::unordered_map<std::string, std::string> m_responses;
+    uint64_t m_callCount = 0;
+    uint64_t m_nextRequestId = 1;
+};
+
+/// Forwards requests to whichever ILLMBackend is currently registered.
+/// Falls back to OfflineLLMBackend when no backend is set.
+class LLMBackendRegistry {
+public:
+    /// Replace the active backend. Pass nullptr to revert to offline stub.
+    void SetBackend(std::shared_ptr<ILLMBackend> backend);
+
+    /// Active backend (never nullptr — falls back to offline stub).
+    ILLMBackend& GetBackend();
+    const ILLMBackend& GetBackend() const;
+
+    /// Whether a non-offline backend is currently registered.
+    bool HasRealBackend() const;
+
+    /// Send a prompt and return a response via the active backend.
+    LLMResponse Complete(const LLMRequest& request);
+
+    /// Convenience: fire-and-forget with a simple string prompt.
+    LLMResponse Complete(const std::string& prompt);
+
+    /// History of all completed requests.
+    const std::vector<LLMResponse>& ResponseHistory() const;
+
+    /// Number of requests processed since construction.
+    size_t RequestCount() const;
+
+    /// Clear response history.
+    void ClearHistory();
+
+private:
+    std::shared_ptr<ILLMBackend> m_backend;
+    OfflineLLMBackend m_offlineStub;
+    std::vector<LLMResponse> m_history;
+    uint64_t m_nextRequestId = 1;
+};
+
+} // namespace atlas::ai

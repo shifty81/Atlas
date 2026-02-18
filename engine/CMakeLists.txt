@@ -143,6 +143,9 @@ add_library(AtlasEngine STATIC
     sim/ReplayVersioning.cpp
     assets/AssetCategoryRegistry.cpp
     assets/ServerAssetValidator.cpp
+    ai/LLMBackend.cpp
+    production/BuildAuditLog.cpp
+    tools/ProjectNamespaceRewriter.cpp
 )
 
 # Conditionally add platform/render sources that require X11, Win32, or OpenGL

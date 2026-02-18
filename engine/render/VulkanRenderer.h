@@ -79,6 +79,24 @@ struct VkSamplerDesc {
     uint32_t id = 0;
 };
 
+/// A push-constant block pushed to a shader stage.
+struct VkPushConstantRange {
+    std::string name;
+    uint32_t offset = 0;
+    uint32_t size = 0;   ///< Size in bytes (max 128 bytes per Vulkan spec)
+    uint32_t id = 0;
+};
+
+/// A scalar/vector/matrix uniform value bound to a shader.
+struct VkShaderUniform {
+    std::string name;
+    uint32_t binding = 0;
+    uint32_t set = 0;
+    uint32_t sizeBytes = 0;
+    std::vector<uint8_t> data;
+    uint32_t id = 0;
+};
+
 class VulkanRenderer : public ui::UIRenderer {
 public:
     void BeginFrame() override;
@@ -144,6 +162,21 @@ public:
     const VkSamplerDesc* GetSampler(uint32_t id) const;
     uint32_t SamplerCount() const;
 
+    // Push constant management
+    uint32_t RegisterPushConstantRange(const VkPushConstantRange& range);
+    bool PushConstants(uint32_t rangeId, const void* data, uint32_t sizeBytes);
+    const VkPushConstantRange* GetPushConstantRange(uint32_t id) const;
+    uint32_t PushConstantRangeCount() const;
+    const std::vector<uint8_t>& PushConstantData(uint32_t rangeId) const;
+
+    // Shader uniform management
+    uint32_t BindUniform(const VkShaderUniform& uniform);
+    bool UpdateUniform(uint32_t uniformId, const void* data, uint32_t sizeBytes);
+    const VkShaderUniform* GetUniform(uint32_t id) const;
+    const VkShaderUniform* GetUniformByName(const std::string& name) const;
+    uint32_t UniformCount() const;
+    void ClearUniforms();
+
     static constexpr uint32_t MAX_BUFFERED_FRAMES = 3;
 
 private:
@@ -176,6 +209,15 @@ private:
 
     std::vector<VkSamplerDesc> m_samplers;
     uint32_t m_nextSamplerId = 1;
+
+    std::vector<VkPushConstantRange> m_pushConstantRanges;
+    std::vector<std::vector<uint8_t>>  m_pushConstantData;
+    uint32_t m_nextPushConstantId = 1;
+
+    std::vector<VkShaderUniform> m_uniforms;
+    uint32_t m_nextUniformId = 1;
+
+    static const std::vector<uint8_t> s_emptyPushData;
 };
 
 } // namespace atlas::render

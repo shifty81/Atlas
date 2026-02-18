@@ -1,5 +1,6 @@
 #include "VulkanRenderer.h"
 #include "../core/Logger.h"
+#include <cstring>
 
 namespace atlas::render {
 
@@ -339,6 +340,103 @@ const VkSamplerDesc* VulkanRenderer::GetSampler(uint32_t id) const {
 
 uint32_t VulkanRenderer::SamplerCount() const {
     return static_cast<uint32_t>(m_samplers.size());
+}
+
+// --- Push constant management ---
+
+const std::vector<uint8_t> VulkanRenderer::s_emptyPushData;
+
+uint32_t VulkanRenderer::RegisterPushConstantRange(const VkPushConstantRange& range) {
+    VkPushConstantRange r = range;
+    r.id = m_nextPushConstantId++;
+    m_pushConstantRanges.push_back(r);
+    m_pushConstantData.emplace_back(); // empty data slot
+    Logger::Info("[VulkanRenderer] RegisterPushConstantRange '" + r.name +
+                 "' offset=" + std::to_string(r.offset) +
+                 " size=" + std::to_string(r.size) +
+                 " id=" + std::to_string(r.id));
+    return r.id;
+}
+
+bool VulkanRenderer::PushConstants(uint32_t rangeId, const void* data, uint32_t sizeBytes) {
+    if (rangeId == 0 || rangeId >= m_nextPushConstantId) return false;
+    size_t idx = rangeId - 1;
+    if (idx >= m_pushConstantRanges.size()) return false;
+    const auto& range = m_pushConstantRanges[idx];
+    if (sizeBytes > range.size) return false;
+    auto& buf = m_pushConstantData[idx];
+    buf.resize(sizeBytes);
+    std::memcpy(buf.data(), data, sizeBytes);
+    Logger::Info("[VulkanRenderer] PushConstants rangeId=" + std::to_string(rangeId) +
+                 " bytes=" + std::to_string(sizeBytes));
+    return true;
+}
+
+const VkPushConstantRange* VulkanRenderer::GetPushConstantRange(uint32_t id) const {
+    if (id == 0 || id >= m_nextPushConstantId) return nullptr;
+    return &m_pushConstantRanges[id - 1];
+}
+
+uint32_t VulkanRenderer::PushConstantRangeCount() const {
+    return static_cast<uint32_t>(m_pushConstantRanges.size());
+}
+
+const std::vector<uint8_t>& VulkanRenderer::PushConstantData(uint32_t rangeId) const {
+    if (rangeId == 0 || rangeId >= m_nextPushConstantId) return s_emptyPushData;
+    size_t idx = rangeId - 1;
+    if (idx >= m_pushConstantData.size()) return s_emptyPushData;
+    return m_pushConstantData[idx];
+}
+
+// --- Shader uniform management ---
+
+uint32_t VulkanRenderer::BindUniform(const VkShaderUniform& uniform) {
+    VkShaderUniform u = uniform;
+    u.id = m_nextUniformId++;
+    m_uniforms.push_back(u);
+    Logger::Info("[VulkanRenderer] BindUniform '" + u.name +
+                 "' set=" + std::to_string(u.set) +
+                 " binding=" + std::to_string(u.binding) +
+                 " id=" + std::to_string(u.id));
+    return u.id;
+}
+
+bool VulkanRenderer::UpdateUniform(uint32_t uniformId, const void* data, uint32_t sizeBytes) {
+    for (auto& u : m_uniforms) {
+        if (u.id == uniformId) {
+            // sizeBytes == 0 means the uniform was created without an initial size
+            // (flexible); otherwise enforce the declared size as an upper bound.
+            if (u.sizeBytes != 0 && sizeBytes > u.sizeBytes) return false;
+            u.data.resize(sizeBytes);
+            std::memcpy(u.data.data(), data, sizeBytes);
+            u.sizeBytes = sizeBytes;
+            return true;
+        }
+    }
+    return false;
+}
+
+const VkShaderUniform* VulkanRenderer::GetUniform(uint32_t id) const {
+    for (const auto& u : m_uniforms) {
+        if (u.id == id) return &u;
+    }
+    return nullptr;
+}
+
+const VkShaderUniform* VulkanRenderer::GetUniformByName(const std::string& name) const {
+    for (const auto& u : m_uniforms) {
+        if (u.name == name) return &u;
+    }
+    return nullptr;
+}
+
+uint32_t VulkanRenderer::UniformCount() const {
+    return static_cast<uint32_t>(m_uniforms.size());
+}
+
+void VulkanRenderer::ClearUniforms() {
+    m_uniforms.clear();
+    m_nextUniformId = 1;
 }
 
 } // namespace atlas::render
