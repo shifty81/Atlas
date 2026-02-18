@@ -147,15 +147,15 @@ static EditorWidgetIds BuildEditorUI(atlas::ui::UIScreen& screen) {
     atlas::editor::EditorTheme theme = atlas::editor::EditorTheme::Dark();
     (void)theme; // Theme values are used by the renderer; stored for future use.
 
-    if (result.success && result.root) {
-        // parentWidget=0 is the root; x,y=0,0 is the top-left; 1280x720 is default viewport
-        ApplyDSLNode(screen, *result.root, 0, 0, 0, 1280, 720);
-        return EditorWidgetIds{};
-    }
-
     if (!result.success) {
         std::cerr << "DSL parse error: " << result.errorMessage << std::endl;
     }
+
+    // NOTE: When DSL parsing succeeds, ApplyDSLNode only creates empty Panel
+    // containers (borders with no widget content).  Until the DSL pipeline is
+    // extended to populate panels with menus, buttons, text, and other
+    // widgets, we fall through to the hard-coded layout below which provides
+    // the full editor UI.
 
     // Fallback: hard-coded layout
     // Menu bar

@@ -63,6 +63,10 @@ LRESULT CALLBACK Win32Window::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPA
                 WindowEvent event;
                 event.type = WindowEvent::Type::KeyDown;
                 event.keyCode = static_cast<uint32_t>(wParam);
+                event.modifiers = 0;
+                if (GetKeyState(VK_CONTROL) & 0x8000) event.modifiers |= kModCtrl;
+                if (GetKeyState(VK_SHIFT) & 0x8000)   event.modifiers |= kModShift;
+                if (GetKeyState(VK_MENU) & 0x8000)    event.modifiers |= kModAlt;
                 self->PushEvent(event);
             }
             return 0;
@@ -72,6 +76,10 @@ LRESULT CALLBACK Win32Window::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPA
                 WindowEvent event;
                 event.type = WindowEvent::Type::KeyUp;
                 event.keyCode = static_cast<uint32_t>(wParam);
+                event.modifiers = 0;
+                if (GetKeyState(VK_CONTROL) & 0x8000) event.modifiers |= kModCtrl;
+                if (GetKeyState(VK_SHIFT) & 0x8000)   event.modifiers |= kModShift;
+                if (GetKeyState(VK_MENU) & 0x8000)    event.modifiers |= kModAlt;
                 self->PushEvent(event);
             }
             return 0;

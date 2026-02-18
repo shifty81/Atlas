@@ -25,6 +25,7 @@ struct UIEvent {
     uint8_t mouseButton = 0;
     char textChar = 0;
     float scrollDelta = 0.0f; ///< Scroll wheel delta (positive = down)
+    uint8_t modifiers = 0;    ///< Bitmask: 1=Ctrl, 2=Shift, 4=Alt
 };
 
 /// Base class for any UI element that can receive routed events.
