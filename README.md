@@ -453,6 +453,28 @@ ctest
 ./tests/AtlasTests
 ```
 
+### AI Assistant Configuration (Optional)
+
+Atlas includes an AI-powered editor assistant that can help with content generation. By default, it runs in offline mode with no network access. To enable the HTTP LLM backend:
+
+```bash
+# Configure environment variables
+export ATLAS_LLM_ENDPOINT="https://api.openai.com/v1/chat/completions"
+export ATLAS_LLM_MODEL="gpt-4"
+export ATLAS_LLM_API_KEY="your-api-key-here"
+
+# Then run the editor
+./dist/AtlasEditor
+```
+
+Supported backends:
+- OpenAI (GPT-3.5, GPT-4)
+- Azure OpenAI
+- Local LLMs (llama.cpp, Ollama)
+- Any OpenAI-compatible API
+
+For detailed configuration options, see [docs/16_ATLAS_AI.md](docs/16_ATLAS_AI.md).
+
 ---
 
 ## Core Design Principles

@@ -128,8 +128,129 @@ All backends are abstracted behind the `IAssistantBackend` interface.
 - Privacy-respecting: no project data is sent without explicit consent
 - Indexed content is cached and versioned locally
 
+## LLM Backend Configuration
+
+Atlas supports multiple LLM backend options for AI-assisted authoring:
+
+### 1. Offline Mode (Default)
+
+The offline stub backend is used by default when no LLM configuration is provided. It returns deterministic canned responses and requires no network access.
+
+```cpp
+// Offline mode is automatic - no configuration needed
+// The editor will use OfflineLLMBackend automatically
+```
+
+### 2. HTTP LLM Backend (Production)
+
+Configure via environment variables:
+
+```bash
+# Required
+export ATLAS_LLM_ENDPOINT="https://api.openai.com/v1/chat/completions"
+export ATLAS_LLM_MODEL="gpt-4"
+export ATLAS_LLM_API_KEY="your-api-key-here"
+
+# Optional
+export ATLAS_LLM_TIMEOUT_MS="30000"  # Default: 30 seconds
+```
+
+Supported API providers:
+- **OpenAI** (GPT-3.5, GPT-4, GPT-4-turbo)
+- **Azure OpenAI** (with Azure-specific endpoint)
+- **Local LLMs** (via OpenAI-compatible API like llama.cpp server, Ollama)
+- **Anthropic Claude** (with compatible wrapper)
+
+### 3. Using LLMBackendFactory
+
+The recommended way to create an LLM backend:
+
+```cpp
+#include "engine/ai/LLMBackend.h"
+
+// Create from environment variables
+auto httpClient = /* your IHttpClient implementation */;
+auto backend = atlas::ai::LLMBackendFactory::CreateFromEnv(httpClient);
+
+// Or create with explicit parameters
+auto backend = atlas::ai::LLMBackendFactory::Create(
+    httpClient,
+    "https://api.openai.com/v1/chat/completions",
+    "gpt-4",
+    "your-api-key-here"
+);
+
+// Register with the global registry
+atlas::ai::LLMBackendRegistry registry;
+registry.SetBackend(backend);
+```
+
+### 4. Local LLM Setup (Privacy-Focused)
+
+For users who prefer to keep data local:
+
+```bash
+# Example: Using Ollama (https://ollama.ai/)
+ollama serve  # Start Ollama server on port 11434
+
+# Configure Atlas to use local endpoint
+export ATLAS_LLM_ENDPOINT="http://localhost:11434/v1/chat/completions"
+export ATLAS_LLM_MODEL="llama2"
+export ATLAS_LLM_API_KEY="not-required-for-local"
+```
+
+### Environment Variable Reference
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `ATLAS_LLM_ENDPOINT` | Yes* | None | API endpoint URL |
+| `ATLAS_LLM_MODEL` | Yes* | None | Model identifier |
+| `ATLAS_LLM_API_KEY` | Yes* | None | API authentication key |
+| `ATLAS_LLM_TIMEOUT_MS` | No | 30000 | Request timeout in milliseconds |
+
+*Required only when using HTTP LLM backend. Offline mode works without any configuration.
+
+### Testing Your Configuration
+
+```bash
+# Build the editor
+./build.sh editor
+
+# Run with LLM backend (environment variables must be set)
+./dist/AtlasEditor
+
+# The AI assistant will automatically use the configured backend
+# Check the console for connection status messages
+```
+
+### Troubleshooting
+
+**Problem**: "LLM backend not available"
+- **Solution**: Check that environment variables are set correctly
+- Verify API key is valid
+- Test endpoint connectivity: `curl -v $ATLAS_LLM_ENDPOINT`
+
+**Problem**: "Request timeout"
+- **Solution**: Increase `ATLAS_LLM_TIMEOUT_MS`
+- Check network connectivity
+- Try a faster model or reduce `maxTokens` in requests
+
+**Problem**: "API key invalid"
+- **Solution**: Verify API key is correct
+- Check that key has proper permissions
+- Ensure no extra whitespace in environment variable
+
+### Security Notes
+
+- API keys are **never** logged or included in crash reports
+- Keys are loaded from environment variables only at startup
+- No API keys are stored in configuration files or source code
+- All network traffic should use HTTPS endpoints
+- Consider using local LLM for sensitive projects
+
 ## See Also
 
 - `08_AI_EDITOR_ASSIST.md` — AI aggregator and validation layer
 - `15_FLOW_GRAPH.md` — flow graph system targeted by AI generation
 - `12_GUI_SYSTEM.md` — GUI DSL that AI can produce
+- `engine/ai/LLMBackend.h` — LLM backend interface and implementation
