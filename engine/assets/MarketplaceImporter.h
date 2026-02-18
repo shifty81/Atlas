@@ -18,6 +18,7 @@
 #include <vector>
 #include <memory>
 #include <optional>
+#include <unordered_map>
 
 namespace atlas::asset {
 
@@ -173,6 +174,137 @@ public:
     
 private:
     std::vector<std::unique_ptr<IMarketplaceImporter>> m_importers;
+};
+
+// ---------------------------------------------------------------------------
+// Hot-Reload for Marketplace Assets
+// ---------------------------------------------------------------------------
+
+/// Tracks a marketplace asset for hot-reload (file modification monitoring).
+struct HotReloadEntry {
+    std::string assetId;
+    MarketplaceType marketplace = MarketplaceType::ItchIO;
+    std::string localPath;
+    uint64_t lastHash = 0;       ///< Hash of the local file when last imported
+    std::string currentVersion;  ///< Version at last import
+    bool dirty = false;          ///< True when change detected
+};
+
+/// Watches imported marketplace assets for changes and triggers re-import.
+class MarketplaceHotReloader {
+public:
+    /// Register an imported asset for hot-reload monitoring.
+    void Watch(const std::string& assetId, MarketplaceType marketplace,
+               const std::string& localPath, uint64_t hash,
+               const std::string& version = {});
+
+    /// Unregister an asset from hot-reload monitoring.
+    bool Unwatch(const std::string& assetId);
+
+    /// Scan all watched assets and mark dirty any whose file hash changed.
+    size_t CheckForUpdates();
+
+    /// Return all currently dirty entries (assets that need re-import).
+    std::vector<HotReloadEntry> DirtyAssets() const;
+
+    /// Clear the dirty flag on an asset (e.g., after re-import).
+    void ClearDirty(const std::string& assetId);
+
+    /// Query
+    size_t WatchCount() const;
+    bool IsWatching(const std::string& assetId) const;
+    const HotReloadEntry* GetEntry(const std::string& assetId) const;
+
+private:
+    std::vector<HotReloadEntry> m_entries;
+    static uint64_t HashFile(const std::string& path);
+};
+
+// ---------------------------------------------------------------------------
+// Asset Validation Dashboard
+// ---------------------------------------------------------------------------
+
+/// Result of a single asset validation check.
+enum class ValidationStatus {
+    Pass,
+    Warning,
+    Fail,
+};
+
+struct ValidationCheckResult {
+    std::string checkName;
+    ValidationStatus status = ValidationStatus::Pass;
+    std::string message;
+};
+
+struct AssetValidationReport {
+    std::string assetId;
+    std::string localPath;
+    std::vector<ValidationCheckResult> checks;
+
+    bool AllPassed() const;
+    size_t FailCount() const;
+    size_t WarnCount() const;
+};
+
+/// Runs a suite of validation checks on marketplace-imported assets.
+class AssetValidationDashboard {
+public:
+    /// Validate a single imported asset.
+    AssetValidationReport Validate(const std::string& assetId,
+                                   const std::string& localPath) const;
+
+    /// Validate all assets in a directory.
+    std::vector<AssetValidationReport> ValidateDirectory(const std::string& dir) const;
+
+    /// Return a summary string suitable for display.
+    static std::string SummaryString(const AssetValidationReport& report);
+};
+
+// ---------------------------------------------------------------------------
+// Mod Asset Sandboxing
+// ---------------------------------------------------------------------------
+
+/// Per-mod resource budget (CPU time, memory, asset count).
+struct ModSandboxBudget {
+    size_t maxAssetCount = 256;
+    size_t maxTotalBytes = 64 * 1024 * 1024; // 64 MB default
+    size_t currentAssetCount = 0;
+    size_t currentTotalBytes = 0;
+};
+
+/// Tracks which assets belong to a mod and enforces sandbox rules.
+class ModAssetSandbox {
+public:
+    /// Register a mod sandbox with a given budget.
+    void RegisterMod(const std::string& modId, const ModSandboxBudget& budget);
+
+    /// Unregister a mod sandbox.
+    bool UnregisterMod(const std::string& modId);
+
+    /// Attempt to add an asset to a mod's sandbox.
+    /// Returns false if the asset fails hash verification or exceeds budget.
+    bool AddAsset(const std::string& modId, const std::string& assetPath,
+                  uint64_t expectedHash);
+
+    /// Remove an asset from a mod's sandbox.
+    bool RemoveAsset(const std::string& modId, const std::string& assetPath);
+
+    /// Query
+    bool HasMod(const std::string& modId) const;
+    const ModSandboxBudget* GetBudget(const std::string& modId) const;
+    size_t AssetCount(const std::string& modId) const;
+    std::vector<std::string> Assets(const std::string& modId) const;
+    bool VerifyAsset(const std::string& assetPath, uint64_t expectedHash) const;
+    size_t ModCount() const;
+
+private:
+    struct ModEntry {
+        ModSandboxBudget budget;
+        std::vector<std::string> assets;
+    };
+    std::unordered_map<std::string, ModEntry> m_mods;
+    static uint64_t HashFile(const std::string& path);
 };
 
 }  // namespace atlas::asset

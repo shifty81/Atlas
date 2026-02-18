@@ -29,6 +29,29 @@ struct ComparisonResult {
     double matchPercentage = 100.0;
 };
 
+/// Snapshot of a single input frame for the Input Frame Viewer.
+struct InputFrameEntry {
+    uint32_t tick = 0;
+    size_t dataSize = 0;
+    uint64_t stateHash = 0;
+    bool isSavePoint = false;
+    std::string hexPreview; // first N bytes as hex string
+};
+
+/// A single event on the Event Timeline.
+enum class TimelineEventType {
+    Input,
+    Divergence,
+    Branch,
+    SavePoint,
+};
+
+struct TimelineEvent {
+    uint32_t tick = 0;
+    TimelineEventType type = TimelineEventType::Input;
+    std::string description;
+};
+
 class ReplayTimelinePanel : public EditorPanel {
 public:
     const char* Name() const override { return "Replay Timeline"; }
@@ -64,6 +87,17 @@ public:
 
     // Branching
     std::vector<atlas::sim::ReplayFrame> BranchAt(uint32_t tick);
+
+    // --- Replay Inspector: Input Frame Viewer ---
+    std::vector<InputFrameEntry> GetInputFrames(uint32_t startTick, uint32_t endTick) const;
+    InputFrameEntry GetInputFrameAt(uint32_t tick) const;
+
+    // --- Replay Inspector: Event Timeline ---
+    std::vector<TimelineEvent> BuildEventTimeline() const;
+
+    // --- Replay Inspector: Branch Point Markers ---
+    std::vector<TimelineMarker> BranchPoints() const;
+    void AddBranchPoint(uint32_t tick, const std::string& label);
 
     const atlas::ui::UIDrawList& GetDrawList() const { return m_drawList; }
 

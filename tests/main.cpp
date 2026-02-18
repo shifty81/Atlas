@@ -1644,6 +1644,7 @@ void run_next_tasks_phase8_tests();
 void run_next_tasks_phase9_tests();
 void run_next_tasks_phase10_tests();
 void run_next_tasks_phase11_tests();
+void run_next_tasks_phase12_tests();
 void run_panel_draw_tests();
 
 // Menu System tests
@@ -3063,6 +3064,9 @@ int main() {
     test_collab_resolve_first_writer_wins();
     test_collab_no_conflicts();
     test_collab_clear();
+
+    // Next Tasks Phase 12
+    run_next_tasks_phase12_tests();
 
     // AtlasAI Core
     std::cout << "\n--- AtlasAI Core ---" << std::endl;

@@ -1,5 +1,6 @@
 #include "ReplayTimelinePanel.h"
 #include <algorithm>
+#include <cstdio>
 
 namespace atlas::editor {
 
@@ -226,6 +227,122 @@ void ReplayTimelinePanel::CheckAndNotifyDivergence() {
     if (HasDivergence() && m_divergenceCallback) {
         m_divergenceCallback(DivergenceTick());
     }
+}
+
+// --- Replay Inspector: Input Frame Viewer ---
+
+static std::string BytesToHex(const std::vector<uint8_t>& data, size_t maxBytes) {
+    std::string hex;
+    size_t limit = std::min(data.size(), maxBytes);
+    for (size_t i = 0; i < limit; ++i) {
+        char buf[4];
+        std::snprintf(buf, sizeof(buf), "%02X", data[i]);
+        if (!hex.empty()) hex += ' ';
+        hex += buf;
+    }
+    return hex;
+}
+
+std::vector<InputFrameEntry> ReplayTimelinePanel::GetInputFrames(
+    uint32_t startTick, uint32_t endTick) const {
+    std::vector<InputFrameEntry> entries;
+    for (const auto& f : m_frames) {
+        if (f.tick >= startTick && f.tick <= endTick) {
+            InputFrameEntry e;
+            e.tick = f.tick;
+            e.dataSize = f.inputData.size();
+            e.stateHash = f.stateHash;
+            e.isSavePoint = f.isSavePoint;
+            e.hexPreview = BytesToHex(f.inputData, 16);
+            entries.push_back(e);
+        }
+    }
+    return entries;
+}
+
+InputFrameEntry ReplayTimelinePanel::GetInputFrameAt(uint32_t tick) const {
+    InputFrameEntry e;
+    e.tick = tick;
+    for (const auto& f : m_frames) {
+        if (f.tick == tick) {
+            e.dataSize = f.inputData.size();
+            e.stateHash = f.stateHash;
+            e.isSavePoint = f.isSavePoint;
+            e.hexPreview = BytesToHex(f.inputData, 16);
+            return e;
+        }
+    }
+    return e;
+}
+
+// --- Replay Inspector: Event Timeline ---
+
+std::vector<TimelineEvent> ReplayTimelinePanel::BuildEventTimeline() const {
+    std::vector<TimelineEvent> events;
+
+    // Add input events from frames
+    for (const auto& f : m_frames) {
+        if (!f.inputData.empty()) {
+            TimelineEvent ev;
+            ev.tick = f.tick;
+            ev.type = TimelineEventType::Input;
+            ev.description = "Input (" + std::to_string(f.inputData.size()) + " bytes)";
+            events.push_back(ev);
+        }
+        if (f.isSavePoint) {
+            TimelineEvent ev;
+            ev.tick = f.tick;
+            ev.type = TimelineEventType::SavePoint;
+            ev.description = "Save Point";
+            events.push_back(ev);
+        }
+    }
+
+    // Add marker-based events
+    for (const auto& m : m_markers) {
+        TimelineEvent ev;
+        ev.tick = m.tick;
+        ev.description = m.label;
+        switch (m.type) {
+            case MarkerType::Branch:
+                ev.type = TimelineEventType::Branch;
+                break;
+            case MarkerType::Divergence:
+                ev.type = TimelineEventType::Divergence;
+                break;
+            default:
+                continue; // skip bookmarks and injections in event timeline
+        }
+        events.push_back(ev);
+    }
+
+    // Sort by tick
+    std::sort(events.begin(), events.end(),
+              [](const TimelineEvent& a, const TimelineEvent& b) {
+                  return a.tick < b.tick;
+              });
+
+    return events;
+}
+
+// --- Replay Inspector: Branch Point Markers ---
+
+std::vector<TimelineMarker> ReplayTimelinePanel::BranchPoints() const {
+    std::vector<TimelineMarker> points;
+    for (const auto& m : m_markers) {
+        if (m.type == MarkerType::Branch) {
+            points.push_back(m);
+        }
+    }
+    return points;
+}
+
+void ReplayTimelinePanel::AddBranchPoint(uint32_t tick, const std::string& label) {
+    TimelineMarker marker;
+    marker.tick = tick;
+    marker.label = label;
+    marker.type = MarkerType::Branch;
+    m_markers.push_back(marker);
 }
 
 }

@@ -170,6 +170,7 @@ add_executable(AtlasTests
     test_next_tasks_phase9.cpp
     test_next_tasks_phase10.cpp
     test_next_tasks_phase11.cpp
+    test_next_tasks_phase12.cpp
     test_viewport_framebuffer.cpp
     test_menu_system.cpp
     test_gui_full_completion.cpp

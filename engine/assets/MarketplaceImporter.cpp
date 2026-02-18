@@ -649,4 +649,360 @@ bool UnityAssetStoreImporter::ParsePrefabHeader(
     return foundName;
 }
 
+// ---------------------------------------------------------------------------
+// MarketplaceHotReloader
+// ---------------------------------------------------------------------------
+
+void MarketplaceHotReloader::Watch(const std::string& assetId,
+                                   MarketplaceType marketplace,
+                                   const std::string& localPath,
+                                   uint64_t hash,
+                                   const std::string& version) {
+    for (auto& e : m_entries) {
+        if (e.assetId == assetId) {
+            e.localPath = localPath;
+            e.lastHash = hash;
+            e.currentVersion = version;
+            e.dirty = false;
+            return;
+        }
+    }
+    HotReloadEntry entry;
+    entry.assetId = assetId;
+    entry.marketplace = marketplace;
+    entry.localPath = localPath;
+    entry.lastHash = hash;
+    entry.currentVersion = version;
+    entry.dirty = false;
+    m_entries.push_back(entry);
+}
+
+bool MarketplaceHotReloader::Unwatch(const std::string& assetId) {
+    auto it = std::remove_if(m_entries.begin(), m_entries.end(),
+        [&](const HotReloadEntry& e) { return e.assetId == assetId; });
+    if (it == m_entries.end()) return false;
+    m_entries.erase(it, m_entries.end());
+    return true;
+}
+
+size_t MarketplaceHotReloader::CheckForUpdates() {
+    size_t dirtyCount = 0;
+    for (auto& e : m_entries) {
+        if (!FileExists(e.localPath)) continue;
+        uint64_t currentHash = HashFile(e.localPath);
+        if (currentHash != e.lastHash) {
+            e.dirty = true;
+            ++dirtyCount;
+        }
+    }
+    return dirtyCount;
+}
+
+std::vector<HotReloadEntry> MarketplaceHotReloader::DirtyAssets() const {
+    std::vector<HotReloadEntry> result;
+    for (const auto& e : m_entries) {
+        if (e.dirty) result.push_back(e);
+    }
+    return result;
+}
+
+void MarketplaceHotReloader::ClearDirty(const std::string& assetId) {
+    for (auto& e : m_entries) {
+        if (e.assetId == assetId) {
+            e.dirty = false;
+            e.lastHash = HashFile(e.localPath);
+            return;
+        }
+    }
+}
+
+size_t MarketplaceHotReloader::WatchCount() const {
+    return m_entries.size();
+}
+
+bool MarketplaceHotReloader::IsWatching(const std::string& assetId) const {
+    for (const auto& e : m_entries) {
+        if (e.assetId == assetId) return true;
+    }
+    return false;
+}
+
+const HotReloadEntry* MarketplaceHotReloader::GetEntry(const std::string& assetId) const {
+    for (const auto& e : m_entries) {
+        if (e.assetId == assetId) return &e;
+    }
+    return nullptr;
+}
+
+uint64_t MarketplaceHotReloader::HashFile(const std::string& path) {
+    std::ifstream in(path, std::ios::binary);
+    if (!in.is_open()) return 0;
+
+    // FNV-1a 64-bit hash
+    uint64_t hash = 14695981039346656037ULL;
+    char buf[4096];
+    while (in.read(buf, sizeof(buf))) {
+        for (std::streamsize i = 0; i < in.gcount(); ++i) {
+            hash ^= static_cast<uint64_t>(static_cast<uint8_t>(buf[i]));
+            hash *= 1099511628211ULL;
+        }
+    }
+    for (std::streamsize i = 0; i < in.gcount(); ++i) {
+        hash ^= static_cast<uint64_t>(static_cast<uint8_t>(buf[i]));
+        hash *= 1099511628211ULL;
+    }
+    return hash;
+}
+
+// ---------------------------------------------------------------------------
+// AssetValidationDashboard
+// ---------------------------------------------------------------------------
+
+bool AssetValidationReport::AllPassed() const {
+    for (const auto& c : checks) {
+        if (c.status == ValidationStatus::Fail) return false;
+    }
+    return true;
+}
+
+size_t AssetValidationReport::FailCount() const {
+    size_t n = 0;
+    for (const auto& c : checks) {
+        if (c.status == ValidationStatus::Fail) ++n;
+    }
+    return n;
+}
+
+size_t AssetValidationReport::WarnCount() const {
+    size_t n = 0;
+    for (const auto& c : checks) {
+        if (c.status == ValidationStatus::Warning) ++n;
+    }
+    return n;
+}
+
+AssetValidationReport AssetValidationDashboard::Validate(
+    const std::string& assetId, const std::string& localPath) const {
+
+    AssetValidationReport report;
+    report.assetId = assetId;
+    report.localPath = localPath;
+
+    // Check 1: File existence
+    {
+        ValidationCheckResult r;
+        r.checkName = "FileExists";
+        if (FileExists(localPath)) {
+            r.status = ValidationStatus::Pass;
+            r.message = "File exists";
+        } else {
+            r.status = ValidationStatus::Fail;
+            r.message = "File not found: " + localPath;
+        }
+        report.checks.push_back(r);
+    }
+
+    if (!FileExists(localPath)) return report;
+
+    // Check 2: File size
+    {
+        ValidationCheckResult r;
+        r.checkName = "FileSize";
+        auto sz = std::filesystem::file_size(localPath);
+        if (sz == 0) {
+            r.status = ValidationStatus::Fail;
+            r.message = "File is empty";
+        } else if (sz > 512ULL * 1024 * 1024) {
+            r.status = ValidationStatus::Warning;
+            r.message = "File exceeds 512 MB (" + std::to_string(sz) + " bytes)";
+        } else {
+            r.status = ValidationStatus::Pass;
+            r.message = std::to_string(sz) + " bytes";
+        }
+        report.checks.push_back(r);
+    }
+
+    // Check 3: Extension recognized
+    {
+        ValidationCheckResult r;
+        r.checkName = "ExtensionRecognized";
+        std::string ext = GetFileExtension(localPath);
+        static const std::vector<std::string> knownExts = {
+            ".png", ".obj", ".fbx", ".gltf", ".wav", ".ogg", ".flac",
+            ".ttf", ".otf", ".uasset", ".prefab", ".dds", ".tga",
+        };
+        bool known = false;
+        for (const auto& ke : knownExts) {
+            if (ext == ke) { known = true; break; }
+        }
+        if (known) {
+            r.status = ValidationStatus::Pass;
+            r.message = "Extension: " + ext;
+        } else {
+            r.status = ValidationStatus::Warning;
+            r.message = "Unrecognized extension: " + ext;
+        }
+        report.checks.push_back(r);
+    }
+
+    // Check 4: Readable
+    {
+        ValidationCheckResult r;
+        r.checkName = "Readable";
+        std::ifstream in(localPath, std::ios::binary);
+        if (in.is_open()) {
+            r.status = ValidationStatus::Pass;
+            r.message = "File is readable";
+        } else {
+            r.status = ValidationStatus::Fail;
+            r.message = "Cannot open file for reading";
+        }
+        report.checks.push_back(r);
+    }
+
+    return report;
+}
+
+std::vector<AssetValidationReport> AssetValidationDashboard::ValidateDirectory(
+    const std::string& dir) const {
+
+    std::vector<AssetValidationReport> reports;
+    if (!std::filesystem::exists(dir)) return reports;
+
+    for (const auto& entry : std::filesystem::directory_iterator(dir)) {
+        if (entry.is_regular_file()) {
+            std::string name = entry.path().filename().string();
+            reports.push_back(Validate(name, entry.path().string()));
+        }
+    }
+    return reports;
+}
+
+std::string AssetValidationDashboard::SummaryString(const AssetValidationReport& report) {
+    std::string s = report.assetId + ": ";
+    if (report.AllPassed()) {
+        s += "PASS (" + std::to_string(report.checks.size()) + " checks)";
+    } else {
+        s += std::to_string(report.FailCount()) + " FAIL, "
+           + std::to_string(report.WarnCount()) + " WARN";
+    }
+    return s;
+}
+
+// ---------------------------------------------------------------------------
+// ModAssetSandbox
+// ---------------------------------------------------------------------------
+
+void ModAssetSandbox::RegisterMod(const std::string& modId,
+                                  const ModSandboxBudget& budget) {
+    ModEntry entry;
+    entry.budget = budget;
+    m_mods[modId] = entry;
+}
+
+bool ModAssetSandbox::UnregisterMod(const std::string& modId) {
+    return m_mods.erase(modId) > 0;
+}
+
+bool ModAssetSandbox::AddAsset(const std::string& modId,
+                               const std::string& assetPath,
+                               uint64_t expectedHash) {
+    auto it = m_mods.find(modId);
+    if (it == m_mods.end()) return false;
+
+    // Verify hash
+    if (!VerifyAsset(assetPath, expectedHash)) return false;
+
+    // Check budget
+    auto& entry = it->second;
+    if (entry.budget.currentAssetCount >= entry.budget.maxAssetCount) return false;
+
+    size_t fileSize = 0;
+    if (FileExists(assetPath)) {
+        fileSize = static_cast<size_t>(std::filesystem::file_size(assetPath));
+    }
+    if (entry.budget.currentTotalBytes + fileSize > entry.budget.maxTotalBytes) return false;
+
+    entry.assets.push_back(assetPath);
+    entry.budget.currentAssetCount++;
+    entry.budget.currentTotalBytes += fileSize;
+    return true;
+}
+
+bool ModAssetSandbox::RemoveAsset(const std::string& modId,
+                                  const std::string& assetPath) {
+    auto it = m_mods.find(modId);
+    if (it == m_mods.end()) return false;
+
+    auto& assets = it->second.assets;
+    auto ait = std::find(assets.begin(), assets.end(), assetPath);
+    if (ait == assets.end()) return false;
+
+    size_t fileSize = 0;
+    if (FileExists(assetPath)) {
+        fileSize = static_cast<size_t>(std::filesystem::file_size(assetPath));
+    }
+
+    assets.erase(ait);
+    auto& budget = it->second.budget;
+    if (budget.currentAssetCount > 0) budget.currentAssetCount--;
+    if (budget.currentTotalBytes >= fileSize) {
+        budget.currentTotalBytes -= fileSize;
+    } else {
+        budget.currentTotalBytes = 0;
+    }
+    return true;
+}
+
+bool ModAssetSandbox::HasMod(const std::string& modId) const {
+    return m_mods.find(modId) != m_mods.end();
+}
+
+const ModSandboxBudget* ModAssetSandbox::GetBudget(const std::string& modId) const {
+    auto it = m_mods.find(modId);
+    if (it == m_mods.end()) return nullptr;
+    return &it->second.budget;
+}
+
+size_t ModAssetSandbox::AssetCount(const std::string& modId) const {
+    auto it = m_mods.find(modId);
+    if (it == m_mods.end()) return 0;
+    return it->second.assets.size();
+}
+
+std::vector<std::string> ModAssetSandbox::Assets(const std::string& modId) const {
+    auto it = m_mods.find(modId);
+    if (it == m_mods.end()) return {};
+    return it->second.assets;
+}
+
+bool ModAssetSandbox::VerifyAsset(const std::string& assetPath,
+                                  uint64_t expectedHash) const {
+    uint64_t actual = HashFile(assetPath);
+    return actual == expectedHash;
+}
+
+size_t ModAssetSandbox::ModCount() const {
+    return m_mods.size();
+}
+
+uint64_t ModAssetSandbox::HashFile(const std::string& path) {
+    std::ifstream in(path, std::ios::binary);
+    if (!in.is_open()) return 0;
+
+    uint64_t hash = 14695981039346656037ULL;
+    char buf[4096];
+    while (in.read(buf, sizeof(buf))) {
+        for (std::streamsize i = 0; i < in.gcount(); ++i) {
+            hash ^= static_cast<uint64_t>(static_cast<uint8_t>(buf[i]));
+            hash *= 1099511628211ULL;
+        }
+    }
+    for (std::streamsize i = 0; i < in.gcount(); ++i) {
+        hash ^= static_cast<uint64_t>(static_cast<uint8_t>(buf[i]));
+        hash *= 1099511628211ULL;
+    }
+    return hash;
+}
+
 }  // namespace atlas::asset
