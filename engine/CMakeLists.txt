@@ -142,6 +142,7 @@ add_library(AtlasEngine STATIC
     module/ModuleLoader.cpp
     render/VulkanRenderer.cpp
     render/AtlasShaderIR.cpp
+    render/GLViewportFramebuffer.cpp
     sim/SimulationStateAuditor.cpp
     sim/DesyncReproducer.cpp
     sim/TLCModelChecker.cpp

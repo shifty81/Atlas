@@ -15,6 +15,7 @@
 
 #if !defined(__linux__) || defined(ATLAS_HAS_X11)
 #include "../render/GLRenderer.h"
+#include "../render/GLViewportFramebuffer.h"
 #endif
 
 namespace atlas {
@@ -134,9 +135,33 @@ void Engine::InitEditor() {
     // This fixes the GUI issue where the scene would render directly to the
     // swapchain backbuffer (appearing behind the editor UI) instead of into
     // the viewport panel.  See gui_issues.txt for the full diagnosis.
-    m_viewportFB = std::make_unique<render::NullViewportFramebuffer>(
-        static_cast<uint32_t>(m_config.windowWidth),
-        static_cast<uint32_t>(m_config.windowHeight));
+    //
+    // When an OpenGL context is available, use a real FBO so the scene can
+    // be rendered into a texture and displayed inside the viewport panel.
+    // Otherwise fall back to the Null implementation for headless / CI builds.
+#if !defined(__linux__) || defined(ATLAS_HAS_X11)
+    if (m_renderer && m_config.renderAPI == render::RenderAPI::OpenGL) {
+        auto glFB = std::make_unique<render::GLViewportFramebuffer>();
+        if (glFB->Create(static_cast<uint32_t>(m_config.windowWidth),
+                         static_cast<uint32_t>(m_config.windowHeight))) {
+            m_viewportFB = std::move(glFB);
+        } else {
+            m_viewportFB = std::make_unique<render::NullViewportFramebuffer>(
+                static_cast<uint32_t>(m_config.windowWidth),
+                static_cast<uint32_t>(m_config.windowHeight));
+        }
+    } else
+#endif
+    {
+        m_viewportFB = std::make_unique<render::NullViewportFramebuffer>(
+            static_cast<uint32_t>(m_config.windowWidth),
+            static_cast<uint32_t>(m_config.windowHeight));
+    }
+
+    // Set initial viewport size so the UI layout knows its starting dimensions
+    m_uiManager.SetViewportSize(
+        static_cast<float>(m_config.windowWidth),
+        static_cast<float>(m_config.windowHeight));
 
     Logger::Info("Editor tools initialized");
 }
@@ -191,6 +216,12 @@ void Engine::ProcessWindowEvents() {
                     m_viewportFB->Resize(
                         static_cast<uint32_t>(event.width),
                         static_cast<uint32_t>(event.height));
+                }
+                // Propagate viewport size to the UI so the widget layout scales
+                if (event.width > 0 && event.height > 0) {
+                    m_uiManager.SetViewportSize(
+                        static_cast<float>(event.width),
+                        static_cast<float>(event.height));
                 }
                 break;
             case platform::WindowEvent::Type::KeyDown: {

@@ -81,6 +81,12 @@ public:
     uint32_t GetIconId(uint32_t id) const;
     UIWidget* GetWidgetMutable(uint32_t id);
 
+    /// Proportionally scale all widget positions and sizes from
+    /// (oldWidth × oldHeight) to (newWidth × newHeight).  This is
+    /// called when the window is resized so the editor layout adapts.
+    void ScaleLayout(float oldWidth, float oldHeight,
+                     float newWidth, float newHeight);
+
 private:
     std::string m_name;
     std::unordered_map<uint32_t, UIWidget> m_widgets;
