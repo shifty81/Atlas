@@ -296,8 +296,15 @@ bool UIManager::IsInitialized() const {
 }
 
 void UIManager::SetViewportSize(float width, float height) {
+    float oldW = m_viewportWidth;
+    float oldH = m_viewportHeight;
     m_viewportWidth = width;
     m_viewportHeight = height;
+
+    // Proportionally scale the widget layout when the viewport changes
+    if (oldW > 0.0f && oldH > 0.0f && width > 0.0f && height > 0.0f) {
+        m_screen.ScaleLayout(oldW, oldH, width, height);
+    }
 }
 
 float UIManager::GetViewportWidth() const {

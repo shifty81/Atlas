@@ -959,6 +959,20 @@ void test_engine_editor_has_viewport_framebuffer();
 void test_engine_client_no_viewport_framebuffer();
 void test_engine_server_no_viewport_framebuffer();
 
+// Phase 13: GLViewportFramebuffer, ScaleLayout, viewport propagation
+void test_gl_viewport_fb_default_state();
+void test_gl_viewport_fb_create_requires_nonzero();
+void test_gl_viewport_fb_resize_to_zero();
+void test_gl_viewport_fb_bind_unbind_safe();
+void test_scale_layout_basic();
+void test_scale_layout_identity();
+void test_scale_layout_zero_old_noop();
+void test_scale_layout_zero_new_noop();
+void test_scale_layout_shrink();
+void test_ui_manager_viewport_propagates_layout();
+void test_ui_manager_viewport_first_set_no_scale();
+void test_engine_editor_sets_initial_viewport();
+
 // Component Category
 void test_component_category_defaults();
 void test_component_category_simulated();
@@ -1922,6 +1936,21 @@ int main() {
     test_engine_editor_has_viewport_framebuffer();
     test_engine_client_no_viewport_framebuffer();
     test_engine_server_no_viewport_framebuffer();
+
+    // Phase 13: GLViewportFramebuffer, ScaleLayout, viewport resize
+    std::cout << "\n--- Phase 13: GL Viewport, ScaleLayout, Resize ---" << std::endl;
+    test_gl_viewport_fb_default_state();
+    test_gl_viewport_fb_create_requires_nonzero();
+    test_gl_viewport_fb_resize_to_zero();
+    test_gl_viewport_fb_bind_unbind_safe();
+    test_scale_layout_basic();
+    test_scale_layout_identity();
+    test_scale_layout_zero_old_noop();
+    test_scale_layout_zero_new_noop();
+    test_scale_layout_shrink();
+    test_ui_manager_viewport_propagates_layout();
+    test_ui_manager_viewport_first_set_no_scale();
+    test_engine_editor_sets_initial_viewport();
 
     // Noise
     std::cout << "\n--- Noise Generator ---" << std::endl;

@@ -168,6 +168,32 @@ This document tracks the remaining implementation tasks to complete the vision o
 - `tools/replay_inspector.py` - Standalone replay inspector CLI
 - `tests/test_next_tasks_phase12.cpp` - 25 new tests
 
+#### 7. GL Viewport, Layout Resize, Bitmap Font
+**Status**: Complete
+
+**Completed work**:
+- [x] GLViewportFramebuffer implementation
+  - FBO with color texture and depth renderbuffer
+  - Runtime GL extension resolution
+  - Graceful fallback on platforms without GL
+- [x] Editor layout resize propagation
+  - `UIScreen::ScaleLayout` for proportional widget scaling
+  - `UIManager::SetViewportSize` triggers layout scaling
+  - `Engine::ProcessWindowEvents` propagates resize to UI
+  - `Engine::InitEditor` sets initial viewport size
+- [x] Bitmap font rendering in GLRenderer
+  - Built-in 5×7 pixel font for printable ASCII (0x20–0x7E)
+  - Replaces solid-rectangle placeholder text
+
+**Files created/modified**:
+- `engine/render/GLViewportFramebuffer.h` - GL FBO header
+- `engine/render/GLViewportFramebuffer.cpp` - GL FBO implementation (conditional compilation)
+- `engine/render/GLRenderer.cpp` - Bitmap font DrawText
+- `engine/ui/UIScreenGraph.h/.cpp` - ScaleLayout method
+- `engine/ui/UIManager.cpp` - SetViewportSize propagation
+- `engine/core/Engine.cpp` - Resize and initial viewport wiring
+- `tests/test_next_tasks_phase13.cpp` - 12 new tests
+
 ## Implementation Priority Order
 
 1. **Marketplace Integration Completion** (Highest business value)

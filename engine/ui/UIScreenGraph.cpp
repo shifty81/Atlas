@@ -193,4 +193,20 @@ UIWidget* UIScreen::GetWidgetMutable(uint32_t id) {
     return nullptr;
 }
 
+void UIScreen::ScaleLayout(float oldWidth, float oldHeight,
+                           float newWidth, float newHeight) {
+    if (oldWidth <= 0.0f || oldHeight <= 0.0f) return;
+    if (newWidth <= 0.0f || newHeight <= 0.0f) return;
+
+    float sx = newWidth / oldWidth;
+    float sy = newHeight / oldHeight;
+
+    for (auto& [id, w] : m_widgets) {
+        w.x      = w.x * sx;
+        w.y      = w.y * sy;
+        w.width  = w.width * sx;
+        w.height = w.height * sy;
+    }
+}
+
 } // namespace atlas::ui

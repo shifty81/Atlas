@@ -12,7 +12,7 @@
 
 Atlas is a deterministic, data-driven game engine built in C++20. The
 project is **approximately 97–99% complete** across its core systems.
-All 929+ tests pass. The engine compiles and runs on Linux with
+All 941+ tests pass. The engine compiles and runs on Linux with
 OpenGL and Vulkan rendering backends. The Vulkan renderer records
 and submits draw commands through a GPU command buffer pipeline with
 render pass, pipeline state, GPU resource management, descriptor set
@@ -175,7 +175,7 @@ Server rules support config-driven hot-reload with change tracking.
 - [x] Contributor rules (`ATLAS_CONTRIBUTOR_RULES.md`)
 
 ### Testing (`tests/`)
-- [x] 929+ tests across 165+ test files — all passing
+- [x] 941+ tests across 166+ test files — all passing
 - [x] Covers ECS, networking, replay, assets, UI, editor panels, graphs, etc.
 
 ---
@@ -260,7 +260,20 @@ commands via `UIDrawList`.
 ### Font System (`engine/ui/FontBootstrap.cpp`)
 - [x] Fallback placeholder glyph generation
 - [x] TTF/OTF header parsing and font name extraction
+- [x] Built-in 5×7 bitmap font for readable text rendering (GLRenderer)
 - [ ] Real Inter-Regular.ttf font bundling
+
+### GL Viewport Framebuffer (`engine/render/GLViewportFramebuffer`)
+- [x] FBO creation with color texture and depth renderbuffer
+- [x] Runtime GL extension resolution (glGenFramebuffers etc.)
+- [x] Bind/Unbind for offscreen scene rendering
+- [x] Resize with resource recreation
+- [x] Graceful fallback on platforms without GL
+
+### Editor Layout Resize (`engine/ui/UIScreenGraph`)
+- [x] `UIScreen::ScaleLayout` for proportional widget scaling
+- [x] `UIManager::SetViewportSize` triggers layout scaling
+- [x] `Engine::ProcessWindowEvents` propagates resize to UI
 
 ---
 
@@ -289,13 +302,13 @@ Assets             ✅ 100%   Registry, import, cook, validate, hot-reload, depe
 World Generation   ✅ 100%   Terrain, voxel, galaxy, streaming
 AI Systems         ✅ 100%   Behavior, memory, faction, strategy
 UI Framework       ✅ 100%   DrawList, SceneGraph, Layout, Events, DSL
-Rendering          ✅  98%   OpenGL working; Vulkan render pipeline (passes, states, resources, descriptors, textures, samplers, fences, semaphores, memory pools) active (hardware device pending)
+Rendering          ✅  98%   OpenGL working (bitmap font, FBO viewport); Vulkan render pipeline (passes, states, resources, descriptors, textures, samplers, fences, semaphores, memory pools) active (hardware device pending)
 Editor Logic       ✅ 100%   All panels have full business logic
 Editor Rendering   ✅ 100%   All panels produce draw commands via UIDrawList
 Production         ✅ 100%   Full packager pipeline
 CI/Enforcement     ✅ 100%   Determinism gate, contract bot, crash reporter
 Documentation      ✅  95%   43 docs; minor updates needed
-Testing            ✅ 100%   929+ tests, all passing
+Testing            ✅ 100%   941+ tests, all passing
 ```
 
 ---
@@ -308,7 +321,7 @@ Testing            ✅ 100%   929+ tests, all passing
 | AtlasServer | ✅ | ✅ | Headless, no graphics deps |
 | AtlasClient | ✅ | ✅ | Player runtime |
 | AtlasRuntime | ✅ | ✅ | Unified CLI runtime |
-| AtlasTests | ✅ | ✅ | 1673 tests passing |
+| AtlasTests | ✅ | ✅ | 941+ tests passing |
 | TileEditor | ✅ | ✅ | Standalone tile tool |
 
 ---
@@ -330,7 +343,7 @@ Testing            ✅ 100%   929+ tests, all passing
 | World Gen | ~30 | ✅ All pass |
 | Tile Editor | ~40 | ✅ All pass |
 | CI/Tooling | ~12 | ✅ All pass |
-| **Total** | **929+** | **✅ All pass** |
+| **Total** | **941+** | **✅ All pass** |
 
 ---
 
@@ -350,7 +363,11 @@ build systems are all production-ready. The Vulkan renderer records
 draw commands and submits them through a triple-buffered GPU command
 buffer pipeline with descriptor set layouts, texture management,
 sampler objects, fence/semaphore synchronization, and memory pool
-allocation, ready for hardware device integration. The marketplace
+allocation, ready for hardware device integration. The GL renderer now
+features a built-in 5×7 bitmap font for readable text and a
+GLViewportFramebuffer for offscreen scene rendering into the editor
+viewport panel. The editor layout scales proportionally on window
+resize. The marketplace
 importers now parse .uasset binary headers and .prefab YAML formats
 with API credential management, hot-reload monitoring, asset validation,
 and mod sandboxing with budget enforcement. The editor features live
@@ -360,6 +377,6 @@ breakpoints, and a full replay inspector with input frame viewer,
 event timeline visualization, and branch point markers. Standalone
 tools for state diff viewing and replay inspection are available in
 `tools/`. The networking layer includes packet loss simulation and
-connection quality diagnostics. All 929+ tests pass. The primary
+connection quality diagnostics. All 941+ tests pass. The primary
 remaining work is Vulkan hardware device integration (real
 VkDevice/VkCommandBuffer) and shipping production font backends.
