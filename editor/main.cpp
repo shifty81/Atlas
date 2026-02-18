@@ -125,7 +125,16 @@ static std::string ResolveAssetRoot() {
     return "assets";
 }
 
-static void BuildEditorUI(atlas::ui::UIScreen& screen) {
+/// Widget IDs returned from BuildEditorUI for manager setup.
+struct EditorWidgetIds {
+    uint32_t toolbar;
+    uint32_t tbPlay, tbPause, tbStop;
+    uint32_t tabBar, tabScene, tabGame;
+    uint32_t scenePanel, gamePanel;
+    uint32_t assetScroll, entityScroll, consoleScroll;
+};
+
+static EditorWidgetIds BuildEditorUI(atlas::ui::UIScreen& screen) {
     // Self-hosting: parse the default editor DSL to build the initial
     // widget tree.  If DSL parsing fails, fall back to a hard-coded layout.
     atlas::ui::GUIDSLParser parser;
@@ -138,7 +147,7 @@ static void BuildEditorUI(atlas::ui::UIScreen& screen) {
     if (result.success && result.root) {
         // parentWidget=0 is the root; x,y=0,0 is the top-left; 1280x720 is default viewport
         ApplyDSLNode(screen, *result.root, 0, 0, 0, 1280, 720);
-        return;
+        return EditorWidgetIds{};
     }
 
     if (!result.success) {
@@ -249,6 +258,25 @@ static void BuildEditorUI(atlas::ui::UIScreen& screen) {
                                                166, 108, 140, 24);
     screen.SetParent(toolsSettings, toolsMenu);
 
+    // Help menu
+    uint32_t helpMenu = screen.AddWidget(atlas::ui::UIWidgetType::Menu, "Help",
+                                          225, 2, 50, 24);
+    screen.SetParent(helpMenu, menuBar);
+
+    uint32_t helpDocs = screen.AddWidget(atlas::ui::UIWidgetType::MenuItem, "Documentation",
+                                          225, 28, 140, 24);
+    screen.SetParent(helpDocs, helpMenu);
+    screen.SetShortcutLabel(helpDocs, "F1");
+
+    uint32_t helpSep1 = screen.AddWidget(atlas::ui::UIWidgetType::MenuItem, "",
+                                          225, 52, 140, 8);
+    screen.SetParent(helpSep1, helpMenu);
+    screen.SetSeparator(helpSep1, true);
+
+    uint32_t helpAbout = screen.AddWidget(atlas::ui::UIWidgetType::MenuItem, "About Atlas",
+                                           225, 60, 140, 24);
+    screen.SetParent(helpAbout, helpMenu);
+
     // Keyboard shortcuts
     screen.SetShortcutLabel(fileNew, "Ctrl+N");
     screen.SetShortcutLabel(fileOpen, "Ctrl+O");
@@ -267,49 +295,110 @@ static void BuildEditorUI(atlas::ui::UIScreen& screen) {
     screen.SetCheckable(viewConsole, true);
     screen.SetChecked(viewConsole, true);
 
+    // --- Toolbar below menu bar ---
+    uint32_t toolbar = screen.AddWidget(atlas::ui::UIWidgetType::Toolbar, "MainToolbar",
+                                         0, 28, 1280, 30);
+
+    uint32_t tbPlay = screen.AddWidget(atlas::ui::UIWidgetType::Button, "Play",
+                                        4, 31, 50, 24);
+    screen.SetParent(tbPlay, toolbar);
+
+    uint32_t tbPause = screen.AddWidget(atlas::ui::UIWidgetType::Button, "Pause",
+                                         58, 31, 50, 24);
+    screen.SetParent(tbPause, toolbar);
+
+    uint32_t tbStop = screen.AddWidget(atlas::ui::UIWidgetType::Button, "Stop",
+                                        112, 31, 50, 24);
+    screen.SetParent(tbStop, toolbar);
+
     // Left panel — Project / Asset Browser
     uint32_t leftPanel = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "AssetBrowser",
-                                           0, 30, 260, 690);
+                                           0, 60, 260, 630);
 
     uint32_t assetTitle = screen.AddWidget(atlas::ui::UIWidgetType::Text, "Asset Browser",
-                                            4, 34, 252, 20);
+                                            4, 64, 252, 20);
     screen.SetParent(assetTitle, leftPanel);
 
+    uint32_t assetScroll = screen.AddWidget(atlas::ui::UIWidgetType::ScrollView, "AssetScroll",
+                                             4, 86, 252, 540);
+    screen.SetParent(assetScroll, leftPanel);
+
     uint32_t assetList = screen.AddWidget(atlas::ui::UIWidgetType::List, "Assets",
-                                           4, 56, 252, 600);
-    screen.SetParent(assetList, leftPanel);
+                                           4, 86, 252, 540);
+    screen.SetParent(assetList, assetScroll);
 
-    // Center panel — Viewport / World Graph
-    uint32_t centerPanel = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "Viewport",
-                                             262, 30, 756, 480);
+    // Center area — Tab bar + Viewport panels
+    uint32_t tabBar = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "ViewportTabs",
+                                        262, 60, 756, 28);
 
-    uint32_t vpTitle = screen.AddWidget(atlas::ui::UIWidgetType::Text, "Viewport",
-                                         266, 34, 748, 20);
-    screen.SetParent(vpTitle, centerPanel);
+    uint32_t tabScene = screen.AddWidget(atlas::ui::UIWidgetType::Tab, "Scene",
+                                          264, 62, 80, 24);
+    screen.SetParent(tabScene, tabBar);
+    screen.SetChecked(tabScene, true);
+
+    uint32_t tabGame = screen.AddWidget(atlas::ui::UIWidgetType::Tab, "Game",
+                                         348, 62, 80, 24);
+    screen.SetParent(tabGame, tabBar);
+
+    // Scene viewport panel (visible by default)
+    uint32_t scenePanel = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "SceneViewport",
+                                            262, 88, 756, 422);
+
+    uint32_t vpTitle = screen.AddWidget(atlas::ui::UIWidgetType::Text, "Scene Viewport",
+                                         266, 92, 748, 20);
+    screen.SetParent(vpTitle, scenePanel);
+
+    // Game viewport panel (hidden by default)
+    uint32_t gamePanel = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "GameViewport",
+                                           262, 88, 756, 422);
+    screen.SetVisible(gamePanel, false);
+
+    uint32_t gameTitle = screen.AddWidget(atlas::ui::UIWidgetType::Text, "Game Preview",
+                                           266, 92, 748, 20);
+    screen.SetParent(gameTitle, gamePanel);
 
     // Right panel — Inspector
     uint32_t rightPanel = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "Inspector",
-                                            1020, 30, 260, 690);
+                                            1020, 60, 260, 630);
 
     uint32_t inspTitle = screen.AddWidget(atlas::ui::UIWidgetType::Text, "ECS Inspector",
-                                           1024, 34, 252, 20);
+                                           1024, 64, 252, 20);
     screen.SetParent(inspTitle, rightPanel);
 
+    uint32_t entityScroll = screen.AddWidget(atlas::ui::UIWidgetType::ScrollView, "EntityScroll",
+                                              1024, 86, 252, 540);
+    screen.SetParent(entityScroll, rightPanel);
+
     uint32_t entityList = screen.AddWidget(atlas::ui::UIWidgetType::List, "Entities",
-                                            1024, 56, 252, 600);
-    screen.SetParent(entityList, rightPanel);
+                                            1024, 86, 252, 540);
+    screen.SetParent(entityList, entityScroll);
 
     // Bottom panel — Console
     uint32_t bottomPanel = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "Console",
-                                             262, 512, 756, 208);
+                                             262, 512, 756, 178);
 
     uint32_t consoleTitle = screen.AddWidget(atlas::ui::UIWidgetType::Text, "Console",
                                               266, 516, 748, 20);
     screen.SetParent(consoleTitle, bottomPanel);
 
+    uint32_t consoleScroll = screen.AddWidget(atlas::ui::UIWidgetType::ScrollView, "ConsoleScroll",
+                                               266, 538, 748, 124);
+    screen.SetParent(consoleScroll, bottomPanel);
+
     uint32_t consoleInput = screen.AddWidget(atlas::ui::UIWidgetType::InputField, "command...",
-                                              266, 692, 748, 24);
+                                              266, 664, 748, 24);
     screen.SetParent(consoleInput, bottomPanel);
+
+    // Status bar at the bottom
+    uint32_t statusBar = screen.AddWidget(atlas::ui::UIWidgetType::StatusBar, "Ready",
+                                           0, 692, 1280, 28);
+    (void)statusBar;
+
+    // Store tab/panel IDs for manager setup
+    return EditorWidgetIds{toolbar, tbPlay, tbPause, tbStop,
+                           tabBar, tabScene, tabGame,
+                           scenePanel, gamePanel,
+                           assetScroll, entityScroll, consoleScroll};
 }
 
 int main() {
@@ -356,7 +445,31 @@ int main() {
         }
     }
 
-    BuildEditorUI(engine.GetUIManager().GetScreen());
+    auto ids = BuildEditorUI(engine.GetUIManager().GetScreen());
+
+    // --- Set up Tab Manager ---
+    auto& tabMgr = engine.GetUIManager().GetTabManager();
+    if (ids.tabScene != 0) {
+        tabMgr.SetTabContent(ids.tabScene, ids.scenePanel);
+        tabMgr.SetTabContent(ids.tabGame, ids.gamePanel);
+    }
+
+    // --- Set up Scroll Manager ---
+    auto& scrollMgr = engine.GetUIManager().GetScrollManager();
+    if (ids.assetScroll != 0) {
+        scrollMgr.RegisterScrollView(ids.assetScroll, 1000.0f);
+        scrollMgr.RegisterScrollView(ids.entityScroll, 800.0f);
+        scrollMgr.RegisterScrollView(ids.consoleScroll, 500.0f);
+    }
+
+    // --- Set up Toolbar Manager ---
+    auto& toolbarMgr = engine.GetUIManager().GetToolbarManager();
+    toolbarMgr.SetButtonCallback(
+        [](uint32_t toolbarId, uint32_t buttonId) {
+            atlas::Logger::Info("Toolbar button clicked: toolbar=" + std::to_string(toolbarId)
+                               + " button=" + std::to_string(buttonId));
+        }
+    );
 
     // Set up menu item callback
     engine.GetUIManager().GetMenuManager().SetMenuItemCallback(

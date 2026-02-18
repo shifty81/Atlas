@@ -22,6 +22,9 @@ void UIManager::Init(GUIContext context) {
 
     m_screen.Init(screenName);
     m_menuManager.Init(&m_screen);
+    m_tabManager.Init(&m_screen);
+    m_scrollManager.Init(&m_screen);
+    m_toolbarManager.Init(&m_screen);
     m_initialized = true;
 }
 
@@ -324,6 +327,23 @@ bool UIManager::DispatchEvent(const UIEvent& event) {
     if (m_menuManager.HandleEvent(event)) {
         return true;
     }
+
+    // Handle scroll wheel events via ScrollManager
+    if (event.type == UIEvent::Type::ScrollWheel) {
+        if (m_scrollManager.HandleScrollWheel(event.x, event.y, event.scrollDelta)) {
+            return true;
+        }
+    }
+
+    // Handle tab clicks
+    if (event.type == UIEvent::Type::MouseDown && event.mouseButton == 0) {
+        if (m_tabManager.HandleClick(event.x, event.y)) {
+            return true;
+        }
+        if (m_toolbarManager.HandleClick(event.x, event.y)) {
+            return true;
+        }
+    }
     
     return m_eventRouter.Dispatch(event);
 }
@@ -346,6 +366,30 @@ MenuManager& UIManager::GetMenuManager() {
 
 const MenuManager& UIManager::GetMenuManager() const {
     return m_menuManager;
+}
+
+TabManager& UIManager::GetTabManager() {
+    return m_tabManager;
+}
+
+const TabManager& UIManager::GetTabManager() const {
+    return m_tabManager;
+}
+
+ScrollManager& UIManager::GetScrollManager() {
+    return m_scrollManager;
+}
+
+const ScrollManager& UIManager::GetScrollManager() const {
+    return m_scrollManager;
+}
+
+ToolbarManager& UIManager::GetToolbarManager() {
+    return m_toolbarManager;
+}
+
+const ToolbarManager& UIManager::GetToolbarManager() const {
+    return m_toolbarManager;
 }
 
 } // namespace atlas::ui

@@ -14,7 +14,8 @@ struct UIEvent {
         MouseUp,
         KeyDown,
         KeyUp,
-        TextInput
+        TextInput,
+        ScrollWheel
     };
 
     Type type = Type::MouseMove;
@@ -23,6 +24,7 @@ struct UIEvent {
     uint32_t keyCode = 0;
     uint8_t mouseButton = 0;
     char textChar = 0;
+    float scrollDelta = 0.0f; ///< Scroll wheel delta (positive = down)
 };
 
 /// Base class for any UI element that can receive routed events.

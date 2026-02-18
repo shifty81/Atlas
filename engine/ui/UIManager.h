@@ -6,6 +6,9 @@
 #include "UIEventRouter.h"
 #include "FontBootstrap.h"
 #include "MenuManager.h"
+#include "TabManager.h"
+#include "ScrollManager.h"
+#include "ToolbarManager.h"
 #include <string>
 
 namespace atlas::ui {
@@ -83,6 +86,18 @@ public:
     MenuManager& GetMenuManager();
     const MenuManager& GetMenuManager() const;
 
+    /// Access the tab manager for tab switching.
+    TabManager& GetTabManager();
+    const TabManager& GetTabManager() const;
+
+    /// Access the scroll manager for ScrollView state.
+    ScrollManager& GetScrollManager();
+    const ScrollManager& GetScrollManager() const;
+
+    /// Access the toolbar manager for toolbar button interactions.
+    ToolbarManager& GetToolbarManager();
+    const ToolbarManager& GetToolbarManager() const;
+
 private:
     void RenderWidget(UIRenderer* renderer, uint32_t widgetId, int depth = 0);
     static constexpr int kMaxRenderDepth = 64;
@@ -94,6 +109,9 @@ private:
     UIEventRouter m_eventRouter;
     FontBootstrap m_fontBootstrap;
     MenuManager m_menuManager;
+    TabManager m_tabManager;
+    ScrollManager m_scrollManager;
+    ToolbarManager m_toolbarManager;
     UIRenderer* m_renderer = nullptr;
     float m_viewportWidth = 0.0f;
     float m_viewportHeight = 0.0f;

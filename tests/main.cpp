@@ -1705,6 +1705,27 @@ void test_dockarea_with_panels();
 void test_dockarea_rendering_with_null_renderer();
 void test_editor_checkable_view_items();
 
+// GUI Managers tests
+void test_tab_manager_activate();
+void test_tab_manager_no_change_same_tab();
+void test_tab_manager_get_active();
+void test_tab_manager_content_visibility();
+void test_tab_manager_callback();
+void test_tab_manager_handle_click();
+void test_scroll_manager_register();
+void test_scroll_manager_scroll_wheel();
+void test_scroll_manager_scroll_outside();
+void test_scroll_manager_not_scrollable();
+void test_scroll_manager_to_top_bottom();
+void test_scroll_manager_set_content_height();
+void test_toolbar_manager_click();
+void test_toolbar_manager_toggle();
+void test_toolbar_manager_miss();
+void test_scroll_wheel_event_type();
+void test_ui_manager_tab_integration();
+void test_ui_manager_scroll_integration();
+void test_ui_manager_toolbar_integration();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -3597,6 +3618,27 @@ int main() {
     test_dockarea_with_panels();
     test_dockarea_rendering_with_null_renderer();
     test_editor_checkable_view_items();
+
+    std::cout << "\n--- GUI Managers ---" << std::endl;
+    test_tab_manager_activate();
+    test_tab_manager_no_change_same_tab();
+    test_tab_manager_get_active();
+    test_tab_manager_content_visibility();
+    test_tab_manager_callback();
+    test_tab_manager_handle_click();
+    test_scroll_manager_register();
+    test_scroll_manager_scroll_wheel();
+    test_scroll_manager_scroll_outside();
+    test_scroll_manager_not_scrollable();
+    test_scroll_manager_to_top_bottom();
+    test_scroll_manager_set_content_height();
+    test_toolbar_manager_click();
+    test_toolbar_manager_toggle();
+    test_toolbar_manager_miss();
+    test_scroll_wheel_event_type();
+    test_ui_manager_tab_integration();
+    test_ui_manager_scroll_integration();
+    test_ui_manager_toolbar_integration();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
