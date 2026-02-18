@@ -61,15 +61,19 @@ static PFNGLFRAMEBUFFERRENDERBUFFERPROC  pglFramebufferRenderbuffer  = nullptr;
 static PFNGLCHECKFRAMEBUFFERSTATUSPROC   pglCheckFramebufferStatus   = nullptr;
 
 // Platform-specific function loader
+#if defined(__linux__)
+extern "C" void* dlsym(void*, const char*);
+#ifndef RTLD_DEFAULT
+#define RTLD_DEFAULT ((void*)0)
+#endif
+#endif
+
 static void* GLGetProcAddress(const char* name) {
 #if defined(__linux__)
-    extern "C" void* dlsym(void*, const char*);
-    #ifndef RTLD_DEFAULT
-    #define RTLD_DEFAULT ((void*)0)
-    #endif
     return dlsym(RTLD_DEFAULT, name);
 #elif defined(_WIN32)
-    extern "C" __declspec(dllimport) void* __stdcall wglGetProcAddress(const char*);
+    // wglGetProcAddress is already declared via windows.h/wingdi.h and returns
+    // PROC (a FARPROC alias).  Cast the result to void* for our generic loader.
     return reinterpret_cast<void*>(wglGetProcAddress(name));
 #else
     (void)name;
