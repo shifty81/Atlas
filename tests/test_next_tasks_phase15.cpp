@@ -157,7 +157,7 @@ void test_mesh_viewer_draw_grid_commands() {
     panel.Draw();
     size_t withoutGrid = panel.GetDrawList().CommandCount();
 
-    // Grid adds 2 rects for crosshair lines
+    // Grid adds 2 draw commands for crosshair lines (horizontal + vertical)
     assert(withGrid > withoutGrid);
     std::cout << "[PASS] test_mesh_viewer_draw_grid_commands" << std::endl;
 }
