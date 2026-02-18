@@ -1,12 +1,8 @@
 #include "MenuManager.h"
+#include "UIConstants.h"
 #include <algorithm>
 
 namespace atlas::ui {
-
-// Maximum widget ID to check when iterating. This is a reasonable upper bound
-// for editor UI. Could be replaced with UIScreen::WidgetCount() + 1 for
-// dynamic sizing, but that would require exposing m_nextId from UIScreen.
-static constexpr uint32_t kMaxWidgetId = 1000;
 
 // Common key codes used for menu keyboard navigation.
 static constexpr uint32_t kKeyUp    = 0x26;  // VK_UP / SDLK_UP

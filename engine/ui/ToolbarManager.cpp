@@ -1,9 +1,8 @@
 #include "ToolbarManager.h"
+#include "UIConstants.h"
 #include <algorithm>
 
 namespace atlas::ui {
-
-static constexpr uint32_t kMaxWidgetId = 1000;
 
 void ToolbarManager::Init(UIScreen* screen) {
     m_screen = screen;
