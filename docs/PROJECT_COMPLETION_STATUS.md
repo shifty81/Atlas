@@ -156,6 +156,8 @@ Server rules support config-driven hot-reload with change tracking.
 - [x] Contract scanner (`tools/contract_scan.py`)
 - [x] Dependency verifier (`tools/verify_dependencies.sh`)
 - [x] CMake presets (`CMakePresets.json` — Debug/Release/Development/CI with layer enforcement)
+- [x] Crash reporter tool (`tools/crash_reporter.py`)
+- [x] Crash reporter CI workflow (`atlas_crash_reporter.yml` with hash comparison dashboard)
 
 ### Documentation (`docs/`)
 - [x] 43 documentation files covering architecture, systems, and policies
@@ -164,7 +166,7 @@ Server rules support config-driven hot-reload with change tracking.
 - [x] Contributor rules (`ATLAS_CONTRIBUTOR_RULES.md`)
 
 ### Testing (`tests/`)
-- [x] 1483 tests across 160+ test files — all passing
+- [x] 1495 tests across 160+ test files — all passing
 - [x] Covers ECS, networking, replay, assets, UI, editor panels, graphs, etc.
 
 ---
@@ -272,9 +274,9 @@ Rendering          ✅  98%   OpenGL working; Vulkan render pipeline (passes, st
 Editor Logic       ✅ 100%   All panels have full business logic
 Editor Rendering   ✅ 100%   All panels produce draw commands via UIDrawList
 Production         ✅ 100%   Full packager pipeline
-CI/Enforcement     ✅ 100%   Determinism gate, contract bot
+CI/Enforcement     ✅ 100%   Determinism gate, contract bot, crash reporter
 Documentation      ✅  95%   43 docs; minor updates needed
-Testing            ✅ 100%   1483 tests, all passing
+Testing            ✅ 100%   1495 tests, all passing
 ```
 
 ---
@@ -308,7 +310,8 @@ Testing            ✅ 100%   1483 tests, all passing
 | Production | ~20 | ✅ All pass |
 | World Gen | ~30 | ✅ All pass |
 | Tile Editor | ~40 | ✅ All pass |
-| **Total** | **1483** | **✅ All pass** |
+| CI/Tooling | ~12 | ✅ All pass |
+| **Total** | **1495** | **✅ All pass** |
 
 ---
 

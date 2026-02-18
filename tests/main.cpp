@@ -1762,6 +1762,22 @@ void test_ui_manager_focus_integration();
 void test_ui_manager_dock_integration();
 void test_ui_manager_tooltip_integration();
 
+// Crash Reporter tests
+void test_crash_reporter_tool_exists();
+void test_crash_reporter_help();
+void test_crash_reporter_validate_empty_dir();
+void test_crash_reporter_validate_manifest();
+void test_crash_reporter_bundle();
+
+// Include Firewall Enhancement tests
+void test_include_firewall_header_exists();
+void test_include_firewall_defines_marker();
+void test_include_firewall_guards_simulation();
+void test_include_firewall_guards_core();
+void test_include_firewall_ecs_no_render();
+void test_include_firewall_physics_no_render();
+void test_crash_reporter_workflow_exists();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -3720,6 +3736,22 @@ int main() {
     test_ui_manager_focus_integration();
     test_ui_manager_dock_integration();
     test_ui_manager_tooltip_integration();
+
+    std::cout << "\n--- Crash Reporter ---" << std::endl;
+    test_crash_reporter_tool_exists();
+    test_crash_reporter_help();
+    test_crash_reporter_validate_empty_dir();
+    test_crash_reporter_validate_manifest();
+    test_crash_reporter_bundle();
+
+    std::cout << "\n--- Include Firewall Enhancements ---" << std::endl;
+    test_include_firewall_header_exists();
+    test_include_firewall_defines_marker();
+    test_include_firewall_guards_simulation();
+    test_include_firewall_guards_core();
+    test_include_firewall_ecs_no_render();
+    test_include_firewall_physics_no_render();
+    test_crash_reporter_workflow_exists();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

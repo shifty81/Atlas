@@ -474,3 +474,20 @@ Atlas modules. Arrows point from dependent to dependency.
 - **Editor, Client, Server** each link against **AtlasEngine**
 - **Simulation code** cannot include rendering headers (enforced by include firewall)
 - **Tests** link against **AtlasEngine**, **AtlasGameplay**, and all game modules
+
+### Layer Enforcement
+
+Atlas enforces strict layer boundaries at compile time via `IncludeFirewall.h`:
+
+| Layer | May Include | Forbidden |
+|-------|-------------|-----------|
+| `core/` | C++ stdlib only | Simulation, rendering, editor, platform |
+| `sim/`, `ecs/`, `physics/`, `ai/` | `core/` only | Rendering, editor, platform windows |
+| `render/` | `core/`, platform APIs | Simulation internals |
+| `editor/` | `core/`, `render/`, `assets/` | Simulation internals (uses commands/events) |
+
+Enforcement mechanisms:
+- **Compile-time**: `IncludeFirewall.h` triggers `#error` on forbidden header detection
+- **CI**: `contract_scan.py` scans simulation code for banned APIs
+- **Runtime**: `test_include_firewall.cpp` verifies no cross-layer includes exist
+- **CMake**: Layer-specific `target_link_libraries` prevent linking violations

@@ -81,16 +81,16 @@ This document tracks the remaining implementation tasks to complete the vision o
   - Automatically reduce failing replays to minimal reproduction
   - Binary search through replay frames
   - Output minimal .atlasreplay file
-- [ ] Add crash report bundling
+- [x] Add crash report bundling
   - Capture state snapshot on crash
   - Bundle with replay up to crash point
   - Generate hash ladder for debugging
-- [ ] Add cross-platform hash comparison dashboard
+- [x] Add cross-platform hash comparison dashboard
   - GitHub Action artifact summary
   - Visual diff of platform results
   - Automated bisection hints
 
-**Files to create**:
+**Files created**:
 - `tools/replay_minimizer.py`
 - `tools/crash_reporter.py`
 - `.github/workflows/atlas_crash_reporter.yml`
@@ -105,15 +105,14 @@ This document tracks the remaining implementation tasks to complete the vision o
   - Enforce that `core/` never depends on other modules
   - Enforce that `simulation/` only depends on `core/`
   - Enforce that `editor/` never links `simulation` directly
-- [ ] Add compile-time include guards
+- [x] Add compile-time include guards
   - Prevent `simulation` from including `presentation` headers
   - Prevent `editor` from including `sim` internals
-- [ ] Document dependency graph in ARCHITECTURE.md
+- [x] Document dependency graph in ARCHITECTURE.md
 
-**Files to modify**:
-- `CMakeLists.txt` - Add dependency validation
-- `engine/core/CMakeLists.txt` - Add include guards
-- `docs/ARCHITECTURE.md` - Add dependency graph
+**Files created/modified**:
+- `engine/core/contract/IncludeFirewall.h` - Compile-time include guards
+- `docs/ARCHITECTURE.md` - Added layer enforcement documentation
 
 #### 5. Advanced Debugging Tools
 **Status**: Not started
