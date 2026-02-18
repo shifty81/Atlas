@@ -391,7 +391,8 @@ bool UnrealMarketplaceImporter::ConvertUAsset(
     const char fbxHeader[] = "ATLAS_FBX_CONVERTED";
     out.write(fbxHeader, sizeof(fbxHeader));
     // Write the mesh data bytes (everything after the header)
-    constexpr size_t UASSET_MESH_DATA_OFFSET = 84; // past magic + version + padding + class name
+    // Offset breakdown: magic[4] + version[4] + padding[12] + className[64] = 84
+    constexpr size_t UASSET_MESH_DATA_OFFSET = 84;
     size_t dataStart = std::min<size_t>(UASSET_MESH_DATA_OFFSET, fileData.size());
     if (fileData.size() > dataStart) {
         out.write(reinterpret_cast<const char*>(fileData.data() + dataStart),

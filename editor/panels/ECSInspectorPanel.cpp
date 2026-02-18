@@ -114,23 +114,35 @@ std::vector<ecs::EntityID> ECSInspectorPanel::GetChildren(ecs::EntityID parent) 
 std::vector<EntityHierarchyNode> ECSInspectorPanel::BuildHierarchy() const {
     std::vector<EntityHierarchyNode> nodes;
     auto entities = m_world.GetEntities();
+
+    // Cache computed depths to avoid redundant traversals
+    std::unordered_map<ecs::EntityID, int> depthCache;
+    static constexpr int MAX_HIERARCHY_DEPTH = 100;
+
+    // Recursive-safe depth lookup with caching
+    auto computeDepth = [&](ecs::EntityID eid) -> int {
+        auto cached = depthCache.find(eid);
+        if (cached != depthCache.end()) return cached->second;
+        int depth = 0;
+        ecs::EntityID cur = eid;
+        while (GetParent(cur) != 0) {
+            cur = GetParent(cur);
+            auto cc = depthCache.find(cur);
+            if (cc != depthCache.end()) { depth += 1 + cc->second; break; }
+            ++depth;
+            if (depth > MAX_HIERARCHY_DEPTH) break;
+        }
+        depthCache[eid] = depth;
+        return depth;
+    };
+
     for (auto eid : entities) {
         EntityHierarchyNode node;
         node.entityID = eid;
         node.parentID = GetParent(eid);
         node.children = GetChildren(eid);
         node.label = "Entity_" + std::to_string(eid);
-
-    // Compute depth (with cycle-prevention limit)
-    static constexpr int MAX_HIERARCHY_DEPTH = 100;
-    int depth = 0;
-    ecs::EntityID cur = eid;
-    while (GetParent(cur) != 0) {
-        cur = GetParent(cur);
-        ++depth;
-        if (depth > MAX_HIERARCHY_DEPTH) break;
-    }
-        node.depth = depth;
+        node.depth = computeDepth(eid);
         nodes.push_back(std::move(node));
     }
     return nodes;

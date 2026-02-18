@@ -592,6 +592,9 @@ bool VulkanRenderer::DestroyMemoryPool(uint32_t poolId) {
 }
 
 uint32_t VulkanRenderer::AllocateFromPool(uint32_t poolId, size_t size) {
+    // Linear bump allocator: freed blocks are not reused until pool is destroyed.
+    // This is intentional for frame-scoped allocations where fragmentation is
+    // avoided by resetting the pool each frame.
     for (auto& pool : m_memoryPools) {
         if (pool.id == poolId) {
             if (pool.usedSize + size > pool.totalSize) {
