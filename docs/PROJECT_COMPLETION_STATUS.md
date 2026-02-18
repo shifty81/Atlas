@@ -12,7 +12,7 @@
 
 Atlas is a deterministic, data-driven game engine built in C++20. The
 project is **approximately 98–99% complete** across its core systems.
-All 1067+ tests pass. The engine compiles and runs on Linux with
+All 1093+ tests pass. The engine compiles and runs on Linux with
 OpenGL and Vulkan rendering backends. The Vulkan renderer records
 and submits draw commands through a GPU command buffer pipeline with
 render pass, pipeline state, GPU resource management, descriptor set
@@ -66,6 +66,8 @@ Server rules support config-driven hot-reload with change tracking.
 - [x] Determinism crash report bundle (`.atlascrash` manifest with state + replay + metadata)
 - [x] TLA+ model checker integration (CI stub mode)
 - [x] Tick-step debugger (step forward/backward/jump, tick and hash-mismatch breakpoints)
+- [x] Component migration (schema versioning, field remap, hot reload safety check)
+- [x] Simulation mirror controller (server/client lockstep verification, desync detection)
 
 ### Graph VM (`engine/graphvm/`)
 - [x] Graph compiler
@@ -172,6 +174,7 @@ Server rules support config-driven hot-reload with change tracking.
 - [x] CMake presets (`CMakePresets.json` — Debug/Release/Development/CI with layer enforcement)
 - [x] Crash reporter tool (`tools/crash_reporter.py`)
 - [x] Crash reporter CI workflow (`atlas_crash_reporter.yml` with hash comparison dashboard)
+- [x] Headless editor build + replay tests (`atlas_headless_editor.yml`)
 
 ### Documentation (`docs/`)
 - [x] 43 documentation files covering architecture, systems, and policies
@@ -180,7 +183,7 @@ Server rules support config-driven hot-reload with change tracking.
 - [x] Contributor rules (`ATLAS_CONTRIBUTOR_RULES.md`)
 
 ### Testing (`tests/`)
-- [x] 1067+ tests across 166+ test files — all passing
+- [x] 1093+ tests across 167+ test files — all passing
 - [x] Covers ECS, networking, replay, assets, UI, editor panels, graphs, etc.
 
 ---
@@ -216,6 +219,7 @@ implementations** producing deferred draw commands via `UIDrawList`.
 - [x] ProofViewerPanel — produces draw commands via UIDrawList
 - [x] JobTracePanel — full UIDrawList rendering (trace summaries, mismatch highlighting)
 - [x] StateHashDiffPanel — full UIDrawList rendering (hash entries, divergence, per-system breakdown)
+- [x] DesyncVisualizerPanel — live desync event display with field-level detail and mirror controller sync
 
 ### TileEditorModule (`editor/tools/`)
 - [x] Mode management (Paint, Erase, Select, LayerEdit, RuleEdit)
@@ -358,14 +362,15 @@ Testing            ✅ 100%   1067+ tests, all passing
 | Replay | ~37 | ✅ All pass |
 | Assets | ~57 | ✅ All pass |
 | UI System | ~80 | ✅ All pass |
-| Editor Panels | ~146 | ✅ All pass |
+| Editor Panels | ~154 | ✅ All pass |
 | Graph Systems | ~80 | ✅ All pass |
 | AI Systems | ~30 | ✅ All pass |
 | Production | ~20 | ✅ All pass |
 | World Gen | ~30 | ✅ All pass |
 | Tile Editor | ~40 | ✅ All pass |
+| Sim Mirror/Migration | ~18 | ✅ All pass |
 | CI/Tooling | ~12 | ✅ All pass |
-| **Total** | **1067+** | **✅ All pass** |
+| **Total** | **1093+** | **✅ All pass** |
 
 ---
 
@@ -406,7 +411,14 @@ diff viewing and replay inspection are available in `tools/`. The
 networking layer includes packet loss simulation, latency/jitter
 simulation, CRC32 checksum validation, bandwidth enforcement on send,
 manual replication triggers, and reliable/unreliable delta splitting
-with connection quality diagnostics. All 1067+ tests pass. The IHttpClient interface now supports
+with connection quality diagnostics. The component migration system
+supports schema versioning with field remap, new field zero-initialization,
+and hot reload safety checks. The SimMirrorController runs server and
+client simulations in lockstep to verify determinism with per-tick hash
+comparison and desync callbacks. The DesyncVisualizerPanel provides live
+desync event display with per-field detail breakdowns. A CI headless
+editor build workflow validates all targets and runs replay determinism
+tests. All 1093+ tests pass. The IHttpClient interface now supports
 HTTP POST, and the HttpLLMBackend uses proper POST requests for API
 communication. The LLMBackendFactory enables environment-based
 configuration via ATLAS_LLM_ENDPOINT, ATLAS_LLM_MODEL, and

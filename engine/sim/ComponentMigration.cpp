@@ -29,6 +29,13 @@ MigrationResult RemapComponent(
         if (oldField) {
             // Copy the smaller of the two sizes to avoid overflow
             uint32_t copySize = std::min(newField.size, oldField->size);
+            // Bounds check: ensure offsets + size don't exceed buffer sizes
+            if (newField.offset + copySize > newSchema.totalSize ||
+                oldField->offset + copySize > oldSchema.totalSize) {
+                result.error = "Field offset exceeds schema size";
+                result.success = false;
+                return result;
+            }
             std::memcpy(
                 static_cast<uint8_t*>(newData) + newField.offset,
                 static_cast<const uint8_t*>(oldData) + oldField->offset,
@@ -112,8 +119,9 @@ MigrationResult ComponentMigrationManager::MigrateToLatest(
         return r;
     }
     if (oldSchema->version == newSchema->version) {
-        // No migration needed; just copy
-        std::memcpy(newData, oldData, oldSchema->totalSize);
+        // No migration needed; just copy (use smaller size for safety)
+        uint32_t copySize = std::min(oldSchema->totalSize, newSchema->totalSize);
+        std::memcpy(newData, oldData, copySize);
         MigrationResult r;
         r.success = true;
         return r;

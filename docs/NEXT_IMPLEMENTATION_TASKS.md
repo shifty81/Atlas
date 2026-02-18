@@ -368,6 +368,78 @@ This document tracks the remaining implementation tasks to complete the vision o
 - `editor/panels/StateHashDiffPanel.h/.cpp` — Added EditorPanel inheritance, UIDrawList, Name(), Draw()
 - `tests/test_panel_draw_impl.cpp` — 26 new tests
 
+#### 13. Hot Reload World Migration (Component Remap)
+**Status**: Complete
+
+**Completed work**:
+- [x] ComponentSchema and FieldDesc definitions
+  - Stable field IDs, type-safe field descriptors
+  - Schema version tracking per component type
+- [x] RemapComponent function
+  - Field-by-field migration from old to new schema
+  - Matching fields copied, new fields zero-initialized, removed fields dropped
+  - Type and null-data safety checks
+- [x] ComponentMigrationManager
+  - Multi-version schema registry
+  - MigrateToLatest for automatic version upgrade
+  - IsHotReloadSafe check (blocks type-changing field migrations)
+  - NeedsMigration detection
+- [x] 10 tests covering all migration scenarios
+
+**Files created**:
+- `engine/sim/ComponentMigration.h` — ComponentSchema, FieldDesc, RemapComponent, ComponentMigrationManager
+- `engine/sim/ComponentMigration.cpp` — Full implementations
+
+#### 14. Server/Client Simulation Mirror Tool
+**Status**: Complete
+
+**Completed work**:
+- [x] ISimulation abstract interface (Step, WorldHash, CurrentTick)
+- [x] SimMirrorController
+  - Lockstep execution of two simulations with same inputs
+  - Per-tick hash comparison for determinism verification
+  - MirrorDesyncEvent recording with tick/hash details
+  - RunFrames batch execution with early exit on desync
+  - Desync callback for live notification
+  - Enable/disable toggle for mirror mode
+  - Reset for clearing desync history
+- [x] 8 tests covering determinism, desync detection, callbacks
+
+**Files created**:
+- `engine/sim/SimMirror.h` — ISimulation, MirrorDesyncEvent, SimMirrorController
+- `engine/sim/SimMirror.cpp` — Full implementations
+
+#### 15. Live Net-Desync Visualizer
+**Status**: Complete
+
+**Completed work**:
+- [x] DesyncVisualizerPanel (EditorPanel subclass)
+  - Live desync event display with tick, server hash, client hash
+  - Per-field detail view (entity, component, field, server/client values)
+  - Event selection and highlighting
+  - Automatic sync from SimMirrorController
+  - UIDrawList rendering with color-coded entries
+- [x] 8 tests covering empty state, events, field details, mirror sync
+
+**Files created**:
+- `editor/panels/DesyncVisualizerPanel.h` — DesyncFieldDetail, DesyncDisplayEvent, DesyncVisualizerPanel
+- `editor/panels/DesyncVisualizerPanel.cpp` — Full Draw() implementation
+
+#### 16. CI Headless Editor Build + Replay Tests
+**Status**: Complete
+
+**Completed work**:
+- [x] GitHub Actions workflow for headless builds
+  - Build all targets (Editor, Server, Client, Runtime, Tests)
+  - Binary existence verification
+  - Full test suite execution
+  - Headless editor and server smoke tests
+  - Golden replay determinism verification (double-run hash comparison)
+  - Contract scanner integration
+
+**Files created**:
+- `.github/workflows/atlas_headless_editor.yml` — Full CI workflow
+
 ## References
 
 - Original gaps analysis: `gaps.txt`
