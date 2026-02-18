@@ -2,6 +2,14 @@
 
 namespace atlas::ui {
 
+// --- MenuItem rendering constants ---
+static constexpr const char* kCheckmarkSymbol = "\xe2\x9c\x93"; // ✓
+
+/// Compute horizontal offset for icon placement, accounting for checkmark space.
+static int32_t IconOffsetX(int32_t rectX, bool isCheckable) {
+    return rectX + (isCheckable ? 18 : 2);
+}
+
 void UIManager::Init(GUIContext context) {
     m_context = context;
 
@@ -157,7 +165,7 @@ void UIManager::RenderWidget(UIRenderer* renderer, uint32_t widgetId, int depth)
                 // Draw icon if present, grayed out
                 if (widget->iconId != 0) {
                     UIColor iconTint = {100, 100, 100, 255};
-                    UIRect iconRect = {rect.x + (widget->isCheckable ? 18 : 2), rect.y + 2, rect.h - 4, rect.h - 4};
+                    UIRect iconRect = {IconOffsetX(rect.x, widget->isCheckable), rect.y + 2, rect.h - 4, rect.h - 4};
                     renderer->DrawIcon(iconRect, widget->iconId, iconTint);
                 }
             } else {
@@ -168,12 +176,12 @@ void UIManager::RenderWidget(UIRenderer* renderer, uint32_t widgetId, int depth)
                 if (widget->isCheckable) {
                     UIColor checkColor = widget->isChecked ? UIColor{220, 220, 220, 255} : UIColor{80, 80, 80, 255};
                     UIRect checkRect = {rect.x + 2, rect.y, 16, rect.h};
-                    renderer->DrawText(checkRect, widget->isChecked ? "\xe2\x9c\x93" : " ", checkColor);
+                    renderer->DrawText(checkRect, widget->isChecked ? kCheckmarkSymbol : " ", checkColor);
                 }
                 // Icon rendering
                 if (widget->iconId != 0) {
                     UIColor iconTint = {255, 255, 255, 255};
-                    UIRect iconRect = {rect.x + (widget->isCheckable ? 18 : 2), rect.y + 2, rect.h - 4, rect.h - 4};
+                    UIRect iconRect = {IconOffsetX(rect.x, widget->isCheckable), rect.y + 2, rect.h - 4, rect.h - 4};
                     renderer->DrawIcon(iconRect, widget->iconId, iconTint);
                 }
                 UIColor textColor = {220, 220, 220, 255};
