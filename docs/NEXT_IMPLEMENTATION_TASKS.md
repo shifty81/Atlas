@@ -232,6 +232,35 @@ This document tracks the remaining implementation tasks to complete the vision o
 - `engine/ui/FontBootstrap.cpp` - Font discovery and loading implementations
 - `tests/test_next_tasks_phase14.cpp` - 35 new tests
 
+#### 9. MeshViewerPanel and PrefabEditorPanel Draw Implementations
+**Status**: Complete
+
+**Completed work**:
+- [x] MeshViewerPanel::Draw() implementation
+  - Title bar with current view mode label (Solid, Wireframe, Solid+Wire, Normals)
+  - Vertex/triangle count and bounding box display
+  - Viewport area with border
+  - Grid overlay (horizontal and vertical crosshair lines, togglable)
+  - Normals overlay indicator when enabled
+  - Selected vertex indicator
+  - "No mesh loaded" fallback text
+- [x] PrefabEditorPanel::Draw() implementation
+  - Title bar with dirty indicator (*)
+  - Entity hierarchy tree with recursive parent-child rendering
+  - Indented child entities with depth-based offset
+  - Parent nodes marked with > prefix
+  - Component inspector section for selected entity
+  - Component type display with property key-value pairs
+  - "(no components)" fallback for entities without components
+  - "Empty prefab" fallback text
+
+**Files created/modified**:
+- `editor/panels/MeshViewerPanel.h` - Added UIDrawList include, m_drawList member, GetDrawList() accessor, moved Draw() to .cpp
+- `editor/panels/MeshViewerPanel.cpp` - New — full Draw() implementation with UIDrawList commands
+- `editor/panels/PrefabEditorPanel.h` - Added UIDrawList include, m_drawList member, GetDrawList() accessor, DrawEntityRow() helper, moved Draw() to .cpp
+- `editor/panels/PrefabEditorPanel.cpp` - New — full Draw() implementation with hierarchy tree and component inspector
+- `tests/test_next_tasks_phase15.cpp` - 15 new tests
+
 ## Implementation Priority Order
 
 1. **Marketplace Integration Completion** (Highest business value)

@@ -1,5 +1,6 @@
 #pragma once
 #include "../ui/EditorPanel.h"
+#include "../../engine/ui/UIDrawList.h"
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -31,11 +32,7 @@ struct PrefabEntity {
 class PrefabEditorPanel : public EditorPanel {
 public:
     const char* Name() const override { return "Prefab Editor"; }
-    void Draw() override {
-        // Prefab hierarchy tree with parent-child relationships.
-        // Show component list for selected entity.
-        // Display dirty indicator for unsaved changes.
-    }
+    void Draw() override;
 
     uint32_t AddEntity(const std::string& name) {
         PrefabEntity entity;
@@ -141,11 +138,16 @@ public:
         return oss.str();
     }
 
+    const atlas::ui::UIDrawList& GetDrawList() const { return m_drawList; }
+
 private:
     std::unordered_map<uint32_t, PrefabEntity> m_entities;
     uint32_t m_nextID = 1;
     uint32_t m_selectedEntity = 0;
     bool m_dirty = false;
+    atlas::ui::UIDrawList m_drawList;
+
+    int32_t DrawEntityRow(uint32_t entityId, int depth, int32_t y);
 };
 
 } // namespace atlas::editor

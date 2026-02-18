@@ -245,7 +245,7 @@ Production-grade CI, build experience, and template repository support.
 | Gameplay | ✅ Complete | Camera, input, physics, audio, mechanics |
 | Interaction/Voice | ✅ Complete | Unified intent pipeline |
 | Project/Plugin | ✅ Complete | Multi-project, schema validation, plugins, game modules |
-| Editor Framework | 🔧 Functional | All panel logic works, layout persistence added, PIE implemented, rendering layer (Draw() methods) deferred pending Atlas custom UI backend integration |
+| Editor Framework | 🔧 Functional | All panel logic works, layout persistence added, PIE implemented, Draw() methods implemented for all panels including MeshViewer and PrefabEditor |
 | Networking | ✅ Complete | API, lockstep/rollback, replication, production hardening (timeouts, reconnect, bandwidth, heartbeat) |
 | Production Tools | ✅ Complete | Game packager pipeline (Validate → Cook → Bundle → Emit), asset cooker, build profiles, platform targeting |
 | Polish | ✅ Complete | Undo/redo, visual diff, profiler, replay recorder, crash analysis |

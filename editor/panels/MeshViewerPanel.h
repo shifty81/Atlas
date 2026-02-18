@@ -1,6 +1,7 @@
 #pragma once
 #include "../ui/EditorPanel.h"
 #include "../../engine/procedural/ProceduralMeshGraph.h"
+#include "../../engine/ui/UIDrawList.h"
 #include <string>
 #include <vector>
 #include <sstream>
@@ -24,11 +25,7 @@ struct MeshViewerStats {
 class MeshViewerPanel : public EditorPanel {
 public:
     const char* Name() const override { return "Mesh Viewer"; }
-    void Draw() override {
-        // Mesh viewport with view mode (solid, wireframe, normals).
-        // Display vertex/triangle count and bounding box.
-        // Show normals overlay and grid when enabled.
-    }
+    void Draw() override;
 
     void LoadMesh(const procedural::MeshData& mesh) {
         m_mesh = mesh;
@@ -73,6 +70,8 @@ public:
         return oss.str();
     }
 
+    const atlas::ui::UIDrawList& GetDrawList() const { return m_drawList; }
+
 private:
     procedural::MeshData m_mesh;
     bool m_loaded = false;
@@ -81,6 +80,7 @@ private:
     bool m_showNormals = false;
     bool m_showGrid = true;
     int m_selectedVertex = -1;
+    atlas::ui::UIDrawList m_drawList;
 
     void ComputeStats() {
         m_stats.vertexCount = m_mesh.VertexCount();

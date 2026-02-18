@@ -976,6 +976,9 @@ void test_engine_editor_sets_initial_viewport();
 // Phase 14: Vulkan Device, HttpLLMBackend, FontBootstrap enhancements
 void register_next_tasks_phase14();
 
+// Phase 15: MeshViewerPanel and PrefabEditorPanel Draw implementations
+void register_next_tasks_phase15();
+
 // Component Category
 void test_component_category_defaults();
 void test_component_category_simulated();
@@ -1957,6 +1960,9 @@ int main() {
 
     // Phase 14: Vulkan Device, HttpLLMBackend, FontBootstrap
     register_next_tasks_phase14();
+
+    // Phase 15: MeshViewerPanel and PrefabEditorPanel Draw
+    register_next_tasks_phase15();
 
     // Noise
     std::cout << "\n--- Noise Generator ---" << std::endl;
