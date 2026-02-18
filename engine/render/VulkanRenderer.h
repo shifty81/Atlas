@@ -1,5 +1,6 @@
 #pragma once
 #include "../ui/UIRenderer.h"
+#include <climits>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -9,6 +10,9 @@
 #endif
 
 namespace atlas::render {
+
+/// Stub Vulkan API version for environments without the Vulkan SDK
+constexpr uint32_t VK_HEADER_VERSION_STUB = ((1 << 22) | (3 << 12) | 0); // 1.3.0
 
 struct VkDrawCommand {
     enum class Kind : uint8_t {
@@ -127,6 +131,53 @@ struct VkMemoryAllocation {
     uint32_t id = 0;
 };
 
+/// Vulkan physical device properties (hardware GPU info)
+struct VkPhysicalDeviceInfo {
+    std::string deviceName;
+    uint32_t vendorId = 0;
+    uint32_t deviceId = 0;
+    uint32_t driverVersion = 0;
+    uint32_t apiVersion = 0;
+    enum class DeviceType : uint8_t { Other, IntegratedGPU, DiscreteGPU, VirtualGPU, CPU };
+    DeviceType deviceType = DeviceType::Other;
+    size_t totalMemoryBytes = 0;
+    bool supportsGeometryShader = false;
+    bool supportsTessellation = false;
+    bool supportsCompute = true;
+};
+
+/// Vulkan queue family properties
+struct VkQueueFamilyInfo {
+    uint32_t index = 0;
+    uint32_t queueCount = 0;
+    bool supportsGraphics = false;
+    bool supportsCompute = false;
+    bool supportsTransfer = false;
+    bool supportsPresent = false;
+};
+
+/// Vulkan swap chain configuration
+struct VkSwapChainDesc {
+    uint32_t imageCount = 2;            ///< Double or triple buffering
+    uint32_t width = 0;
+    uint32_t height = 0;
+    enum class PresentMode : uint8_t { Immediate, Mailbox, FIFO, FIFORelaxed };
+    PresentMode presentMode = PresentMode::FIFO;
+    enum class Format : uint8_t { BGRA8_SRGB, RGBA8_SRGB, BGRA8_UNORM, RGBA8_UNORM };
+    Format format = Format::BGRA8_SRGB;
+    bool valid = false;
+};
+
+/// Vulkan logical device configuration
+struct VkDeviceConfig {
+    std::string applicationName = "AtlasEngine";
+    uint32_t applicationVersion = 1;
+    bool enableValidationLayers = false;
+    bool enableDebugMessenger = false;
+    std::vector<std::string> requiredExtensions;
+    std::vector<std::string> requiredDeviceExtensions;
+};
+
 class VulkanRenderer : public ui::UIRenderer {
 public:
     void BeginFrame() override;
@@ -235,6 +286,54 @@ public:
     size_t PoolUsedSize(uint32_t poolId) const;
     size_t PoolFreeSize(uint32_t poolId) const;
 
+    // --- Vulkan device management ---
+
+    /// Initialize the Vulkan instance and select a physical device.
+    /// Returns true if a device was selected (or stub mode is active).
+    bool InitDevice(const VkDeviceConfig& config);
+
+    /// Shut down the Vulkan device and release all resources.
+    void ShutdownDevice();
+
+    /// Whether the device has been initialized.
+    bool IsDeviceInitialized() const;
+
+    /// Returns the selected physical device info.
+    const VkPhysicalDeviceInfo& GetPhysicalDeviceInfo() const;
+
+    /// Returns discovered queue families.
+    const std::vector<VkQueueFamilyInfo>& GetQueueFamilies() const;
+
+    /// Returns the index of the graphics queue family, or UINT32_MAX if none.
+    uint32_t GetGraphicsQueueFamily() const;
+
+    /// Returns the index of the compute queue family, or UINT32_MAX if none.
+    uint32_t GetComputeQueueFamily() const;
+
+    /// Returns the index of the transfer queue family, or UINT32_MAX if none.
+    uint32_t GetTransferQueueFamily() const;
+
+    /// Create a swap chain with the given description.
+    bool CreateSwapChain(const VkSwapChainDesc& desc);
+
+    /// Returns the current swap chain description.
+    const VkSwapChainDesc& GetSwapChain() const;
+
+    /// Resize the swap chain (e.g. on window resize).
+    bool ResizeSwapChain(uint32_t width, uint32_t height);
+
+    /// Whether a valid swap chain is active.
+    bool HasSwapChain() const;
+
+    /// Returns the device configuration used during InitDevice.
+    const VkDeviceConfig& GetDeviceConfig() const;
+
+    /// Enumerate available physical devices (returns device info for each).
+    const std::vector<VkPhysicalDeviceInfo>& EnumerateDevices() const;
+
+    /// Select a specific device by index from EnumerateDevices() result.
+    bool SelectDevice(uint32_t deviceIndex);
+
     static constexpr uint32_t MAX_BUFFERED_FRAMES = 3;
 
 private:
@@ -288,6 +387,14 @@ private:
     uint32_t m_nextAllocationId = 1;
 
     static const std::vector<uint8_t> s_emptyPushData;
+
+    // Vulkan device state
+    bool m_deviceInitialized = false;
+    VkDeviceConfig m_deviceConfig;
+    VkPhysicalDeviceInfo m_selectedDevice;
+    std::vector<VkPhysicalDeviceInfo> m_availableDevices;
+    std::vector<VkQueueFamilyInfo> m_queueFamilies;
+    VkSwapChainDesc m_swapChain;
 };
 
 } // namespace atlas::render

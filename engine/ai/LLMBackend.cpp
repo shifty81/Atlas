@@ -1,4 +1,5 @@
 #include "LLMBackend.h"
+#include "../core/Logger.h"
 #include <algorithm>
 
 namespace atlas::ai {
@@ -103,6 +104,180 @@ size_t LLMBackendRegistry::RequestCount() const {
 
 void LLMBackendRegistry::ClearHistory() {
     m_history.clear();
+}
+
+// ============================================================
+// HttpLLMBackend
+// ============================================================
+
+HttpLLMBackend::HttpLLMBackend(atlas::asset::IHttpClient* httpClient,
+                               const std::string& endpoint,
+                               const std::string& model)
+    : m_httpClient(httpClient)
+    , m_endpoint(endpoint)
+    , m_model(model) {}
+
+LLMResponse HttpLLMBackend::Complete(const LLMRequest& request) {
+    LLMResponse resp;
+    resp.requestId = request.requestId != 0 ? request.requestId : m_nextRequestId++;
+
+    if (!m_httpClient) {
+        resp.success = false;
+        resp.errorMessage = "No HTTP client configured";
+        ++m_failureCount;
+        return resp;
+    }
+
+    if (m_apiKey.empty()) {
+        resp.success = false;
+        resp.errorMessage = "No API key configured";
+        ++m_failureCount;
+        return resp;
+    }
+
+    std::string body = BuildRequestBody(request);
+
+    std::vector<std::pair<std::string, std::string>> headers = {
+        {"Authorization", "Bearer " + m_apiKey},
+        {"Content-Type", "application/json"}
+    };
+
+    // NOTE: IHttpClient only exposes Get(); the JSON body is passed via query
+    // string as a workaround. A real deployment should add a Post() method.
+    auto httpResp = m_httpClient->Get(m_endpoint + "?" + body, headers);
+
+    if (httpResp.IsError()) {
+        resp.success = false;
+        resp.errorMessage = "HTTP error " + std::to_string(httpResp.statusCode) +
+                            ": " + httpResp.errorMessage;
+        ++m_failureCount;
+        return resp;
+    }
+
+    resp = ParseResponse(httpResp.body, resp.requestId);
+    if (resp.success) {
+        ++m_successCount;
+    } else {
+        ++m_failureCount;
+    }
+    return resp;
+}
+
+bool HttpLLMBackend::IsAvailable() const {
+    return m_httpClient != nullptr && !m_apiKey.empty();
+}
+
+std::string HttpLLMBackend::Name() const {
+    return "HttpLLM(" + m_model + ")";
+}
+
+uint8_t HttpLLMBackend::Capabilities() const {
+    return static_cast<uint8_t>(LLMCapability::TextGeneration) |
+           static_cast<uint8_t>(LLMCapability::Streaming);
+}
+
+void HttpLLMBackend::SetApiKey(const std::string& apiKey) {
+    m_apiKey = apiKey;
+}
+
+bool HttpLLMBackend::HasApiKey() const {
+    return !m_apiKey.empty();
+}
+
+const std::string& HttpLLMBackend::GetEndpoint() const {
+    return m_endpoint;
+}
+
+const std::string& HttpLLMBackend::GetModel() const {
+    return m_model;
+}
+
+void HttpLLMBackend::SetTimeoutMs(uint32_t timeoutMs) {
+    m_timeoutMs = timeoutMs;
+}
+
+uint32_t HttpLLMBackend::GetTimeoutMs() const {
+    return m_timeoutMs;
+}
+
+uint64_t HttpLLMBackend::SuccessCount() const {
+    return m_successCount;
+}
+
+uint64_t HttpLLMBackend::FailureCount() const {
+    return m_failureCount;
+}
+
+std::string HttpLLMBackend::BuildRequestBody(const LLMRequest& request) const {
+    // Minimal JSON construction without a JSON library.
+    // Escapes double quotes and backslashes in user input.
+    auto escape = [](const std::string& s) -> std::string {
+        std::string out;
+        out.reserve(s.size());
+        for (char c : s) {
+            if (c == '"') out += "\\\"";
+            else if (c == '\\') out += "\\\\";
+            else if (c == '\n') out += "\\n";
+            else if (c == '\r') out += "\\r";
+            else if (c == '\t') out += "\\t";
+            else out += c;
+        }
+        return out;
+    };
+
+    std::string json = "{\"model\":\"" + escape(m_model) + "\",\"messages\":[";
+
+    if (!request.systemPrompt.empty()) {
+        json += "{\"role\":\"system\",\"content\":\"" + escape(request.systemPrompt) + "\"},";
+    }
+
+    json += "{\"role\":\"user\",\"content\":\"" + escape(request.prompt) + "\"}],";
+    json += "\"temperature\":" + std::to_string(request.temperature) + ",";
+    json += "\"max_tokens\":" + std::to_string(request.maxTokens) + "}";
+
+    return json;
+}
+
+LLMResponse HttpLLMBackend::ParseResponse(const std::string& responseBody,
+                                           uint64_t requestId) const {
+    LLMResponse resp;
+    resp.requestId = requestId;
+
+    // Look for "content":"..." in the response JSON.
+    const std::string key = "\"content\":\"";
+    auto pos = responseBody.find(key);
+    if (pos == std::string::npos) {
+        resp.success = false;
+        resp.errorMessage = "Could not find 'content' field in response";
+        return resp;
+    }
+
+    pos += key.size();
+    std::string content;
+    bool escaped = false;
+    for (size_t i = pos; i < responseBody.size(); ++i) {
+        char c = responseBody[i];
+        if (escaped) {
+            if (c == 'n') content += '\n';
+            else if (c == 't') content += '\t';
+            else if (c == 'r') content += '\r';
+            else content += c;
+            escaped = false;
+        } else if (c == '\\') {
+            escaped = true;
+        } else if (c == '"') {
+            break;
+        } else {
+            content += c;
+        }
+    }
+
+    resp.text = content;
+    resp.success = true;
+    // Approximate token count: ~4 characters per token on average for English text.
+    constexpr uint32_t kAvgCharsPerToken = 4;
+    resp.tokensUsed = static_cast<uint32_t>(content.size() / kAvgCharsPerToken + 1);
+    return resp;
 }
 
 } // namespace atlas::ai

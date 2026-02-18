@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace atlas::ui {
 
@@ -42,6 +43,22 @@ public:
     /// Returns true if using the built-in fallback font
     bool IsUsingFallback() const;
 
+    /// Register an additional font search directory.
+    void AddFontSearchPath(const std::string& path);
+
+    /// Returns all registered font search paths.
+    const std::vector<std::string>& GetFontSearchPaths() const;
+
+    /// Scan all search paths and return discovered font file paths (.ttf, .otf).
+    std::vector<std::string> DiscoverFonts() const;
+
+    /// Attempt to load a specific font file by full path.
+    /// Returns true if the font was successfully validated and loaded.
+    bool LoadFont(const std::string& fontPath);
+
+    /// Returns the path to the currently loaded font file (empty if using fallback).
+    const std::string& GetLoadedFontPath() const;
+
 private:
     FontHandle m_defaultFont = kInvalidFont;
     float m_baseFontSize = 18.0f;
@@ -49,6 +66,8 @@ private:
     bool m_ready = false;
     std::string m_fontName;
     bool m_usingFallback = false;
+    std::vector<std::string> m_searchPaths;
+    std::string m_loadedFontPath;
 };
 
 } // namespace atlas::ui

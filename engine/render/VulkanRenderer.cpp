@@ -669,4 +669,173 @@ size_t VulkanRenderer::PoolFreeSize(uint32_t poolId) const {
     return 0;
 }
 
+// --- Vulkan device management (stub – real VkDevice integration pending Vulkan SDK) ---
+
+bool VulkanRenderer::InitDevice(const VkDeviceConfig& config) {
+    if (m_deviceInitialized) {
+        Logger::Warn("[VulkanRenderer] Device already initialized");
+        return true;
+    }
+    m_deviceConfig = config;
+
+    // Simulate discovering a GPU.
+    VkPhysicalDeviceInfo gpu;
+    gpu.deviceName = "Atlas Simulated GPU";
+    gpu.vendorId = 0x10DE; // NVIDIA-style vendor ID
+    gpu.deviceId = 0x2204;
+    gpu.driverVersion = 1;
+    gpu.apiVersion = VK_HEADER_VERSION_STUB;
+    gpu.deviceType = VkPhysicalDeviceInfo::DeviceType::DiscreteGPU;
+    gpu.totalMemoryBytes = 8ULL * 1024 * 1024 * 1024; // 8 GB
+    gpu.supportsGeometryShader = true;
+    gpu.supportsTessellation = true;
+    gpu.supportsCompute = true;
+    m_availableDevices.clear();
+    m_availableDevices.push_back(gpu);
+    m_selectedDevice = gpu;
+
+    // Simulate queue families.
+    m_queueFamilies.clear();
+    VkQueueFamilyInfo gfx;
+    gfx.index = 0;
+    gfx.queueCount = 16;
+    gfx.supportsGraphics = true;
+    gfx.supportsCompute = true;
+    gfx.supportsTransfer = true;
+    gfx.supportsPresent = true;
+    m_queueFamilies.push_back(gfx);
+
+    VkQueueFamilyInfo transfer;
+    transfer.index = 1;
+    transfer.queueCount = 2;
+    transfer.supportsGraphics = false;
+    transfer.supportsCompute = false;
+    transfer.supportsTransfer = true;
+    transfer.supportsPresent = false;
+    m_queueFamilies.push_back(transfer);
+
+    VkQueueFamilyInfo compute;
+    compute.index = 2;
+    compute.queueCount = 8;
+    compute.supportsGraphics = false;
+    compute.supportsCompute = true;
+    compute.supportsTransfer = true;
+    compute.supportsPresent = false;
+    m_queueFamilies.push_back(compute);
+
+    m_deviceInitialized = true;
+
+    Logger::Info("[VulkanRenderer] Device initialized: " + gpu.deviceName +
+                 " (app: " + config.applicationName + ")");
+    return true;
+}
+
+void VulkanRenderer::ShutdownDevice() {
+    if (!m_deviceInitialized) return;
+    m_swapChain = VkSwapChainDesc{};
+    m_queueFamilies.clear();
+    m_availableDevices.clear();
+    m_selectedDevice = VkPhysicalDeviceInfo{};
+    m_deviceInitialized = false;
+    Logger::Info("[VulkanRenderer] Device shut down");
+}
+
+bool VulkanRenderer::IsDeviceInitialized() const {
+    return m_deviceInitialized;
+}
+
+const VkPhysicalDeviceInfo& VulkanRenderer::GetPhysicalDeviceInfo() const {
+    return m_selectedDevice;
+}
+
+const std::vector<VkQueueFamilyInfo>& VulkanRenderer::GetQueueFamilies() const {
+    return m_queueFamilies;
+}
+
+uint32_t VulkanRenderer::GetGraphicsQueueFamily() const {
+    for (const auto& qf : m_queueFamilies) {
+        if (qf.supportsGraphics) return qf.index;
+    }
+    return UINT32_MAX;
+}
+
+uint32_t VulkanRenderer::GetComputeQueueFamily() const {
+    for (const auto& qf : m_queueFamilies) {
+        if (qf.supportsCompute && !qf.supportsGraphics) return qf.index;
+    }
+    // Fall back to graphics queue if no dedicated compute queue.
+    for (const auto& qf : m_queueFamilies) {
+        if (qf.supportsCompute) return qf.index;
+    }
+    return UINT32_MAX;
+}
+
+uint32_t VulkanRenderer::GetTransferQueueFamily() const {
+    for (const auto& qf : m_queueFamilies) {
+        if (qf.supportsTransfer && !qf.supportsGraphics && !qf.supportsCompute)
+            return qf.index;
+    }
+    for (const auto& qf : m_queueFamilies) {
+        if (qf.supportsTransfer) return qf.index;
+    }
+    return UINT32_MAX;
+}
+
+bool VulkanRenderer::CreateSwapChain(const VkSwapChainDesc& desc) {
+    if (!m_deviceInitialized) {
+        Logger::Warn("[VulkanRenderer] Cannot create swap chain: device not initialized");
+        return false;
+    }
+    if (desc.width == 0 || desc.height == 0) {
+        Logger::Warn("[VulkanRenderer] Cannot create swap chain: zero dimensions");
+        return false;
+    }
+    m_swapChain = desc;
+    m_swapChain.valid = true;
+    Logger::Info("[VulkanRenderer] SwapChain created: " +
+                 std::to_string(desc.width) + "x" + std::to_string(desc.height) +
+                 " images=" + std::to_string(desc.imageCount));
+    return true;
+}
+
+const VkSwapChainDesc& VulkanRenderer::GetSwapChain() const {
+    return m_swapChain;
+}
+
+bool VulkanRenderer::ResizeSwapChain(uint32_t width, uint32_t height) {
+    if (!m_swapChain.valid) {
+        Logger::Warn("[VulkanRenderer] Cannot resize swap chain: no swap chain active");
+        return false;
+    }
+    if (width == 0 || height == 0) return false;
+    m_swapChain.width = width;
+    m_swapChain.height = height;
+    Logger::Info("[VulkanRenderer] SwapChain resized: " +
+                 std::to_string(width) + "x" + std::to_string(height));
+    return true;
+}
+
+bool VulkanRenderer::HasSwapChain() const {
+    return m_swapChain.valid;
+}
+
+const VkDeviceConfig& VulkanRenderer::GetDeviceConfig() const {
+    return m_deviceConfig;
+}
+
+const std::vector<VkPhysicalDeviceInfo>& VulkanRenderer::EnumerateDevices() const {
+    return m_availableDevices;
+}
+
+bool VulkanRenderer::SelectDevice(uint32_t deviceIndex) {
+    if (deviceIndex >= m_availableDevices.size()) return false;
+    if (m_deviceInitialized) {
+        Logger::Warn("[VulkanRenderer] Cannot change device while initialized; call ShutdownDevice first");
+        return false;
+    }
+    m_selectedDevice = m_availableDevices[deviceIndex];
+    Logger::Info("[VulkanRenderer] Selected device: " + m_selectedDevice.deviceName);
+    return true;
+}
+
 } // namespace atlas::render

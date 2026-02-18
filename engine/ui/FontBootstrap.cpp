@@ -154,6 +154,7 @@ static bool GenerateBuiltinFontAtlas(const std::string& assetRoot) {
 bool FontBootstrap::Init(const std::string& assetRoot, float dpiScale) {
     m_dpiScale = dpiScale;
 
+    AddFontSearchPath(assetRoot + "/fonts");
     std::string fontPath = assetRoot + "/fonts/Inter-Regular.ttf";
 
     if (!std::filesystem::exists(fontPath)) {
@@ -192,6 +193,7 @@ bool FontBootstrap::Init(const std::string& assetRoot, float dpiScale) {
 
     m_defaultFont = 1; // reserved handle for the default font
     m_ready = true;
+    m_loadedFontPath = fontPath;
 
     Logger::Info("Font system initialized with '" + m_fontName
                  + "' (asset root: " + assetRoot +
@@ -232,6 +234,69 @@ const std::string& FontBootstrap::GetFontName() const {
 
 bool FontBootstrap::IsUsingFallback() const {
     return m_usingFallback;
+}
+
+void FontBootstrap::AddFontSearchPath(const std::string& path) {
+    if (path.empty()) return;
+    // Avoid duplicates
+    for (const auto& existing : m_searchPaths) {
+        if (existing == path) return;
+    }
+    m_searchPaths.push_back(path);
+    Logger::Info("Font search path added: " + path);
+}
+
+const std::vector<std::string>& FontBootstrap::GetFontSearchPaths() const {
+    return m_searchPaths;
+}
+
+std::vector<std::string> FontBootstrap::DiscoverFonts() const {
+    std::vector<std::string> fonts;
+    for (const auto& searchPath : m_searchPaths) {
+        std::error_code ec;
+        if (!std::filesystem::exists(searchPath, ec)) continue;
+        if (!std::filesystem::is_directory(searchPath, ec)) continue;
+
+        for (const auto& entry : std::filesystem::directory_iterator(searchPath, ec)) {
+            if (!entry.is_regular_file()) continue;
+            auto ext = entry.path().extension().string();
+            // Case-insensitive extension check
+            for (auto& c : ext) c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+            if (ext == ".ttf" || ext == ".otf") {
+                fonts.push_back(entry.path().string());
+            }
+        }
+    }
+    return fonts;
+}
+
+bool FontBootstrap::LoadFont(const std::string& fontPath) {
+    if (fontPath.empty()) return false;
+
+    std::error_code ec;
+    if (!std::filesystem::exists(fontPath, ec)) {
+        Logger::Warn("Font file not found: " + fontPath);
+        return false;
+    }
+
+    std::string parsedName = ParseTTFHeader(fontPath);
+    if (parsedName.empty()) {
+        Logger::Warn("Failed to parse font file: " + fontPath);
+        return false;
+    }
+
+    m_fontName = parsedName;
+    m_loadedFontPath = fontPath;
+    m_defaultFont = 1;
+    m_ready = true;
+    m_usingFallback = false;
+
+    Logger::Info("Loaded font '" + m_fontName + "' from " + fontPath);
+    return true;
+}
+
+const std::string& FontBootstrap::GetLoadedFontPath() const {
+    return m_loadedFontPath;
 }
 
 } // namespace atlas::ui

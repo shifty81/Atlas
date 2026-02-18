@@ -19,6 +19,8 @@
 #include <memory>
 #include <unordered_map>
 
+#include "../assets/HttpClient.h"
+
 namespace atlas::ai {
 
 /// Configuration for an LLM request.
@@ -92,6 +94,65 @@ private:
     std::unordered_map<std::string, std::string> m_responses;
     uint64_t m_callCount = 0;
     uint64_t m_nextRequestId = 1;
+};
+
+/// HTTP-based LLM backend that connects to an OpenAI-compatible API.
+/// Uses the atlas::asset::IHttpClient interface for network communication.
+/// Supports configurable endpoint URL, model name, and API key.
+class HttpLLMBackend : public ILLMBackend {
+public:
+    /// Construct with an HTTP client, API endpoint, and model name.
+    /// @param httpClient  Non-owning pointer to an HTTP client (must outlive this backend).
+    /// @param endpoint    API endpoint URL (e.g. "https://api.openai.com/v1/chat/completions")
+    /// @param model       Model name (e.g. "gpt-4", "gpt-3.5-turbo")
+    HttpLLMBackend(atlas::asset::IHttpClient* httpClient,
+                   const std::string& endpoint,
+                   const std::string& model);
+
+    LLMResponse Complete(const LLMRequest& request) override;
+    bool IsAvailable() const override;
+    std::string Name() const override;
+    uint8_t Capabilities() const override;
+
+    /// Set the API key for authentication.
+    void SetApiKey(const std::string& apiKey);
+
+    /// Whether an API key has been configured.
+    bool HasApiKey() const;
+
+    /// Returns the configured endpoint URL.
+    const std::string& GetEndpoint() const;
+
+    /// Returns the configured model name.
+    const std::string& GetModel() const;
+
+    /// Set the request timeout in milliseconds.
+    void SetTimeoutMs(uint32_t timeoutMs);
+
+    /// Returns the request timeout in milliseconds.
+    uint32_t GetTimeoutMs() const;
+
+    /// Total number of successful API calls.
+    uint64_t SuccessCount() const;
+
+    /// Total number of failed API calls.
+    uint64_t FailureCount() const;
+
+private:
+    atlas::asset::IHttpClient* m_httpClient = nullptr;
+    std::string m_endpoint;
+    std::string m_model;
+    std::string m_apiKey;
+    uint32_t m_timeoutMs = 30000;
+    uint64_t m_successCount = 0;
+    uint64_t m_failureCount = 0;
+    uint64_t m_nextRequestId = 1;
+
+    /// Build the JSON request body for the API call.
+    std::string BuildRequestBody(const LLMRequest& request) const;
+
+    /// Parse the JSON response from the API.
+    LLMResponse ParseResponse(const std::string& responseBody, uint64_t requestId) const;
 };
 
 /// Forwards requests to whichever ILLMBackend is currently registered.
