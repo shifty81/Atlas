@@ -225,14 +225,15 @@ void Engine::ProcessWindowEvents() {
                 }
                 break;
             case platform::WindowEvent::Type::KeyDown: {
-                // Backtick key toggles diagnostics overlay
-                if (event.keyCode == '`') {
+                // Ctrl+Backtick toggles diagnostics overlay
+                if (event.keyCode == '`' && (event.modifiers & 1)) {
                     ui::DiagnosticsOverlay::Toggle();
                 }
                 ui::UIEvent uiEvent;
                 uiEvent.type = ui::UIEvent::Type::KeyDown;
                 uiEvent.keyCode = event.keyCode;
                 uiEvent.textChar = event.textChar;
+                uiEvent.modifiers = event.modifiers;
                 m_uiManager.DispatchEvent(uiEvent);
                 m_eventRouter.Dispatch(uiEvent);
                 break;
@@ -241,6 +242,7 @@ void Engine::ProcessWindowEvents() {
                 ui::UIEvent uiEvent;
                 uiEvent.type = ui::UIEvent::Type::KeyUp;
                 uiEvent.keyCode = event.keyCode;
+                uiEvent.modifiers = event.modifiers;
                 m_uiManager.DispatchEvent(uiEvent);
                 m_eventRouter.Dispatch(uiEvent);
                 break;

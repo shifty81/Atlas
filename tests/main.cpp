@@ -1812,6 +1812,9 @@ void test_include_firewall_ecs_no_render();
 void test_include_firewall_physics_no_render();
 void test_crash_reporter_workflow_exists();
 
+// Editor UI Fix tests
+void run_editor_ui_fix_tests();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -3825,6 +3828,9 @@ int main() {
     test_include_firewall_ecs_no_render();
     test_include_firewall_physics_no_render();
     test_crash_reporter_workflow_exists();
+
+    // Editor UI Fix tests
+    run_editor_ui_fix_tests();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

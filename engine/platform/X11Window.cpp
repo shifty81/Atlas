@@ -141,6 +141,10 @@ bool X11Window::PollEvent(WindowEvent& event) {
                 event.type = WindowEvent::Type::KeyDown;
                 KeySym sym = XLookupKeysym(&xev.xkey, 0);
                 event.keyCode = static_cast<uint32_t>(sym);
+                event.modifiers = 0;
+                if (xev.xkey.state & ControlMask) event.modifiers |= 1;
+                if (xev.xkey.state & ShiftMask)   event.modifiers |= 2;
+                if (xev.xkey.state & Mod1Mask)    event.modifiers |= 4;
                 char buf[32] = {};
                 int len = XLookupString(&xev.xkey, buf, sizeof(buf) - 1, nullptr, nullptr);
                 if (len > 0) {
@@ -152,6 +156,10 @@ bool X11Window::PollEvent(WindowEvent& event) {
                 event.type = WindowEvent::Type::KeyUp;
                 KeySym sym = XLookupKeysym(&xev.xkey, 0);
                 event.keyCode = static_cast<uint32_t>(sym);
+                event.modifiers = 0;
+                if (xev.xkey.state & ControlMask) event.modifiers |= 1;
+                if (xev.xkey.state & ShiftMask)   event.modifiers |= 2;
+                if (xev.xkey.state & Mod1Mask)    event.modifiers |= 4;
                 return true;
             }
             case ButtonPress: {
