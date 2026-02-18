@@ -973,6 +973,9 @@ void test_ui_manager_viewport_propagates_layout();
 void test_ui_manager_viewport_first_set_no_scale();
 void test_engine_editor_sets_initial_viewport();
 
+// Phase 14: Vulkan Device, HttpLLMBackend, FontBootstrap enhancements
+void register_next_tasks_phase14();
+
 // Component Category
 void test_component_category_defaults();
 void test_component_category_simulated();
@@ -1951,6 +1954,9 @@ int main() {
     test_ui_manager_viewport_propagates_layout();
     test_ui_manager_viewport_first_set_no_scale();
     test_engine_editor_sets_initial_viewport();
+
+    // Phase 14: Vulkan Device, HttpLLMBackend, FontBootstrap
+    register_next_tasks_phase14();
 
     // Noise
     std::cout << "\n--- Noise Generator ---" << std::endl;

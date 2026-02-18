@@ -1,4 +1,5 @@
 #include "LLMBackend.h"
+#include "../core/Logger.h"
 #include <algorithm>
 
 namespace atlas::ai {
