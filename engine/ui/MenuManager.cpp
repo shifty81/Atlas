@@ -2,6 +2,11 @@
 
 namespace atlas::ui {
 
+// Maximum widget ID to check when iterating. This is a reasonable upper bound
+// for editor UI. Could be replaced with UIScreen::WidgetCount() + 1 for
+// dynamic sizing, but that would require exposing m_nextId from UIScreen.
+static constexpr uint32_t kMaxWidgetId = 1000;
+
 void MenuManager::Init(UIScreen* screen) {
     m_screen = screen;
     m_openMenuId = 0;
@@ -18,7 +23,7 @@ bool MenuManager::HandleEvent(const UIEvent& event) {
 
     if (event.type == UIEvent::Type::MouseMove) {
         // Update hover states for all menus and menu items
-        for (uint32_t i = 1; i < 1000; ++i) {  // Iterate through potential widget IDs
+        for (uint32_t i = 1; i < kMaxWidgetId; ++i) {  // Start at 1 (0 is root)
             UIWidget* widget = m_screen->GetWidgetMutable(i);
             if (!widget) continue;
 
@@ -49,7 +54,7 @@ bool MenuManager::HandleEvent(const UIEvent& event) {
     if (event.type == UIEvent::Type::MouseDown && event.mouseButton == 0) {
         // Check if clicking on a menu button
         bool clickedMenu = false;
-        for (uint32_t i = 1; i < 1000; ++i) {
+        for (uint32_t i = 1; i < kMaxWidgetId; ++i) {
             UIWidget* widget = m_screen->GetWidgetMutable(i);
             if (!widget || widget->type != UIWidgetType::Menu) continue;
 
@@ -75,7 +80,7 @@ bool MenuManager::HandleEvent(const UIEvent& event) {
 
         // Check if clicking on a menu item in the open menu
         if (m_openMenuId != 0) {
-            for (uint32_t i = 1; i < 1000; ++i) {
+            for (uint32_t i = 1; i < kMaxWidgetId; ++i) {
                 const UIWidget* widget = m_screen->GetWidget(i);
                 if (!widget || widget->type != UIWidgetType::MenuItem) continue;
                 if (widget->parentId != m_openMenuId) continue;
@@ -101,7 +106,7 @@ bool MenuManager::HandleEvent(const UIEvent& event) {
         if (!clickedMenu && m_openMenuId != 0) {
             // Check if click is inside the dropdown area
             bool inDropdown = false;
-            for (uint32_t i = 1; i < 1000; ++i) {
+            for (uint32_t i = 1; i < kMaxWidgetId; ++i) {
                 const UIWidget* widget = m_screen->GetWidget(i);
                 if (!widget || widget->type != UIWidgetType::MenuItem) continue;
                 if (widget->parentId != m_openMenuId) continue;

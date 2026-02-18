@@ -30,21 +30,43 @@ void test_menu_creation() {
     uint32_t fileExit = screen.AddWidget(atlas::ui::UIWidgetType::MenuItem, "Exit", 10, 86, 120, 24);
     screen.SetParent(fileExit, fileMenu);
 
-    // Verify widgets were created
+    // Verify widgets were created with correct count
     assert(screen.WidgetCount() == 6);
 
+    // Verify menu widget properties
     const auto* menu = screen.GetWidget(fileMenu);
     assert(menu != nullptr);
     assert(menu->type == atlas::ui::UIWidgetType::Menu);
     assert(menu->name == "File");
+    assert(menu->x == 10.0f);
+    assert(menu->y == 5.0f);
+    assert(menu->width == 60.0f);
+    assert(menu->height == 20.0f);
+    assert(menu->parentId == menuBar);
 
+    // Verify separator properties
     const auto* separator = screen.GetWidget(fileSep);
     assert(separator != nullptr);
     assert(separator->isSeparator);
+    assert(separator->parentId == fileMenu);
+    assert(separator->height == 8.0f);
+
+    // Verify menu item properties
+    const auto* newItem = screen.GetWidget(fileNew);
+    assert(newItem != nullptr);
+    assert(newItem->type == atlas::ui::UIWidgetType::MenuItem);
+    assert(newItem->name == "New");
+    assert(newItem->parentId == fileMenu);
+    assert(newItem->width == 120.0f);
+    assert(newItem->height == 24.0f);
 
     // Verify hierarchy
     auto children = screen.GetChildren(fileMenu);
     assert(children.size() == 4); // New, Open, separator, Exit
+    assert(children[0] == fileNew);
+    assert(children[1] == fileOpen);
+    assert(children[2] == fileSep);
+    assert(children[3] == fileExit);
 }
 
 // Test menu state management
