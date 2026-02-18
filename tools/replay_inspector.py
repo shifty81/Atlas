@@ -31,6 +31,8 @@ import os
 
 HEADER_MAGIC = 0x52504C59
 HEADER_SIZE = 20
+MAX_DATA_LEN = 100 * 1024 * 1024  # 100 MB safety limit per frame
+MAX_FRAME_COUNT = 10_000_000      # 10M frames safety limit
 
 
 def read_header(f):
@@ -52,17 +54,36 @@ def read_header(f):
 
 def read_frames(f, frame_count):
     """Read all frames after the header."""
+    if frame_count > MAX_FRAME_COUNT:
+        print(f"Warning: frame_count {frame_count} exceeds limit, truncating to {MAX_FRAME_COUNT}",
+              file=sys.stderr)
+        frame_count = MAX_FRAME_COUNT
+
     frames = []
     for _ in range(frame_count):
         hdr = f.read(8)
         if len(hdr) < 8:
             break
         tick, data_len = struct.unpack("<II", hdr)
+
+        if data_len > MAX_DATA_LEN:
+            print(f"Warning: frame data_len {data_len} exceeds limit, skipping remaining frames",
+                  file=sys.stderr)
+            break
+
         input_data = f.read(data_len) if data_len > 0 else b""
+        if len(input_data) < data_len:
+            break  # truncated file
+
         hash_data = f.read(8)
-        state_hash = struct.unpack("<Q", hash_data)[0] if len(hash_data) == 8 else 0
+        if len(hash_data) < 8:
+            break  # truncated file
+        state_hash = struct.unpack("<Q", hash_data)[0]
+
         sp_data = f.read(1)
-        is_save_point = (sp_data[0] != 0) if len(sp_data) == 1 else False
+        if len(sp_data) < 1:
+            break  # truncated file
+        is_save_point = sp_data[0] != 0
 
         frames.append({
             "tick": tick,

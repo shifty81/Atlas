@@ -921,7 +921,7 @@ bool ModAssetSandbox::AddAsset(const std::string& modId,
     if (FileExists(assetPath)) {
         fileSize = static_cast<size_t>(std::filesystem::file_size(assetPath));
     }
-    if (entry.budget.currentTotalBytes + fileSize > entry.budget.maxTotalBytes) return false;
+    if (fileSize > entry.budget.maxTotalBytes - entry.budget.currentTotalBytes) return false;
 
     entry.assets.push_back(assetPath);
     entry.budget.currentAssetCount++;
