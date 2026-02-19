@@ -1822,6 +1822,46 @@ void run_editor_ui_fix_tests();
 // GUI Interaction Fix tests
 void run_gui_interaction_fix_tests();
 
+// GUI New Widgets tests
+void test_checkbox_widget_creation();
+void test_checkbox_toggle();
+void test_checkbox_rendering_with_null_renderer();
+void test_slider_widget_creation();
+void test_slider_set_value();
+void test_slider_value_range();
+void test_slider_rendering_with_null_renderer();
+void test_progressbar_widget_creation();
+void test_progressbar_set_value();
+void test_progressbar_rendering_with_null_renderer();
+void test_combobox_widget_creation();
+void test_combobox_selected_index();
+void test_combobox_open_state();
+void test_combobox_rendering_with_null_renderer();
+void test_treenode_widget_creation();
+void test_treenode_expand_collapse();
+void test_treenode_depth();
+void test_treenode_rendering_with_null_renderer();
+void test_splitter_widget_creation();
+void test_splitter_rendering_with_null_renderer();
+void test_colorpicker_widget_creation();
+void test_colorpicker_set_get_color();
+void test_colorpicker_rendering_with_null_renderer();
+void test_slider_manager_init();
+void test_slider_manager_click_sets_value();
+void test_slider_manager_drag_updates_value();
+void test_slider_manager_clamps_value();
+void test_slider_manager_click_outside_ignored();
+void test_combobox_manager_init();
+void test_combobox_manager_set_items();
+void test_combobox_manager_click_opens();
+void test_combobox_manager_select_item();
+void test_combobox_manager_click_outside_closes();
+void test_combobox_manager_get_selected_text_no_selection();
+void test_combobox_manager_empty_items();
+void test_ui_manager_slider_integration();
+void test_ui_manager_combobox_integration();
+void test_ui_manager_new_widget_rendering();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -3845,6 +3885,65 @@ int main() {
 
     // GUI Interaction Fix tests
     run_gui_interaction_fix_tests();
+
+    // GUI New Widgets
+    std::cout << "\n--- Checkbox Widget ---" << std::endl;
+    test_checkbox_widget_creation();
+    test_checkbox_toggle();
+    test_checkbox_rendering_with_null_renderer();
+
+    std::cout << "\n--- Slider Widget ---" << std::endl;
+    test_slider_widget_creation();
+    test_slider_set_value();
+    test_slider_value_range();
+    test_slider_rendering_with_null_renderer();
+
+    std::cout << "\n--- ProgressBar Widget ---" << std::endl;
+    test_progressbar_widget_creation();
+    test_progressbar_set_value();
+    test_progressbar_rendering_with_null_renderer();
+
+    std::cout << "\n--- ComboBox Widget ---" << std::endl;
+    test_combobox_widget_creation();
+    test_combobox_selected_index();
+    test_combobox_open_state();
+    test_combobox_rendering_with_null_renderer();
+
+    std::cout << "\n--- TreeNode Widget ---" << std::endl;
+    test_treenode_widget_creation();
+    test_treenode_expand_collapse();
+    test_treenode_depth();
+    test_treenode_rendering_with_null_renderer();
+
+    std::cout << "\n--- Splitter Widget ---" << std::endl;
+    test_splitter_widget_creation();
+    test_splitter_rendering_with_null_renderer();
+
+    std::cout << "\n--- ColorPicker Widget ---" << std::endl;
+    test_colorpicker_widget_creation();
+    test_colorpicker_set_get_color();
+    test_colorpicker_rendering_with_null_renderer();
+
+    std::cout << "\n--- SliderManager ---" << std::endl;
+    test_slider_manager_init();
+    test_slider_manager_click_sets_value();
+    test_slider_manager_drag_updates_value();
+    test_slider_manager_clamps_value();
+    test_slider_manager_click_outside_ignored();
+
+    std::cout << "\n--- ComboBoxManager ---" << std::endl;
+    test_combobox_manager_init();
+    test_combobox_manager_set_items();
+    test_combobox_manager_click_opens();
+    test_combobox_manager_select_item();
+    test_combobox_manager_click_outside_closes();
+    test_combobox_manager_get_selected_text_no_selection();
+    test_combobox_manager_empty_items();
+
+    std::cout << "\n--- UIManager New Widget Integration ---" << std::endl;
+    test_ui_manager_slider_integration();
+    test_ui_manager_combobox_integration();
+    test_ui_manager_new_widget_rendering();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
