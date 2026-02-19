@@ -15,6 +15,10 @@
 #include "InputFieldManager.h"
 #include "SliderManager.h"
 #include "ComboBoxManager.h"
+#include "CheckboxManager.h"
+#include "TreeNodeManager.h"
+#include "SplitterManager.h"
+#include "ColorPickerManager.h"
 #include <string>
 
 namespace atlas::ui {
@@ -128,6 +132,22 @@ public:
     ComboBoxManager& GetComboBoxManager();
     const ComboBoxManager& GetComboBoxManager() const;
 
+    /// Access the checkbox manager for checkbox toggle interactions.
+    CheckboxManager& GetCheckboxManager();
+    const CheckboxManager& GetCheckboxManager() const;
+
+    /// Access the tree node manager for expand/collapse interactions.
+    TreeNodeManager& GetTreeNodeManager();
+    const TreeNodeManager& GetTreeNodeManager() const;
+
+    /// Access the splitter manager for panel resize interactions.
+    SplitterManager& GetSplitterManager();
+    const SplitterManager& GetSplitterManager() const;
+
+    /// Access the color picker manager for color selection interactions.
+    ColorPickerManager& GetColorPickerManager();
+    const ColorPickerManager& GetColorPickerManager() const;
+
 private:
     void RenderWidget(UIRenderer* renderer, uint32_t widgetId, int depth = 0);
     static constexpr int kMaxRenderDepth = 64;
@@ -148,6 +168,10 @@ private:
     InputFieldManager m_inputFieldManager;
     SliderManager m_sliderManager;
     ComboBoxManager m_comboBoxManager;
+    CheckboxManager m_checkboxManager;
+    TreeNodeManager m_treeNodeManager;
+    SplitterManager m_splitterManager;
+    ColorPickerManager m_colorPickerManager;
     UIRenderer* m_renderer = nullptr;
     float m_viewportWidth = 0.0f;
     float m_viewportHeight = 0.0f;

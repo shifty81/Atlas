@@ -89,6 +89,10 @@ add_library(AtlasEngine STATIC
     ui/InputFieldManager.cpp
     ui/SliderManager.cpp
     ui/ComboBoxManager.cpp
+    ui/CheckboxManager.cpp
+    ui/TreeNodeManager.cpp
+    ui/SplitterManager.cpp
+    ui/ColorPickerManager.cpp
     ui/UIDrawList.cpp
     ui/UIStyle.cpp
     ui/UISceneGraph.cpp
