@@ -24,7 +24,8 @@ struct WindowEvent {
         MouseMove,
         MouseButtonDown,
         MouseButtonUp,
-        TextInput
+        TextInput,
+        ScrollWheel
     };
 
     Type type = Type::NoEvent;
@@ -36,6 +37,7 @@ struct WindowEvent {
     uint8_t mouseButton = 0;
     char textChar = 0;
     uint8_t modifiers = 0; ///< Bitmask: 1=Ctrl, 2=Shift, 4=Alt
+    float scrollDelta = 0.0f; ///< Scroll wheel delta (positive = down)
 };
 
 struct PlatformWindowConfig {

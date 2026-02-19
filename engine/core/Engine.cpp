@@ -237,6 +237,18 @@ void Engine::ProcessWindowEvents() {
                 uiEvent.modifiers = event.modifiers;
                 m_uiManager.DispatchEvent(uiEvent);
                 m_eventRouter.Dispatch(uiEvent);
+                // Synthesize a TextInput event for printable characters.
+                // X11 only produces KeyPress (no separate TextInput), so
+                // this ensures InputFieldManager receives character data.
+                // Win32's KeyDown does not set textChar (WM_CHAR handles
+                // that separately), so this is effectively a no-op there.
+                if (event.textChar >= 0x20 && event.textChar != 0x7F) {
+                    ui::UIEvent textEvent;
+                    textEvent.type = ui::UIEvent::Type::TextInput;
+                    textEvent.textChar = event.textChar;
+                    m_uiManager.DispatchEvent(textEvent);
+                    m_eventRouter.Dispatch(textEvent);
+                }
                 break;
             }
             case platform::WindowEvent::Type::KeyUp: {
@@ -293,6 +305,18 @@ void Engine::ProcessWindowEvents() {
                 ui::UIEvent uiEvent;
                 uiEvent.type = ui::UIEvent::Type::TextInput;
                 uiEvent.textChar = event.textChar;
+                m_uiManager.DispatchEvent(uiEvent);
+                m_eventRouter.Dispatch(uiEvent);
+                break;
+            }
+            case platform::WindowEvent::Type::ScrollWheel: {
+                m_mouseX = event.mouseX;
+                m_mouseY = event.mouseY;
+                ui::UIEvent uiEvent;
+                uiEvent.type = ui::UIEvent::Type::ScrollWheel;
+                uiEvent.x = event.mouseX;
+                uiEvent.y = event.mouseY;
+                uiEvent.scrollDelta = event.scrollDelta;
                 m_uiManager.DispatchEvent(uiEvent);
                 m_eventRouter.Dispatch(uiEvent);
                 break;

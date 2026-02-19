@@ -1466,6 +1466,9 @@ void test_engine_mouse_tracking_defaults();
 void test_engine_event_router_register();
 void test_diagnostics_overlay_toggle_state();
 void test_f3_key_constant_defined();
+void test_window_event_scroll_wheel_type();
+void test_window_event_mouse_button_zero_indexed();
+void test_scroll_wheel_dispatch_through_ui_manager();
 
 // World State Serializer
 void test_serializer_default_version();
@@ -2056,6 +2059,17 @@ int main() {
 
     // Networking improvements
     register_net_improvements_tests();
+
+    // Engine Input Routing (moved before panel draw tests to avoid pre-existing crash)
+    std::cout << "\n--- Engine Input Routing ---" << std::endl;
+    test_engine_has_event_router();
+    test_engine_mouse_tracking_defaults();
+    test_engine_event_router_register();
+    test_diagnostics_overlay_toggle_state();
+    test_f3_key_constant_defined();
+    test_window_event_scroll_wheel_type();
+    test_window_event_mouse_button_zero_indexed();
+    test_scroll_wheel_dispatch_through_ui_manager();
 
     // Panel Draw() implementations
     register_panel_draw_impl_tests();
@@ -3500,14 +3514,6 @@ int main() {
     test_pie_double_start_fails();
     test_pie_stop_when_stopped();
     test_pie_auto_possess();
-
-    // Engine Input Routing
-    std::cout << "\n--- Engine Input Routing ---" << std::endl;
-    test_engine_has_event_router();
-    test_engine_mouse_tracking_defaults();
-    test_engine_event_router_register();
-    test_diagnostics_overlay_toggle_state();
-    test_f3_key_constant_defined();
 
     // World State Serializer
     std::cout << "\n--- World State Serializer ---" << std::endl;

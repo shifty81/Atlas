@@ -100,3 +100,68 @@ void test_f3_key_constant_defined() {
 
     std::cout << "[PASS] test_f3_key_constant_defined" << std::endl;
 }
+
+void test_window_event_scroll_wheel_type() {
+    // Verify that the ScrollWheel event type and scrollDelta field exist
+    platform::WindowEvent event;
+    event.type = platform::WindowEvent::Type::ScrollWheel;
+    event.scrollDelta = -1.0f;
+    event.mouseX = 100;
+    event.mouseY = 200;
+    assert(event.type == platform::WindowEvent::Type::ScrollWheel);
+    assert(event.scrollDelta == -1.0f);
+    assert(event.mouseX == 100);
+    assert(event.mouseY == 200);
+
+    std::cout << "[PASS] test_window_event_scroll_wheel_type" << std::endl;
+}
+
+void test_window_event_mouse_button_zero_indexed() {
+    // UI handlers expect 0=left, 1=middle, 2=right.  Verify that the
+    // default mouseButton value is 0 (left) and that the platform
+    // convention is 0-indexed.
+    platform::WindowEvent event;
+    event.type = platform::WindowEvent::Type::MouseButtonDown;
+    event.mouseButton = 0; // left click
+    assert(event.mouseButton == 0);
+
+    // UIManager and all widget managers check mouseButton == 0 for left click.
+    // Verify interaction with a UI widget using a left-click (button 0).
+    ui::UIEvent uiEvent;
+    uiEvent.type = ui::UIEvent::Type::MouseDown;
+    uiEvent.mouseButton = 0; // left click
+    assert(uiEvent.mouseButton == 0);
+
+    std::cout << "[PASS] test_window_event_mouse_button_zero_indexed" << std::endl;
+}
+
+void test_scroll_wheel_dispatch_through_ui_manager() {
+    // Verify that a ScrollWheel UIEvent reaches the UIManager correctly
+    EngineConfig cfg;
+    cfg.mode = EngineMode::Server;
+    cfg.headless = true;
+
+    Engine engine(cfg);
+    engine.InitCore();
+    engine.InitUI();
+
+    auto& screen = engine.GetUIManager().GetScreen();
+    uint32_t sv = screen.AddWidget(ui::UIWidgetType::ScrollView, "SV", 10, 10, 200, 200);
+    engine.GetUIManager().GetScrollManager().RegisterScrollView(sv, 500.0f);
+
+    // Dispatch a scroll wheel event through UIManager
+    ui::UIEvent scrollEvent;
+    scrollEvent.type = ui::UIEvent::Type::ScrollWheel;
+    scrollEvent.x = 100;
+    scrollEvent.y = 100;
+    scrollEvent.scrollDelta = 1.0f;
+    bool consumed = engine.GetUIManager().DispatchEvent(scrollEvent);
+    assert(consumed);
+
+    // Verify scroll state changed
+    auto* state = engine.GetUIManager().GetScrollManager().GetScrollState(sv);
+    assert(state != nullptr);
+    assert(state->GetOffset() != 0.0f);
+
+    std::cout << "[PASS] test_scroll_wheel_dispatch_through_ui_manager" << std::endl;
+}

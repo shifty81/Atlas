@@ -17,6 +17,14 @@ static uint32_t TranslateKeySym(unsigned long sym) {
     return static_cast<uint32_t>(sym);
 }
 
+/// Translate X11 1-based button index to 0-based platform button.
+/// X11: 1=Left, 2=Middle, 3=Right.  Platform: 0=Left, 1=Middle, 2=Right.
+static uint8_t TranslateButton(unsigned int xButton) {
+    if (xButton >= 1 && xButton <= 3)
+        return static_cast<uint8_t>(xButton - 1);
+    return static_cast<uint8_t>(xButton);
+}
+
 X11Window::~X11Window() {
     Shutdown();
 }
@@ -169,15 +177,27 @@ bool X11Window::PollEvent(WindowEvent& event) {
                 return true;
             }
             case ButtonPress: {
+                unsigned int btn = xev.xbutton.button;
+                // X11 buttons 4/5 are scroll wheel up/down
+                if (btn == 4 || btn == 5) {
+                    event.type = WindowEvent::Type::ScrollWheel;
+                    event.mouseX = xev.xbutton.x;
+                    event.mouseY = xev.xbutton.y;
+                    event.scrollDelta = (btn == 5) ? 1.0f : -1.0f;
+                    return true;
+                }
                 event.type = WindowEvent::Type::MouseButtonDown;
-                event.mouseButton = static_cast<uint8_t>(xev.xbutton.button);
+                event.mouseButton = TranslateButton(btn);
                 event.mouseX = xev.xbutton.x;
                 event.mouseY = xev.xbutton.y;
                 return true;
             }
             case ButtonRelease: {
+                unsigned int btn = xev.xbutton.button;
+                // Ignore scroll wheel release events
+                if (btn == 4 || btn == 5) break;
                 event.type = WindowEvent::Type::MouseButtonUp;
-                event.mouseButton = static_cast<uint8_t>(xev.xbutton.button);
+                event.mouseButton = TranslateButton(btn);
                 event.mouseX = xev.xbutton.x;
                 event.mouseY = xev.xbutton.y;
                 return true;
