@@ -193,6 +193,127 @@ UIWidget* UIScreen::GetWidgetMutable(uint32_t id) {
     return nullptr;
 }
 
+void UIScreen::SetValue(uint32_t id, float value) {
+    auto it = m_widgets.find(id);
+    if (it != m_widgets.end()) {
+        it->second.value = value;
+    }
+}
+
+float UIScreen::GetValue(uint32_t id) const {
+    auto it = m_widgets.find(id);
+    if (it != m_widgets.end()) {
+        return it->second.value;
+    }
+    return 0.0f;
+}
+
+void UIScreen::SetValueRange(uint32_t id, float minVal, float maxVal) {
+    auto it = m_widgets.find(id);
+    if (it != m_widgets.end()) {
+        it->second.minValue = minVal;
+        it->second.maxValue = maxVal;
+    }
+}
+
+float UIScreen::GetMinValue(uint32_t id) const {
+    auto it = m_widgets.find(id);
+    if (it != m_widgets.end()) {
+        return it->second.minValue;
+    }
+    return 0.0f;
+}
+
+float UIScreen::GetMaxValue(uint32_t id) const {
+    auto it = m_widgets.find(id);
+    if (it != m_widgets.end()) {
+        return it->second.maxValue;
+    }
+    return 1.0f;
+}
+
+void UIScreen::SetSelectedIndex(uint32_t id, int32_t index) {
+    auto it = m_widgets.find(id);
+    if (it != m_widgets.end()) {
+        it->second.selectedIndex = index;
+    }
+}
+
+int32_t UIScreen::GetSelectedIndex(uint32_t id) const {
+    auto it = m_widgets.find(id);
+    if (it != m_widgets.end()) {
+        return it->second.selectedIndex;
+    }
+    return -1;
+}
+
+void UIScreen::SetComboOpen(uint32_t id, bool open) {
+    auto it = m_widgets.find(id);
+    if (it != m_widgets.end()) {
+        it->second.isOpen = open;
+    }
+}
+
+bool UIScreen::IsComboOpen(uint32_t id) const {
+    auto it = m_widgets.find(id);
+    if (it != m_widgets.end()) {
+        return it->second.isOpen;
+    }
+    return false;
+}
+
+void UIScreen::SetExpanded(uint32_t id, bool expanded) {
+    auto it = m_widgets.find(id);
+    if (it != m_widgets.end()) {
+        it->second.isExpanded = expanded;
+    }
+}
+
+bool UIScreen::IsExpanded(uint32_t id) const {
+    auto it = m_widgets.find(id);
+    if (it != m_widgets.end()) {
+        return it->second.isExpanded;
+    }
+    return false;
+}
+
+void UIScreen::SetTreeDepth(uint32_t id, int32_t depth) {
+    auto it = m_widgets.find(id);
+    if (it != m_widgets.end()) {
+        it->second.treeDepth = depth;
+    }
+}
+
+int32_t UIScreen::GetTreeDepth(uint32_t id) const {
+    auto it = m_widgets.find(id);
+    if (it != m_widgets.end()) {
+        return it->second.treeDepth;
+    }
+    return 0;
+}
+
+void UIScreen::SetColor(uint32_t id, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+    auto it = m_widgets.find(id);
+    if (it != m_widgets.end()) {
+        it->second.colorR = r;
+        it->second.colorG = g;
+        it->second.colorB = b;
+        it->second.colorA = a;
+    }
+}
+
+void UIScreen::GetColor(uint32_t id, uint8_t& r, uint8_t& g, uint8_t& b, uint8_t& a) const {
+    auto it = m_widgets.find(id);
+    if (it != m_widgets.end()) {
+        r = it->second.colorR;
+        g = it->second.colorG;
+        b = it->second.colorB;
+        a = it->second.colorA;
+    } else {
+        r = 255; g = 255; b = 255; a = 255;
+    }
+}
+
 void UIScreen::ScaleLayout(float oldWidth, float oldHeight,
                            float newWidth, float newHeight) {
     if (oldWidth <= 0.0f || oldHeight <= 0.0f) return;

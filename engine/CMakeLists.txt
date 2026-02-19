@@ -87,6 +87,8 @@ add_library(AtlasEngine STATIC
     ui/TooltipManager.cpp
     ui/DockManager.cpp
     ui/InputFieldManager.cpp
+    ui/SliderManager.cpp
+    ui/ComboBoxManager.cpp
     ui/UIDrawList.cpp
     ui/UIStyle.cpp
     ui/UISceneGraph.cpp

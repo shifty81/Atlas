@@ -21,7 +21,14 @@ enum class UIWidgetType : uint8_t {
     Tooltip,
     Tab,
     ScrollView,
-    DockArea
+    DockArea,
+    Checkbox,
+    Slider,
+    ProgressBar,
+    ComboBox,
+    TreeNode,
+    Splitter,
+    ColorPicker
 };
 
 struct UIWidget {
@@ -45,6 +52,25 @@ struct UIWidget {
     bool isCheckable = false;   // For MenuItem: can this item be checked/unchecked?
     bool isChecked = false;     // For MenuItem: is this item currently checked?
     uint32_t iconId = 0;        // Icon texture/atlas ID (0 = no icon)
+
+    // Slider/ProgressBar state
+    float value = 0.0f;          // For Slider: current position (0.0-1.0), For ProgressBar: progress (0.0-1.0)
+    float minValue = 0.0f;       // For Slider: minimum value
+    float maxValue = 1.0f;       // For Slider: maximum value
+
+    // ComboBox state
+    int32_t selectedIndex = -1;  // For ComboBox: currently selected item (-1 = none)
+    bool isOpen = false;         // For ComboBox: is dropdown open?
+
+    // TreeNode state
+    bool isExpanded = false;     // For TreeNode: is this node expanded?
+    int32_t treeDepth = 0;       // For TreeNode: nesting depth level
+
+    // ColorPicker state
+    uint8_t colorR = 255;
+    uint8_t colorG = 255;
+    uint8_t colorB = 255;
+    uint8_t colorA = 255;
 };
 
 class UIScreen {
@@ -80,6 +106,29 @@ public:
     void SetIconId(uint32_t id, uint32_t iconId);
     uint32_t GetIconId(uint32_t id) const;
     UIWidget* GetWidgetMutable(uint32_t id);
+
+    // Slider/ProgressBar state management
+    void SetValue(uint32_t id, float value);
+    float GetValue(uint32_t id) const;
+    void SetValueRange(uint32_t id, float minVal, float maxVal);
+    float GetMinValue(uint32_t id) const;
+    float GetMaxValue(uint32_t id) const;
+
+    // ComboBox state management
+    void SetSelectedIndex(uint32_t id, int32_t index);
+    int32_t GetSelectedIndex(uint32_t id) const;
+    void SetComboOpen(uint32_t id, bool open);
+    bool IsComboOpen(uint32_t id) const;
+
+    // TreeNode state management
+    void SetExpanded(uint32_t id, bool expanded);
+    bool IsExpanded(uint32_t id) const;
+    void SetTreeDepth(uint32_t id, int32_t depth);
+    int32_t GetTreeDepth(uint32_t id) const;
+
+    // ColorPicker state management
+    void SetColor(uint32_t id, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+    void GetColor(uint32_t id, uint8_t& r, uint8_t& g, uint8_t& b, uint8_t& a) const;
 
     /// Proportionally scale all widget positions and sizes from
     /// (oldWidth × oldHeight) to (newWidth × newHeight).  This is

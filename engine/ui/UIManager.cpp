@@ -30,6 +30,8 @@ void UIManager::Init(GUIContext context) {
     m_tooltipManager.Init(&m_screen);
     m_dockManager.Init(&m_screen);
     m_inputFieldManager.Init(&m_screen);
+    m_sliderManager.Init(&m_screen);
+    m_comboBoxManager.Init(&m_screen);
     m_initialized = true;
 }
 
@@ -263,6 +265,103 @@ void UIManager::RenderWidget(UIRenderer* renderer, uint32_t widgetId, int depth)
             renderer->DrawBorder(rect, 1, border);
             break;
         }
+        case UIWidgetType::Checkbox: {
+            // Draw checkbox box
+            UIRect boxRect = {rect.x, rect.y + (rect.h - 14) / 2, 14, 14};
+            UIColor boxBg = {35, 37, 40, 255};
+            renderer->DrawRect(boxRect, boxBg);
+            UIColor boxBorder = {70, 73, 75, 255};
+            renderer->DrawBorder(boxRect, 1, boxBorder);
+            if (widget->isChecked) {
+                UIColor checkColor = {65, 115, 180, 255};
+                renderer->DrawText(boxRect, kCheckmarkSymbol, checkColor);
+            }
+            // Draw label text to the right
+            UIRect labelRect = {rect.x + 20, rect.y, rect.w - 20, rect.h};
+            UIColor textColor = {220, 220, 220, 255};
+            renderer->DrawText(labelRect, widget->name, textColor);
+            break;
+        }
+        case UIWidgetType::Slider: {
+            // Draw track
+            int32_t trackY = rect.y + rect.h / 2 - 2;
+            UIRect trackRect = {rect.x, trackY, rect.w, 4};
+            UIColor trackBg = {35, 37, 40, 255};
+            renderer->DrawRect(trackRect, trackBg);
+            // Draw filled portion
+            int32_t fillW = static_cast<int32_t>(static_cast<float>(rect.w) * widget->value);
+            UIRect fillRect = {rect.x, trackY, fillW, 4};
+            UIColor fillColor = {65, 115, 180, 255};
+            renderer->DrawRect(fillRect, fillColor);
+            // Draw thumb
+            int32_t thumbX = rect.x + fillW - 6;
+            UIRect thumbRect = {thumbX, rect.y + rect.h / 2 - 6, 12, 12};
+            UIColor thumbColor = {220, 220, 220, 255};
+            renderer->DrawRect(thumbRect, thumbColor);
+            break;
+        }
+        case UIWidgetType::ProgressBar: {
+            // Draw background
+            UIColor bg = {35, 37, 40, 255};
+            renderer->DrawRect(rect, bg);
+            UIColor border = {70, 73, 75, 255};
+            renderer->DrawBorder(rect, 1, border);
+            // Draw filled portion
+            int32_t fillW = static_cast<int32_t>(static_cast<float>(rect.w) * widget->value);
+            UIRect fillRect = {rect.x, rect.y, fillW, rect.h};
+            UIColor fillColor = {65, 115, 180, 255};
+            renderer->DrawRect(fillRect, fillColor);
+            // Draw name text centered
+            UIColor textColor = {220, 220, 220, 255};
+            renderer->DrawText(rect, widget->name, textColor);
+            break;
+        }
+        case UIWidgetType::ComboBox: {
+            UIColor bg = {35, 37, 40, 255};
+            renderer->DrawRect(rect, bg);
+            UIColor border = {70, 100, 150, 255};
+            renderer->DrawBorder(rect, 1, border);
+            UIColor textColor = {220, 220, 220, 255};
+            renderer->DrawText(rect, widget->name, textColor);
+            // Draw dropdown arrow on the right
+            UIRect arrowRect = {rect.x + rect.w - 20, rect.y, 20, rect.h};
+            UIColor arrowColor = {180, 180, 180, 255};
+            renderer->DrawText(arrowRect, "\xe2\x96\xbc", arrowColor); // ▼
+            break;
+        }
+        case UIWidgetType::TreeNode: {
+            // Draw expand/collapse indicator indented by treeDepth
+            int32_t indent = widget->treeDepth * 16;
+            UIRect indicatorRect = {rect.x + indent, rect.y, 16, rect.h};
+            UIColor indicatorColor = {180, 180, 180, 255};
+            if (widget->isExpanded) {
+                renderer->DrawText(indicatorRect, "\xe2\x96\xbe", indicatorColor); // ▾
+            } else {
+                renderer->DrawText(indicatorRect, "\xe2\x96\xb8", indicatorColor); // ▸
+            }
+            // Draw name text
+            UIRect labelRect = {rect.x + indent + 16, rect.y, rect.w - indent - 16, rect.h};
+            UIColor textColor = {220, 220, 220, 255};
+            renderer->DrawText(labelRect, widget->name, textColor);
+            break;
+        }
+        case UIWidgetType::Splitter: {
+            UIColor bg = {55, 58, 62, 255};
+            renderer->DrawRect(rect, bg);
+            break;
+        }
+        case UIWidgetType::ColorPicker: {
+            // Draw color swatch
+            UIColor swatch = {widget->colorR, widget->colorG, widget->colorB, widget->colorA};
+            renderer->DrawRect(rect, swatch);
+            UIColor border = {70, 73, 75, 255};
+            renderer->DrawBorder(rect, 1, border);
+            // Draw name text
+            UIColor textColor = {220, 220, 220, 255};
+            UIRect labelRect = {rect.x + rect.w + 4, rect.y, 100, rect.h};
+            renderer->DrawText(labelRect, widget->name, textColor);
+            break;
+        }
     }
 
     // Menu dropdowns only render children when open
@@ -340,6 +439,16 @@ const UIEventRouter& UIManager::GetEventRouter() const {
 bool UIManager::DispatchEvent(const UIEvent& event) {
     if (!m_initialized) return false;
     
+    // Let slider manager handle drag events first
+    if (m_sliderManager.HandleEvent(event)) {
+        return true;
+    }
+
+    // Let combo box manager handle click events
+    if (m_comboBoxManager.HandleEvent(event)) {
+        return true;
+    }
+
     // Let menu manager handle the event first
     if (m_menuManager.HandleEvent(event)) {
         return true;
@@ -486,6 +595,22 @@ InputFieldManager& UIManager::GetInputFieldManager() {
 
 const InputFieldManager& UIManager::GetInputFieldManager() const {
     return m_inputFieldManager;
+}
+
+SliderManager& UIManager::GetSliderManager() {
+    return m_sliderManager;
+}
+
+const SliderManager& UIManager::GetSliderManager() const {
+    return m_sliderManager;
+}
+
+ComboBoxManager& UIManager::GetComboBoxManager() {
+    return m_comboBoxManager;
+}
+
+const ComboBoxManager& UIManager::GetComboBoxManager() const {
+    return m_comboBoxManager;
 }
 
 } // namespace atlas::ui

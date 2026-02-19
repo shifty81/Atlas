@@ -13,6 +13,8 @@
 #include "TooltipManager.h"
 #include "DockManager.h"
 #include "InputFieldManager.h"
+#include "SliderManager.h"
+#include "ComboBoxManager.h"
 #include <string>
 
 namespace atlas::ui {
@@ -118,6 +120,14 @@ public:
     InputFieldManager& GetInputFieldManager();
     const InputFieldManager& GetInputFieldManager() const;
 
+    /// Access the slider manager for slider interactions.
+    SliderManager& GetSliderManager();
+    const SliderManager& GetSliderManager() const;
+
+    /// Access the combo box manager for dropdown interactions.
+    ComboBoxManager& GetComboBoxManager();
+    const ComboBoxManager& GetComboBoxManager() const;
+
 private:
     void RenderWidget(UIRenderer* renderer, uint32_t widgetId, int depth = 0);
     static constexpr int kMaxRenderDepth = 64;
@@ -136,6 +146,8 @@ private:
     TooltipManager m_tooltipManager;
     DockManager m_dockManager;
     InputFieldManager m_inputFieldManager;
+    SliderManager m_sliderManager;
+    ComboBoxManager m_comboBoxManager;
     UIRenderer* m_renderer = nullptr;
     float m_viewportWidth = 0.0f;
     float m_viewportHeight = 0.0f;
