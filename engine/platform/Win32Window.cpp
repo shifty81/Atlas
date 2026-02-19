@@ -107,9 +107,9 @@ LRESULT CALLBACK Win32Window::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPA
                 event.type = WindowEvent::Type::MouseButtonDown;
                 event.mouseX = static_cast<int32_t>(LOWORD(lParam));
                 event.mouseY = static_cast<int32_t>(HIWORD(lParam));
-                if (msg == WM_LBUTTONDOWN) event.mouseButton = 1;
-                else if (msg == WM_RBUTTONDOWN) event.mouseButton = 3;
-                else event.mouseButton = 2;
+                if (msg == WM_LBUTTONDOWN) event.mouseButton = 0;
+                else if (msg == WM_RBUTTONDOWN) event.mouseButton = 2;
+                else event.mouseButton = 1;
                 self->PushEvent(event);
             }
             return 0;
@@ -122,9 +122,9 @@ LRESULT CALLBACK Win32Window::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPA
                 event.type = WindowEvent::Type::MouseButtonUp;
                 event.mouseX = static_cast<int32_t>(LOWORD(lParam));
                 event.mouseY = static_cast<int32_t>(HIWORD(lParam));
-                if (msg == WM_LBUTTONUP) event.mouseButton = 1;
-                else if (msg == WM_RBUTTONUP) event.mouseButton = 3;
-                else event.mouseButton = 2;
+                if (msg == WM_LBUTTONUP) event.mouseButton = 0;
+                else if (msg == WM_RBUTTONUP) event.mouseButton = 2;
+                else event.mouseButton = 1;
                 self->PushEvent(event);
             }
             return 0;

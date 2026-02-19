@@ -42,7 +42,7 @@ void test_interaction_debugger_record() {
     InteractionDebugger debugger;
     assert(debugger.EntryCount() == 0);
 
-    InteractionLogEntry entry;
+    DebuggerLogEntry entry;
     entry.utterance = { "hello", 1, 2, { InteractionMode::Command, true } };
     entry.intent = { "Greet", 1.0f };
 
@@ -56,7 +56,7 @@ void test_interaction_debugger_record() {
 
 void test_interaction_debugger_clear() {
     InteractionDebugger debugger;
-    InteractionLogEntry entry;
+    DebuggerLogEntry entry;
     entry.utterance = { "test", 0, 0, { InteractionMode::Debug, true } };
     entry.intent = { "Test", 1.0f };
 

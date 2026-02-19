@@ -12,7 +12,7 @@ class TemplateAIBackend : public AIBackend {
 public:
     TemplateAIBackend();
 
-    AIResponse Query(
+    AggregatorResponse Query(
         const std::string& prompt,
         const AIContext& context) override;
 
@@ -35,7 +35,7 @@ private:
     std::vector<TemplateEntry> m_templates;
 
     void RegisterDefaults();
-    AIResponse MatchTemplate(const std::string& prompt, const AIContext& context) const;
+    AggregatorResponse MatchTemplate(const std::string& prompt, const AIContext& context) const;
     std::string ExpandVariables(const std::string& tmpl, const AIContext& context) const;
     float ComputeMatchScore(const std::string& prompt, const std::string& pattern) const;
 };

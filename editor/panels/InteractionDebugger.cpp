@@ -2,7 +2,7 @@
 
 namespace atlas::editor {
 
-void InteractionDebugger::Record(const InteractionLogEntry& entry)
+void InteractionDebugger::Record(const DebuggerLogEntry& entry)
 {
     log.push_back(entry);
 }
@@ -17,7 +17,7 @@ size_t InteractionDebugger::EntryCount() const
     return log.size();
 }
 
-const InteractionLogEntry& InteractionDebugger::GetEntry(size_t index) const
+const DebuggerLogEntry& InteractionDebugger::GetEntry(size_t index) const
 {
     return log.at(index);
 }

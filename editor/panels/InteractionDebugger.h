@@ -5,20 +5,20 @@
 
 namespace atlas::editor {
 
-struct InteractionLogEntry {
+struct DebuggerLogEntry {
     interaction::Utterance utterance;
     interaction::Intent intent;
 };
 
 class InteractionDebugger {
 public:
-    void Record(const InteractionLogEntry& entry);
+    void Record(const DebuggerLogEntry& entry);
     void Clear();
     size_t EntryCount() const;
-    const InteractionLogEntry& GetEntry(size_t index) const;
+    const DebuggerLogEntry& GetEntry(size_t index) const;
 
 private:
-    std::vector<InteractionLogEntry> log;
+    std::vector<DebuggerLogEntry> log;
 };
 
 } // namespace atlas::editor

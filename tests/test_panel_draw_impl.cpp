@@ -14,8 +14,9 @@ using namespace atlas::ui;
 static std::string create_temp_asset_dir() {
     auto dir = std::filesystem::temp_directory_path() / ("atlas_panel_draw_test_" + std::to_string(time(nullptr)));
     std::filesystem::create_directories(dir);
-    std::ofstream(dir / "ship.fbx") << "mesh";
-    std::ofstream(dir / "hull.png") << "texture";
+    // AssetRegistry::Scan() only recognizes .atlas and .atlasb extensions.
+    std::ofstream(dir / "ship.atlas") << "mesh";
+    std::ofstream(dir / "hull.atlas") << "texture";
     return dir.string();
 }
 
@@ -53,8 +54,7 @@ void test_asset_browser_draw_with_assets() {
     bool foundAsset = false;
     for (const auto& cmd : panel.GetDrawList().Commands()) {
         if (cmd.kind == UIDrawCmd::Kind::Text &&
-            (cmd.text.find(".fbx") != std::string::npos ||
-             cmd.text.find(".png") != std::string::npos)) {
+            cmd.text.find(".atlas") != std::string::npos) {
             foundAsset = true;
             break;
         }
@@ -107,13 +107,13 @@ void test_asset_browser_draw_shows_filter() {
     registry.Scan(dir);
 
     AssetBrowserPanel panel(registry);
-    panel.SetFilter("fbx");
+    panel.SetFilter("ship");
     panel.Draw();
 
     bool foundFilter = false;
     for (const auto& cmd : panel.GetDrawList().Commands()) {
         if (cmd.kind == UIDrawCmd::Kind::Text &&
-            cmd.text.find("Filter: fbx") != std::string::npos) {
+            cmd.text.find("Filter: ship") != std::string::npos) {
             foundFilter = true;
             break;
         }

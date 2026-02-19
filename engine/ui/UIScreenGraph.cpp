@@ -1,4 +1,5 @@
 #include "UIScreenGraph.h"
+#include <algorithm>
 
 namespace atlas::ui {
 
@@ -71,6 +72,8 @@ std::vector<uint32_t> UIScreen::GetChildren(uint32_t parentId) const {
             children.push_back(id);
         }
     }
+    // Sort by ID to guarantee insertion-order (IDs are sequential).
+    std::sort(children.begin(), children.end());
     return children;
 }
 

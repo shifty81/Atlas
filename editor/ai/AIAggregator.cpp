@@ -8,12 +8,12 @@ void AIAggregator::RegisterBackend(AIBackend* backend) {
     }
 }
 
-AIResponse AIAggregator::Execute(
+AggregatorResponse AIAggregator::Execute(
     AIRequestType type,
     const std::string& prompt,
     const AIContext& context) {
     if (m_backends.empty()) {
-        return AIResponse{};
+        return AggregatorResponse{};
     }
 
     const char* prefix = "";
@@ -26,9 +26,9 @@ AIResponse AIAggregator::Execute(
 
     std::string enhancedPrompt = std::string(prefix) + prompt;
 
-    std::vector<AIResponse> responses;
+    std::vector<AggregatorResponse> responses;
     for (auto* backend : m_backends) {
-        AIResponse resp = backend->Query(enhancedPrompt, context);
+        AggregatorResponse resp = backend->Query(enhancedPrompt, context);
         if (!resp.content.empty()) {
             responses.push_back(std::move(resp));
         }
@@ -37,12 +37,12 @@ AIResponse AIAggregator::Execute(
     return SelectBest(responses);
 }
 
-AIResponse AIAggregator::SelectBest(const std::vector<AIResponse>& responses) const {
+AggregatorResponse AIAggregator::SelectBest(const std::vector<AggregatorResponse>& responses) const {
     if (responses.empty()) {
-        return AIResponse{};
+        return AggregatorResponse{};
     }
 
-    const AIResponse* best = &responses[0];
+    const AggregatorResponse* best = &responses[0];
     for (size_t i = 1; i < responses.size(); ++i) {
         if (responses[i].confidence > best->confidence) {
             best = &responses[i];

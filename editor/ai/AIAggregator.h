@@ -18,7 +18,7 @@ struct AIContext {
     std::string networkMode;
 };
 
-struct AIResponse {
+struct AggregatorResponse {
     std::string content;
     float confidence = 0.0f;
 };
@@ -26,7 +26,7 @@ struct AIResponse {
 class AIBackend {
 public:
     virtual ~AIBackend() = default;
-    virtual AIResponse Query(
+    virtual AggregatorResponse Query(
         const std::string& prompt,
         const AIContext& context) = 0;
 };
@@ -35,7 +35,7 @@ class AIAggregator {
 public:
     void RegisterBackend(AIBackend* backend);
 
-    AIResponse Execute(
+    AggregatorResponse Execute(
         AIRequestType type,
         const std::string& prompt,
         const AIContext& context);
@@ -45,7 +45,7 @@ public:
 private:
     std::vector<AIBackend*> m_backends;
 
-    AIResponse SelectBest(const std::vector<AIResponse>& responses) const;
+    AggregatorResponse SelectBest(const std::vector<AggregatorResponse>& responses) const;
 };
 
 }

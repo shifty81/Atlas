@@ -105,11 +105,11 @@ void TemplateAIBackend::RegisterDefaults() {
         AIRequestType::Analysis});
 }
 
-AIResponse TemplateAIBackend::Query(
+AggregatorResponse TemplateAIBackend::Query(
     const std::string& prompt,
     const AIContext& context) {
     if (prompt.empty()) {
-        return AIResponse{};
+        return AggregatorResponse{};
     }
 
     // Strip type prefix if present (e.g. "[GraphGeneration] ")
@@ -124,7 +124,7 @@ AIResponse TemplateAIBackend::Query(
     return MatchTemplate(cleanPrompt, context);
 }
 
-AIResponse TemplateAIBackend::MatchTemplate(
+AggregatorResponse TemplateAIBackend::MatchTemplate(
     const std::string& prompt,
     const AIContext& context) const {
     float bestScore = 0.0f;
@@ -139,10 +139,10 @@ AIResponse TemplateAIBackend::MatchTemplate(
     }
 
     if (!bestEntry || bestScore <= 0.0f) {
-        return AIResponse{};
+        return AggregatorResponse{};
     }
 
-    AIResponse resp;
+    AggregatorResponse resp;
     resp.content = ExpandVariables(bestEntry->response, context);
     // Template confidence is capped at 0.4 so higher-confidence
     // LLM backends can override when available.

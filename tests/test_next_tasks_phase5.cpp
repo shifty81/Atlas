@@ -537,11 +537,11 @@ public:
     explicit MockAIBackend(float conf, const std::string& resp)
         : m_confidence(conf), m_response(resp) {}
 
-    atlas::ai::AIResponse Query(
+    atlas::ai::AggregatorResponse Query(
         const std::string& prompt,
         const atlas::ai::AIContext& /*context*/) override {
         m_lastPrompt = prompt;
-        return atlas::ai::AIResponse{m_response, m_confidence};
+        return atlas::ai::AggregatorResponse{m_response, m_confidence};
     }
 
     std::string LastPrompt() const { return m_lastPrompt; }
@@ -554,10 +554,10 @@ private:
 
 class EmptyAIBackend : public atlas::ai::AIBackend {
 public:
-    atlas::ai::AIResponse Query(
+    atlas::ai::AggregatorResponse Query(
         const std::string& /*prompt*/,
         const atlas::ai::AIContext& /*context*/) override {
-        return atlas::ai::AIResponse{"", 0.0f};
+        return atlas::ai::AggregatorResponse{"", 0.0f};
     }
 };
 

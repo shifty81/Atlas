@@ -128,9 +128,7 @@ void InputFieldManager::SetText(uint32_t widgetId, const std::string& text) {
     if (it == m_fields.end()) return;
 
     it->second.text = text;
-    if (it->second.cursorPos > text.size()) {
-        it->second.cursorPos = text.size();
-    }
+    it->second.cursorPos = text.size();
 
     if (m_screen) {
         if (UIWidget* w = m_screen->GetWidgetMutable(widgetId)) {
