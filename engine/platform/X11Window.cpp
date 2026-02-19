@@ -178,7 +178,8 @@ bool X11Window::PollEvent(WindowEvent& event) {
             }
             case ButtonPress: {
                 unsigned int btn = xev.xbutton.button;
-                // X11 buttons 4/5 are scroll wheel up/down
+                // X11 buttons 4/5 are scroll wheel: 4=up, 5=down.
+                // Positive scrollDelta = scroll down (matches PlatformWindow.h).
                 if (btn == 4 || btn == 5) {
                     event.type = WindowEvent::Type::ScrollWheel;
                     event.mouseX = xev.xbutton.x;

@@ -242,6 +242,7 @@ void Engine::ProcessWindowEvents() {
                 // this ensures InputFieldManager receives character data.
                 // Win32's KeyDown does not set textChar (WM_CHAR handles
                 // that separately), so this is effectively a no-op there.
+                // 0x20 = space (first printable ASCII), 0x7F = DEL control char.
                 if (event.textChar >= 0x20 && event.textChar != 0x7F) {
                     ui::UIEvent textEvent;
                     textEvent.type = ui::UIEvent::Type::TextInput;
