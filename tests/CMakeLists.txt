@@ -186,6 +186,7 @@ add_executable(AtlasTests
     test_panel_draw_impl.cpp
     test_next_tasks_phase17.cpp
     test_editor_ui_fix.cpp
+    test_gui_interaction_fix.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugger.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp

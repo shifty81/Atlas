@@ -1819,6 +1819,9 @@ void test_crash_reporter_workflow_exists();
 // Editor UI Fix tests
 void run_editor_ui_fix_tests();
 
+// GUI Interaction Fix tests
+void run_gui_interaction_fix_tests();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -3839,6 +3842,9 @@ int main() {
 
     // Editor UI Fix tests
     run_editor_ui_fix_tests();
+
+    // GUI Interaction Fix tests
+    run_gui_interaction_fix_tests();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

@@ -1,4 +1,5 @@
 #include "UIManager.h"
+#include "UIConstants.h"
 
 namespace atlas::ui {
 
@@ -99,9 +100,9 @@ void UIManager::RenderWidget(UIRenderer* renderer, uint32_t widgetId, int depth)
             break;
         }
         case UIWidgetType::Button: {
-            UIColor bg = {55, 58, 62, 255};
+            UIColor bg = widget->isHovered ? UIColor{70, 75, 82, 255} : UIColor{55, 58, 62, 255};
             renderer->DrawRect(rect, bg);
-            UIColor border = {80, 83, 88, 255};
+            UIColor border = widget->isHovered ? UIColor{90, 95, 105, 255} : UIColor{80, 83, 88, 255};
             renderer->DrawBorder(rect, 1, border);
             UIColor textColor = {220, 220, 220, 255};
             renderer->DrawText(rect, widget->name, textColor);
@@ -264,6 +265,11 @@ void UIManager::RenderWidget(UIRenderer* renderer, uint32_t widgetId, int depth)
         }
     }
 
+    // Menu dropdowns only render children when open
+    if (widget->type == UIWidgetType::Menu && !widget->isMenuOpen) {
+        return;
+    }
+
     // Render children
     auto children = m_screen.GetChildren(widgetId);
     for (uint32_t childId : children) {
@@ -339,6 +345,20 @@ bool UIManager::DispatchEvent(const UIEvent& event) {
         return true;
     }
 
+    // Update hover states for interactive widgets on mouse move
+    if (event.type == UIEvent::Type::MouseMove) {
+        for (uint32_t i = 1; i < kMaxWidgetId; ++i) {
+            UIWidget* w = m_screen.GetWidgetMutable(i);
+            if (!w || !w->visible) continue;
+            if (w->type == UIWidgetType::Button ||
+                w->type == UIWidgetType::Tab) {
+                bool inside = (event.x >= w->x && event.x < w->x + w->width &&
+                               event.y >= w->y && event.y < w->y + w->height);
+                w->isHovered = inside;
+            }
+        }
+    }
+
     // Handle scroll wheel events via ScrollManager
     if (event.type == UIEvent::Type::ScrollWheel) {
         if (m_scrollManager.HandleScrollWheel(event.x, event.y, event.scrollDelta)) {
@@ -353,6 +373,23 @@ bool UIManager::DispatchEvent(const UIEvent& event) {
         }
         if (m_toolbarManager.HandleClick(event.x, event.y)) {
             return true;
+        }
+        // Handle general button clicks (non-toolbar buttons)
+        for (uint32_t i = 1; i < kMaxWidgetId; ++i) {
+            const UIWidget* w = m_screen.GetWidget(i);
+            if (!w || !w->visible) continue;
+            if (w->type != UIWidgetType::Button) continue;
+            // Skip toolbar buttons (already handled above)
+            const UIWidget* parent = m_screen.GetWidget(w->parentId);
+            if (parent && parent->type == UIWidgetType::Toolbar) continue;
+            if (event.x >= w->x && event.x < w->x + w->width &&
+                event.y >= w->y && event.y < w->y + w->height) {
+                UICommand cmd;
+                cmd.type = UICommandType::ButtonPress;
+                cmd.targetWidgetId = i;
+                m_commandBus.Enqueue(std::move(cmd));
+                return true;
+            }
         }
         // Update focus on click
         m_focusManager.HandleClick(event.x, event.y);

@@ -321,6 +321,8 @@ void Engine::RunEditor() {
             uiCtx.deltaTime = timeCtx.sim.fixedDeltaTime;
             uiCtx.tick = static_cast<uint32_t>(timeCtx.sim.tick);
             m_uiManager.Update(uiCtx);
+            m_uiManager.GetTooltipManager().Update(m_mouseX, m_mouseY,
+                                                    timeCtx.sim.fixedDeltaTime);
         });
 
         if (m_renderer && m_window && m_window->IsOpen()) {
@@ -381,6 +383,8 @@ void Engine::RunClient() {
             uiCtx.deltaTime = timeCtx.sim.fixedDeltaTime;
             uiCtx.tick = static_cast<uint32_t>(timeCtx.sim.tick);
             m_uiManager.Update(uiCtx);
+            m_uiManager.GetTooltipManager().Update(m_mouseX, m_mouseY,
+                                                    timeCtx.sim.fixedDeltaTime);
         });
 
         if (m_renderer && m_window && m_window->IsOpen()) {
