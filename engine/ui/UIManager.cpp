@@ -357,8 +357,6 @@ bool UIManager::DispatchEvent(const UIEvent& event) {
                 w->isHovered = inside;
             }
         }
-        // Update tooltip hover tracking
-        m_tooltipManager.Update(event.x, event.y, 0.016f);
     }
 
     // Handle scroll wheel events via ScrollManager
