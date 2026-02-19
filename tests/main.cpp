@@ -1862,6 +1862,28 @@ void test_ui_manager_slider_integration();
 void test_ui_manager_combobox_integration();
 void test_ui_manager_new_widget_rendering();
 
+// GUI Interaction Manager tests
+void test_checkbox_manager_init();
+void test_checkbox_manager_click_toggles();
+void test_checkbox_manager_click_outside_ignored();
+void test_checkbox_manager_ignores_non_click();
+void test_treenode_manager_init();
+void test_treenode_manager_click_toggles_expand();
+void test_treenode_manager_click_outside_ignored();
+void test_splitter_manager_init();
+void test_splitter_manager_drag_moves();
+void test_splitter_manager_click_outside_ignored();
+void test_splitter_manager_horizontal_drag();
+void test_colorpicker_manager_init();
+void test_colorpicker_manager_click_opens();
+void test_colorpicker_manager_click_outside_closes();
+void test_colorpicker_manager_select_color();
+void test_colorpicker_manager_set_color_fires_callback();
+void test_ui_manager_checkbox_integration();
+void test_ui_manager_treenode_integration();
+void test_ui_manager_splitter_integration();
+void test_ui_manager_colorpicker_integration();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -3944,6 +3966,36 @@ int main() {
     test_ui_manager_slider_integration();
     test_ui_manager_combobox_integration();
     test_ui_manager_new_widget_rendering();
+
+    std::cout << "\n--- CheckboxManager ---" << std::endl;
+    test_checkbox_manager_init();
+    test_checkbox_manager_click_toggles();
+    test_checkbox_manager_click_outside_ignored();
+    test_checkbox_manager_ignores_non_click();
+
+    std::cout << "\n--- TreeNodeManager ---" << std::endl;
+    test_treenode_manager_init();
+    test_treenode_manager_click_toggles_expand();
+    test_treenode_manager_click_outside_ignored();
+
+    std::cout << "\n--- SplitterManager ---" << std::endl;
+    test_splitter_manager_init();
+    test_splitter_manager_drag_moves();
+    test_splitter_manager_click_outside_ignored();
+    test_splitter_manager_horizontal_drag();
+
+    std::cout << "\n--- ColorPickerManager ---" << std::endl;
+    test_colorpicker_manager_init();
+    test_colorpicker_manager_click_opens();
+    test_colorpicker_manager_click_outside_closes();
+    test_colorpicker_manager_select_color();
+    test_colorpicker_manager_set_color_fires_callback();
+
+    std::cout << "\n--- UIManager Interaction Manager Integration ---" << std::endl;
+    test_ui_manager_checkbox_integration();
+    test_ui_manager_treenode_integration();
+    test_ui_manager_splitter_integration();
+    test_ui_manager_colorpicker_integration();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

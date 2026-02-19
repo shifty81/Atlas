@@ -32,6 +32,10 @@ void UIManager::Init(GUIContext context) {
     m_inputFieldManager.Init(&m_screen);
     m_sliderManager.Init(&m_screen);
     m_comboBoxManager.Init(&m_screen);
+    m_checkboxManager.Init(&m_screen);
+    m_treeNodeManager.Init(&m_screen);
+    m_splitterManager.Init(&m_screen);
+    m_colorPickerManager.Init(&m_screen);
     m_initialized = true;
 }
 
@@ -444,13 +448,33 @@ bool UIManager::DispatchEvent(const UIEvent& event) {
         return true;
     }
 
+    // Let splitter manager handle drag events
+    if (m_splitterManager.HandleEvent(event)) {
+        return true;
+    }
+
     // Let combo box manager handle click events
     if (m_comboBoxManager.HandleEvent(event)) {
         return true;
     }
 
+    // Let color picker manager handle click events
+    if (m_colorPickerManager.HandleEvent(event)) {
+        return true;
+    }
+
     // Let menu manager handle the event first
     if (m_menuManager.HandleEvent(event)) {
+        return true;
+    }
+
+    // Let checkbox manager handle click events
+    if (m_checkboxManager.HandleEvent(event)) {
+        return true;
+    }
+
+    // Let tree node manager handle click events
+    if (m_treeNodeManager.HandleEvent(event)) {
         return true;
     }
 
@@ -611,6 +635,38 @@ ComboBoxManager& UIManager::GetComboBoxManager() {
 
 const ComboBoxManager& UIManager::GetComboBoxManager() const {
     return m_comboBoxManager;
+}
+
+CheckboxManager& UIManager::GetCheckboxManager() {
+    return m_checkboxManager;
+}
+
+const CheckboxManager& UIManager::GetCheckboxManager() const {
+    return m_checkboxManager;
+}
+
+TreeNodeManager& UIManager::GetTreeNodeManager() {
+    return m_treeNodeManager;
+}
+
+const TreeNodeManager& UIManager::GetTreeNodeManager() const {
+    return m_treeNodeManager;
+}
+
+SplitterManager& UIManager::GetSplitterManager() {
+    return m_splitterManager;
+}
+
+const SplitterManager& UIManager::GetSplitterManager() const {
+    return m_splitterManager;
+}
+
+ColorPickerManager& UIManager::GetColorPickerManager() {
+    return m_colorPickerManager;
+}
+
+const ColorPickerManager& UIManager::GetColorPickerManager() const {
+    return m_colorPickerManager;
 }
 
 } // namespace atlas::ui

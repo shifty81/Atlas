@@ -526,6 +526,39 @@ int main() {
         tooltipMgr.SetTooltip(ids.tbSaveBtn, saveTip);
     }
 
+    // --- Set up Checkbox Manager ---
+    engine.GetUIManager().GetCheckboxManager().SetCheckboxChangedCallback(
+        [](uint32_t widgetId, bool checked) {
+            atlas::Logger::Info("Checkbox toggled: widget=" + std::to_string(widgetId)
+                               + " checked=" + std::to_string(checked));
+        }
+    );
+
+    // --- Set up TreeNode Manager ---
+    engine.GetUIManager().GetTreeNodeManager().SetTreeNodeToggledCallback(
+        [](uint32_t widgetId, bool expanded) {
+            atlas::Logger::Info("TreeNode toggled: widget=" + std::to_string(widgetId)
+                               + " expanded=" + std::to_string(expanded));
+        }
+    );
+
+    // --- Set up Splitter Manager ---
+    engine.GetUIManager().GetSplitterManager().SetSplitterMovedCallback(
+        [](uint32_t widgetId, float position) {
+            atlas::Logger::Info("Splitter moved: widget=" + std::to_string(widgetId)
+                               + " position=" + std::to_string(position));
+        }
+    );
+
+    // --- Set up ColorPicker Manager ---
+    engine.GetUIManager().GetColorPickerManager().SetColorChangedCallback(
+        [](uint32_t widgetId, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+            atlas::Logger::Info("Color changed: widget=" + std::to_string(widgetId)
+                               + " rgba=(" + std::to_string(r) + "," + std::to_string(g)
+                               + "," + std::to_string(b) + "," + std::to_string(a) + ")");
+        }
+    );
+
     // Enable diagnostics overlay by default in editor
     atlas::ui::DiagnosticsOverlay::SetEnabled(true);
 
