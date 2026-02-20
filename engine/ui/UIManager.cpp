@@ -84,6 +84,54 @@ void UIManager::Render(UIRenderer* renderer) {
     for (uint32_t id : roots) {
         RenderWidget(renderer, id);
     }
+
+    // Second pass: re-render open menu dropdowns on top of all other UI.
+    // Menu items are children of Menu widgets whose dropdown area can overlap
+    // with other panels (e.g. the toolbar).  Drawing them again in a second
+    // pass ensures they appear above everything else.
+    RenderMenuOverlays(renderer);
+}
+
+void UIManager::RenderMenuOverlays(UIRenderer* renderer) {
+    for (uint32_t i = 1; i < kMaxWidgetId; ++i) {
+        const UIWidget* widget = m_screen.GetWidget(i);
+        if (!widget || !widget->visible) continue;
+        if (widget->type != UIWidgetType::Menu) continue;
+        if (!widget->isMenuOpen) continue;
+
+        auto children = m_screen.GetChildren(i);
+        if (children.empty()) continue;
+
+        // Compute dropdown bounding box from children
+        int32_t minX = INT32_MAX, minY = INT32_MAX;
+        int32_t maxX = INT32_MIN, maxY = INT32_MIN;
+        for (uint32_t childId : children) {
+            const UIWidget* child = m_screen.GetWidget(childId);
+            if (!child || !child->visible) continue;
+            int32_t cx = static_cast<int32_t>(child->x);
+            int32_t cy = static_cast<int32_t>(child->y);
+            int32_t cw = static_cast<int32_t>(child->width);
+            int32_t ch = static_cast<int32_t>(child->height);
+            if (cx < minX) minX = cx;
+            if (cy < minY) minY = cy;
+            if (cx + cw > maxX) maxX = cx + cw;
+            if (cy + ch > maxY) maxY = cy + ch;
+        }
+
+        if (minX >= maxX || minY >= maxY) continue;
+
+        // Draw opaque dropdown background
+        UIRect dropBg = {minX - 1, minY - 1, (maxX - minX) + 2, (maxY - minY) + 2};
+        UIColor bgColor = {45, 47, 50, 255};
+        renderer->DrawRect(dropBg, bgColor);
+        UIColor borderColor = {70, 73, 75, 255};
+        renderer->DrawBorder(dropBg, 1, borderColor);
+
+        // Re-render each menu item child on top
+        for (uint32_t childId : children) {
+            RenderWidget(renderer, childId);
+        }
+    }
 }
 
 void UIManager::RenderWidget(UIRenderer* renderer, uint32_t widgetId, int depth) {

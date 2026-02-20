@@ -135,6 +135,11 @@ struct EditorWidgetIds {
     uint32_t consoleInput;
     uint32_t dockArea;
     uint32_t tbSaveBtn;
+    // Console tab bar and System tab
+    uint32_t consoleTabBar;
+    uint32_t consoleTab, systemTab;
+    uint32_t consoleContentPanel, systemContentPanel;
+    uint32_t systemScroll;
 };
 
 static EditorWidgetIds BuildEditorUI(atlas::ui::UIScreen& screen) {
@@ -384,21 +389,50 @@ static EditorWidgetIds BuildEditorUI(atlas::ui::UIScreen& screen) {
                                             1024, 86, 252, 540);
     screen.SetParent(entityList, entityScroll);
 
-    // Bottom panel — Console
-    uint32_t bottomPanel = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "Console",
+    // Bottom panel — Console / System tabs
+    uint32_t bottomPanel = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "ConsoleArea",
                                              262, 512, 756, 178);
 
-    uint32_t consoleTitle = screen.AddWidget(atlas::ui::UIWidgetType::Text, "Console",
-                                              266, 516, 748, 20);
-    screen.SetParent(consoleTitle, bottomPanel);
+    // Tab bar for Console / System
+    uint32_t consoleTabBar = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "ConsoleTabBar",
+                                               262, 512, 756, 26);
+    screen.SetParent(consoleTabBar, bottomPanel);
+
+    uint32_t consoleTab = screen.AddWidget(atlas::ui::UIWidgetType::Tab, "Console",
+                                            264, 514, 80, 22);
+    screen.SetParent(consoleTab, consoleTabBar);
+    screen.SetChecked(consoleTab, true);
+
+    uint32_t systemTab = screen.AddWidget(atlas::ui::UIWidgetType::Tab, "System",
+                                           348, 514, 80, 22);
+    screen.SetParent(systemTab, consoleTabBar);
+
+    // Console content panel (visible by default)
+    uint32_t consoleContentPanel = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "ConsoleContent",
+                                                     262, 538, 756, 152);
+    screen.SetParent(consoleContentPanel, bottomPanel);
 
     uint32_t consoleScroll = screen.AddWidget(atlas::ui::UIWidgetType::ScrollView, "ConsoleScroll",
-                                               266, 538, 748, 124);
-    screen.SetParent(consoleScroll, bottomPanel);
+                                               266, 540, 748, 124);
+    screen.SetParent(consoleScroll, consoleContentPanel);
 
     uint32_t consoleInput = screen.AddWidget(atlas::ui::UIWidgetType::InputField, "command...",
                                               266, 664, 748, 24);
-    screen.SetParent(consoleInput, bottomPanel);
+    screen.SetParent(consoleInput, consoleContentPanel);
+
+    // System content panel (hidden by default — debug log output)
+    uint32_t systemContentPanel = screen.AddWidget(atlas::ui::UIWidgetType::Panel, "SystemContent",
+                                                    262, 538, 756, 152);
+    screen.SetParent(systemContentPanel, bottomPanel);
+    screen.SetVisible(systemContentPanel, false);
+
+    uint32_t systemTitle = screen.AddWidget(atlas::ui::UIWidgetType::Text, "System Debug Log",
+                                             266, 540, 748, 18);
+    screen.SetParent(systemTitle, systemContentPanel);
+
+    uint32_t systemScroll = screen.AddWidget(atlas::ui::UIWidgetType::ScrollView, "SystemScroll",
+                                              266, 560, 748, 128);
+    screen.SetParent(systemScroll, systemContentPanel);
 
     // Status bar at the bottom
     uint32_t statusBar = screen.AddWidget(atlas::ui::UIWidgetType::StatusBar, "Ready",
@@ -410,7 +444,10 @@ static EditorWidgetIds BuildEditorUI(atlas::ui::UIScreen& screen) {
                            tabBar, tabScene, tabGame,
                            scenePanel, gamePanel,
                            assetScroll, entityScroll, consoleScroll,
-                           consoleInput, dockArea, tbSaveBtn};
+                           consoleInput, dockArea, tbSaveBtn,
+                           consoleTabBar, consoleTab, systemTab,
+                           consoleContentPanel, systemContentPanel,
+                           systemScroll};
 }
 
 int main() {
@@ -465,6 +502,11 @@ int main() {
         tabMgr.SetTabContent(ids.tabScene, ids.scenePanel);
         tabMgr.SetTabContent(ids.tabGame, ids.gamePanel);
     }
+    // Console / System tabs
+    if (ids.consoleTab != 0) {
+        tabMgr.SetTabContent(ids.consoleTab, ids.consoleContentPanel);
+        tabMgr.SetTabContent(ids.systemTab, ids.systemContentPanel);
+    }
 
     // --- Set up Scroll Manager ---
     auto& scrollMgr = engine.GetUIManager().GetScrollManager();
@@ -472,6 +514,31 @@ int main() {
         scrollMgr.RegisterScrollView(ids.assetScroll, 1000.0f);
         scrollMgr.RegisterScrollView(ids.entityScroll, 800.0f);
         scrollMgr.RegisterScrollView(ids.consoleScroll, 500.0f);
+    }
+    if (ids.systemScroll != 0) {
+        scrollMgr.RegisterScrollView(ids.systemScroll, 2000.0f);
+    }
+
+    // --- Logger sink: feed log lines into the System tab scroll area ---
+    // NOTE: In the current architecture Logger is only called from the main
+    // thread (event callbacks, toolbar/menu handlers, etc.), so direct UI
+    // modification is safe.  If Logger is ever called from worker threads,
+    // a queuing mechanism should be added.
+    {
+        atlas::ui::UIScreen* screenPtr = &engine.GetUIManager().GetScreen();
+        uint32_t sysScrollId = ids.systemScroll;
+        atlas::Logger::SetSink([screenPtr, sysScrollId](const std::string& line) {
+            const atlas::ui::UIWidget* scrollW = screenPtr->GetWidget(sysScrollId);
+            if (!scrollW) return;
+            auto children = screenPtr->GetChildren(sysScrollId);
+            float baseY = scrollW->y + 2.0f;
+            float lineY = baseY + static_cast<float>(children.size()) * 16.0f;
+            uint32_t textId = screenPtr->AddWidget(
+                atlas::ui::UIWidgetType::Text, line,
+                scrollW->x + 4.0f, lineY,
+                scrollW->width - 8.0f, 14.0f);
+            screenPtr->SetParent(textId, sysScrollId);
+        });
     }
 
     // --- Set up Toolbar Manager ---
