@@ -150,6 +150,9 @@ public:
 
 private:
     void RenderWidget(UIRenderer* renderer, uint32_t widgetId, int depth = 0);
+    /// Second-pass render of open menu dropdowns so they appear on top of
+    /// all other widgets (toolbar, panels, etc.).
+    void RenderMenuOverlays(UIRenderer* renderer);
     static constexpr int kMaxRenderDepth = 64;
 
     GUIContext m_context = GUIContext::Editor;

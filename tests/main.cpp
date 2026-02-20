@@ -1741,6 +1741,12 @@ void test_full_editor_menu_setup();
 void test_menu_manager_is_any_open();
 void test_close_all_menus_clears_focus();
 
+// Menu overlay and System tab tests
+void test_menu_overlay_renders_on_top();
+void test_menu_overlay_not_rendered_when_closed();
+void test_logger_sink_callback();
+void test_system_tab_creation();
+
 // GUI next tasks tests
 void test_checkable_default_false();
 void test_set_checkable();
@@ -3836,6 +3842,12 @@ int main() {
     test_full_editor_menu_setup();
     test_menu_manager_is_any_open();
     test_close_all_menus_clears_focus();
+
+    std::cout << "\n--- Menu Overlay & System Tab ---" << std::endl;
+    test_menu_overlay_renders_on_top();
+    test_menu_overlay_not_rendered_when_closed();
+    test_logger_sink_callback();
+    test_system_tab_creation();
 
     std::cout << "\n--- GUI Next Tasks ---" << std::endl;
     test_checkable_default_false();

@@ -9,6 +9,7 @@ namespace atlas {
 
 std::ofstream Logger::s_logFile;
 std::mutex Logger::s_mutex;
+Logger::SinkCallback Logger::s_sink;
 
 static std::string Timestamp() {
     auto now = std::chrono::system_clock::now();
@@ -60,11 +61,19 @@ void Logger::Error(const std::string& msg) {
     Write(line, std::cerr);
 }
 
+void Logger::SetSink(SinkCallback sink) {
+    std::lock_guard<std::mutex> lock(s_mutex);
+    s_sink = std::move(sink);
+}
+
 void Logger::Write(const std::string& line, std::ostream& console) {
     std::lock_guard<std::mutex> lock(s_mutex);
     console << line << std::endl;
     if (s_logFile.is_open()) {
         s_logFile << line << std::endl;
+    }
+    if (s_sink) {
+        s_sink(line);
     }
 }
 
